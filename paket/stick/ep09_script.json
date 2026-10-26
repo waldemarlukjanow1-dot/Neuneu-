@@ -1,0 +1,70 @@
+{
+ "episode": "ep09",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "ALLE NUR NOCH E-AUTOS FAHREN?"
+ ],
+ "sources": "KBA 01/2026 · EU-VO 540/2014 · ADAC · AMG (Feb. 2026) · EU-Kommission 12/2025",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Kein V8 mehr. Kein Blubbern, kein Knallen. Nur noch leises Summen.",
+   "cap": "Kein *V8 mehr. Kein *Blubbern, kein *Knallen. Nur noch *leises *Summen."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn alle nur noch Elektroautos fahren?",
+   "cap": "Was passiert, wenn *alle nur noch *Elektroautos fahren?"
+  },
+  {
+   "scene": "now",
+   "say": "Noch sind nur gut vier Prozent der Autos in Deutschland elektrisch.",
+   "cap": "Noch sind nur gut *4 *Prozent der Autos in *Deutschland *elektrisch."
+  },
+  {
+   "scene": "sound",
+   "say": "E-Autos sind so leise, dass sie per Gesetz künstliche Geräusche machen müssen, bis zwanzig Kilometer pro Stunde.",
+   "cap": "*E-Autos sind so *leise, dass sie per *Gesetz *künstliche *Geräusche machen müssen, bis *20 *Kilometer pro Stunde."
+  },
+  {
+   "scene": "fake",
+   "say": "Hersteller bauen sogar Fake-Motorsound ein: AMG testet einen künstlichen V8, Dodge einen elektronischen Auspuff.",
+   "cap": "Hersteller bauen sogar *Fake-Motorsound ein: *AMG testet einen *künstlichen *V8, *Dodge einen *elektronischen *Auspuff."
+  },
+  {
+   "scene": "fake",
+   "say": "Wenn man den Sound fälschen muss, war das Original wohl besser.",
+   "cap": "Wenn man den Sound *fälschen muss, war das *Original wohl *besser."
+  },
+  {
+   "scene": "amg",
+   "say": "Der AMG C63 mit Vierzylinder? Kam bei Kunden nicht an. Jetzt kommen wieder mehr Zylinder.",
+   "cap": "Der *AMG *C63 mit *Vierzylinder? Kam bei Kunden *nicht an. Jetzt kommen wieder *mehr *Zylinder."
+  },
+  {
+   "scene": "practical",
+   "say": "Tanken dauert fünf Minuten, Schnellladen oft eine halbe Stunde. Und im Winter fehlt laut ADAC schnell ein Fünftel Reichweite.",
+   "cap": "*Tanken dauert *5 *Minuten, *Schnellladen oft eine *halbe *Stunde. Und im *Winter fehlt laut *ADAC schnell ein *Fünftel Reichweite."
+  },
+  {
+   "scene": "fair",
+   "say": "Klar, E-Autos sind leise und an der Ampel brutal schnell.",
+   "cap": "Klar, E-Autos sind *leise und an der *Ampel *brutal *schnell."
+  },
+  {
+   "scene": "eu",
+   "say": "Aber selbst die EU will das Verbrenner-Aus für zweitausendfünfunddreißig wieder aufweichen.",
+   "cap": "Aber selbst die *EU will das *Verbrenner-Aus für *2035 wieder *aufweichen."
+  },
+  {
+   "scene": "aha",
+   "say": "Also ehrlich: Warum kauft man sich ein Auto, das so tun muss, als wäre es ein V8?",
+   "cap": "Also *ehrlich: *Warum kauft man sich ein Auto, das so *tun muss, als wäre es ein *V8?"
+  },
+  {
+   "scene": "outro",
+   "say": "Team V8 oder Team Steckdose? Schreib's in die Kommentare!",
+   "cap": "Team *V8 oder Team *Steckdose? Schreib's in die *Kommentare!"
+  }
+ ]
+}

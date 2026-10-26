@@ -331,6 +331,53 @@ if 'spiral' in sc:  # Folge 08
     s = sc['aha']; place(fx, power_off(), s['start'] + 0.3, 0.4); place(fx, birds(2.6), s['start'] + 0.5, 0.15); place(fx, sparkle(), wt('aha', 'hier') - 0.3, 0.25)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
 
+if 'fair' in sc:  # Folge 09
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def v8(d=2.5, rpm0=900, rpm1=3200):   # cross-plane V8 burble: uneven firing pulses + low harmonics
+        n = int(d * SR); x = np.arange(n) / SR
+        rpm = rpm0 + (rpm1 - rpm0) * np.minimum(1, x / (d * 0.6)) ** 1.5
+        f = rpm / 60 * 4   # 4 firings per revolution
+        ph_ = np.cumsum(f) / SR
+        pulse = np.maximum(0, np.sin(2 * np.pi * ph_)) ** 6 * (1 + 0.35 * np.sin(2 * np.pi * ph_ / 4 + 1.3))
+        body = lp(pulse - pulse.mean(), 900) * 2.2 + np.sin(2 * np.pi * ph_ / 2) * 0.25
+        rough = bp(rng.standard_normal(n), 80, 600) * 0.15
+        return np.tanh((body + rough) * 1.8) * np.minimum(1, x / 0.05) * np.minimum(1, (d - x) / 0.25)
+    def backfire():
+        n = int(0.12 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 120, 2500) * np.exp(-x * 45) * 1.5
+    def ev_whine(d=1.5):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 + 1400 * x / d) / SR) * 0.25 * np.sin(np.pi * x / d)
+    def avas(d=1.5):
+        n = int(d * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 220 * x) + 0.5 * np.sin(2 * np.pi * 330 * x)) * 0.3 * (0.6 + 0.4 * np.sin(2 * np.pi * 3 * x)) * np.sin(np.pi * x / d)
+    def stamp():
+        n = int(0.3 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(120 * np.exp(-x * 10) + 45) / SR) * np.exp(-x * 14) + bp(rng.standard_normal(n), 300, 2000) * np.exp(-x * 40) * 0.5
+    h = sc['hook']; ts = wt('hook', 'Summen')
+    place(fx, v8(ts - 0.3, 900, 3800), h['start'] + 0.05, 0.55)
+    for k in range(4): place(fx, backfire(), h['start'] + 0.6 + k * 0.55, 0.45)
+    place(fx, ev_whine(1.4), ts - 0.2, 0.35)
+    place(fx, popsfx(), ph['hook'][1]['start'], 0.3)
+    s = sc['now']
+    for k in range(10): place(fx, tick(), s['start'] + 0.2 + k * 0.08, 0.3)
+    place(fx, ding(1320), s['start'] + 0.3, 0.18)
+    place(fx, avas(1.6), sc['sound']['start'] + 0.5, 0.35); place(fx, popsfx(), wt('sound', 'Gesetz') - 0.2, 0.3)
+    place(fx, popsfx(), wt('fake', 'AMG') - 0.2, 0.3); place(fx, popsfx(), wt('fake', 'Dodge') - 0.2, 0.3); place(fx, stamp(), ph['fake'][1]['start'] - 0.1, 0.55)
+    place(fx, v8(1.2, 1200, 2600), wt('fake', 'Original') - 0.2, 0.35)
+    place(fx, crack(), wt('amg', 'nicht') - 0.1, 0.4); place(fx, v8(1.6, 1000, 3400), wt('amg', 'mehr') - 0.2, 0.45); place(fx, backfire(), wt('amg', 'mehr') + 1.1, 0.4)
+    place(fx, popsfx(), sc['practical']['start'] + 0.2, 0.3); place(fx, popsfx(), wt('practical', 'Schnellladen') - 0.2, 0.3); place(fx, whoosh(0.6), wt('practical', 'Winter') - 0.3, 0.3)
+    place(fx, ev_whine(1.3), sc['fair']['start'] + 1.0, 0.45); place(fx, whoosh(0.6), sc['fair']['start'] + 1.4, 0.3)
+    place(fx, popsfx(), sc['eu']['start'] + 0.6, 0.3); place(fx, ding(1560), wt('eu', 'aufweichen') - 0.3, 0.2)
+    s = sc['aha']; place(fx, v8(2.2, 900, 3600), s['start'] + 0.05, 0.5)
+    for k in range(3): place(fx, backfire(), s['start'] + 0.9 + k * 0.5, 0.4)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, backfire(), s['start'] + 0.8, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
