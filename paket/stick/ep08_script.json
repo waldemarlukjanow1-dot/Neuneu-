@@ -1,0 +1,50 @@
+{
+ "episode": "ep08",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU NUR NOCH IN GTA 6 LEBST?"
+ ],
+ "sources": "Gedankenexperiment · NTU-Studie 2016 · Rockstar/Cfx 2026 · WHO ICD-11 · DAK/UKE",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "GTA sechs sieht so echt aus, dass du kaum noch einen Unterschied merkst. Und irgendwann willst du nur noch dort leben.",
+   "cap": "*GTA *6 sieht so *echt aus, dass du kaum noch einen *Unterschied merkst. Und irgendwann willst du *nur *noch *dort leben."
+  },
+  {
+   "scene": "gtp",
+   "say": "Ein bisschen gibt's das schon: In einer Studie kannten siebenundneunzig Prozent der Zocker Spiel-Effekte im Alltag. Geräusche, Bilder oder Reflexe.",
+   "cap": "Ein bisschen gibt's das *schon: In einer *Studie kannten *97 *Prozent der Zocker *Spiel-Effekte im *Alltag. *Geräusche, *Bilder oder *Reflexe."
+  },
+  {
+   "scene": "money",
+   "say": "Und Geld verdienen? Viele hoffen darauf. Bestätigt ist das für GTA sechs aber nicht. Geld verdienen bisher vor allem Streamer und Mod-Entwickler.",
+   "cap": "Und *Geld verdienen? Viele *hoffen darauf. *Bestätigt ist das für *GTA *6 aber *nicht. Geld verdienen bisher vor allem *Streamer und *Mod-Entwickler."
+  },
+  {
+   "scene": "spiral",
+   "say": "Jetzt stell dir vor, du spielst nur noch: Freunde schreiben, du antwortest nicht. Der Kühlschrank ist leer, die Rechnungen stapeln sich.",
+   "cap": "Jetzt stell dir vor, du spielst *nur *noch: *Freunde schreiben, du antwortest *nicht. Der *Kühlschrank ist *leer, die *Rechnungen stapeln sich."
+  },
+  {
+   "scene": "addiction",
+   "say": "Die WHO erkennt Computerspielsucht als Krankheit an. Laut DAK-Studie sind gut drei Prozent der Zehn- bis Siebzehnjährigen betroffen.",
+   "cap": "Die *WHO erkennt *Computerspielsucht als *Krankheit an. Laut *DAK-Studie sind gut *3 *Prozent der *10- bis *17-Jährigen betroffen."
+  },
+  {
+   "scene": "signs",
+   "say": "Die Warnzeichen: Kontrolle verloren, alles andere unwichtig, und trotzdem weiterzocken.",
+   "cap": "Die *Warnzeichen: *Kontrolle verloren, alles andere *unwichtig, und trotzdem *weiterzocken."
+  },
+  {
+   "scene": "aha",
+   "say": "Das Spiel kann noch so echt aussehen: Dein Leben läuft hier draußen.",
+   "cap": "Das Spiel kann noch so *echt aussehen: Dein *Leben läuft *hier *draußen."
+  },
+  {
+   "scene": "outro",
+   "say": "Wie viele Stunden zockst du am Tag? Sei ehrlich! Und markier jemanden, der mal wieder raus muss.",
+   "cap": "Wie viele *Stunden zockst du am *Tag? Sei *ehrlich! Und *markier jemanden, der mal wieder *raus muss."
+  }
+ ]
+}

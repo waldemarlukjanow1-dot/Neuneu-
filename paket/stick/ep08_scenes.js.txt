@@ -1,0 +1,219 @@
+// ---------- scene data ----------
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function person(x, y, s, hair, color, expr, pose = POSES.stand, facing = 0) { return drawKappi(g, { x, y, scale: s, facing, pose, expr, extra: { hair, color } }); }
+function gamepad(g2, h) {
+  g.save(); g.translate(h.hx + 10, h.hy - 6); g.rotate(-0.15);
+  rr(-42, -22, 84, 44, 20); g.fillStyle = '#2b2d42'; g.fill(); g.strokeStyle = INK; g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#fff'; g.fillRect(-30, -4, 18, 6); g.fillRect(-24, -10, 6, 18);
+  for (const [bx, by, c] of [[22, -8, '#06d6a0'], [32, 2, '#ef476f'], [12, 2, '#4cc9f0']]) { g.fillStyle = c; g.beginPath(); g.arc(bx, by, 5, 0, 7); g.fill(); }
+  g.restore();
+}
+function palm(x, y, s, t, col = 'rgba(40,10,60,0.55)') {
+  g.save(); g.translate(x, y); g.scale(s, s); g.fillStyle = col; g.strokeStyle = col; g.lineCap = 'round';
+  g.lineWidth = 26; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(30, -220, 10, -420); g.stroke();
+  for (let i = 0; i < 7; i++) { const a = -Math.PI / 2 + (i - 3) * 0.48 + Math.sin(t * 1.2 + i) * 0.04; g.save(); g.translate(10, -420); g.rotate(a); g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(110, -40, 210, 40); g.quadraticCurveTo(110, 0, 0, 0); g.fill(); g.restore(); }
+  g.restore();
+}
+function neon(str, x, y, size, col, glowCol) {
+  g.save(); g.shadowColor = glowCol; g.shadowBlur = 30; text(str, x, y, size, col, { lw: 14, stroke: '#2b0a3d' }); g.shadowBlur = 0; g.restore();
+}
+function startButton(x, y, r, pressed, t) {
+  if (pressed > 0) for (let k = 0; k < 3; k++) { const q = ((t * 1.2 + k / 3) % 1); g.strokeStyle = `rgba(255,255,255,${0.7 * (1 - q)})`; g.lineWidth = 8; g.beginPath(); g.arc(x, y, r + q * 160, 0, 7); g.stroke(); }
+  const d = pressed > 0 ? 8 : 0;
+  g.fillStyle = '#9d0208'; g.beginPath(); g.arc(x, y + 14, r, 0, 7); g.fill();
+  g.fillStyle = '#ef233c'; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(x, y + d, r, 0, 7); g.fill(); g.stroke();
+  text('START', x, y + d + 14, r * 0.42, '#fff', { lw: 6 });
+}
+function chaosStars(n, a) {   // GTA-style wanted level, used as "chaos meter"
+  if (a <= 0) return;
+  g.save(); g.globalAlpha = a; text('CHAOS', 400, 518, 24, '#fff', { weight: 900, lw: 6, align: 'right' });
+  for (let i = 0; i < 5; i++) { const on = i < n; g.save(); g.translate(430 + i * 46, 508); g.fillStyle = on ? '#fff' : 'rgba(255,255,255,0.18)'; g.strokeStyle = INK; g.lineWidth = 4; g.beginPath(); for (let k = 0; k < 10; k++) { const r = k % 2 ? 8 : 19, b = k / 10 * Math.PI * 2 - Math.PI / 2; g.lineTo(Math.cos(b) * r, Math.sin(b) * r); } g.closePath(); g.fill(); g.stroke(); g.restore(); }
+  g.restore();
+}
+function serverRack(x, y, t, state, shake) {
+  g.save(); g.translate(x + (shake ? (hash(Math.floor(t * 30)) - 0.5) * 16 : 0), y);
+  rr(-115, -210, 230, 420, 18); g.fillStyle = '#1b1d24'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  for (let i = 0; i < 7; i++) {
+    const uy = -185 + i * 55; rr(-95, uy, 190, 42, 8); g.fillStyle = '#2f323d'; g.fill();
+    for (let k = 0; k < 3; k++) { const blinkOn = hash(i * 7 + k + Math.floor(t * (state ? 14 : 4))) > 0.35; g.fillStyle = state === 2 ? (blinkOn ? '#ef233c' : '#5a0b12') : state === 1 ? (blinkOn ? (k ? '#ffd23f' : '#ef233c') : '#333') : (blinkOn ? '#06d6a0' : '#0a4d3a'); g.beginPath(); g.arc(-70 + k * 22, uy + 21, 6, 0, 7); g.fill(); }
+    g.fillStyle = '#444'; g.fillRect(10, uy + 15, 70, 12);
+  }
+  g.restore();
+}
+function smokePuffs(x, y, t, a) { for (let i = 0; i < 6; i++) { const q = (t * 0.7 + i / 6) % 1; g.fillStyle = `rgba(90,90,100,${a * 0.6 * (1 - q)})`; g.beginPath(); g.arc(x + Math.sin(i * 2.3 + q * 3) * 40, y - q * 220, 26 + q * 40, 0, 7); g.fill(); } }
+function tinyPerson(x, y, col, ctrl) {
+  g.strokeStyle = INK; g.lineWidth = 3; g.fillStyle = col; g.beginPath(); g.arc(x, y - 22, 9, 0, 7); g.fill(); g.stroke();
+  g.strokeStyle = col === '#fff6e6' ? INK : col; g.lineWidth = 4; g.beginPath(); g.moveTo(x, y - 13); g.lineTo(x, y + 6); g.moveTo(x - 8, y - 6); g.lineTo(x + 8, y - 6); g.moveTo(x, y + 6); g.lineTo(x - 6, y + 16); g.moveTo(x, y + 6); g.lineTo(x + 6, y + 16); g.stroke();
+  if (ctrl) { rr(x - 10, y - 10, 20, 10, 5); g.fillStyle = '#2b2d42'; g.fill(); }
+}
+function moneyStack(x, h, col = '#2a9d55') { for (let i = 0; i < h; i++) { rr(x - 50, 1150 - i * 22, 100, 20, 5); g.fillStyle = i % 2 ? col : '#38b26a'; g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); } if (h > 0) text('$', x, 1150 - (h - 1) * 22 + 16, 18, '#fff', { weight: 900 }); }
+
+function monitor(x, y, w, h, t, glowA = 0) {   // screen showing a sunny game world
+  g.save(); g.translate(x, y);
+  if (glowA > 0) glow(0, 0, w * 0.9, `rgba(255,80,200,${0.35 * glowA})`);
+  rr(-w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 18); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  g.save(); rr(-w / 2, -h / 2, w, h, 8); g.clip();
+  const gr = g.createLinearGradient(0, -h / 2, 0, h / 2); gr.addColorStop(0, '#ff6fb5'); gr.addColorStop(1, '#ff9a5c'); g.fillStyle = gr; g.fillRect(-w / 2, -h / 2, w, h);
+  g.fillStyle = 'rgba(255,240,180,0.8)'; g.beginPath(); g.arc(0, h * 0.3, h * 0.28, Math.PI, 0); g.fill();
+  g.fillStyle = '#3fd0c1'; g.fillRect(-w / 2, h * 0.3, w, h * 0.2);
+  g.save(); g.scale(h / 900, h / 900); palm(-w / 2 * 900 / h + 140, 0.3 * 900, 1, t, 'rgba(40,10,60,0.75)'); palm(w / 2 * 900 / h - 120, 0.3 * 900, 0.8, t + 1, 'rgba(40,10,60,0.75)'); g.restore();
+  g.restore(); g.restore();
+}
+function hud(K, s, a, t) {   // game interface floating around the figure in real life
+  if (a <= 0) return;
+  const hx = K.head.x, hy = K.head.y;
+  g.save(); g.globalAlpha = a;
+  rr(hx - 70, hy - 140, 140, 18, 9); g.fillStyle = '#1b1d24'; g.fill(); rr(hx - 66, hy - 136, 132 * (0.6 + 0.1 * Math.sin(t * 2)), 10, 5); g.fillStyle = '#06d6a0'; g.fill();
+  g.strokeStyle = '#fff'; g.lineWidth = 5; g.fillStyle = 'rgba(20,22,28,0.75)'; g.beginPath(); g.arc(hx - 150, hy + 230, 52, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#ffd23f'; g.beginPath(); g.moveTo(hx - 150, hy + 214); g.lineTo(hx - 140, hy + 240); g.lineTo(hx - 160, hy + 240); g.closePath(); g.fill();
+  g.restore();
+}
+function prompt(x, y, s, key, label) { withScale(x, y, s, () => { g.fillStyle = '#fff'; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.arc(-80, 0, 26, 0, 7); g.fill(); g.stroke(); text(key, -80, 11, 30, INK); rr(-46, -24, 180, 48, 12); g.fillStyle = 'rgba(20,22,28,0.85)'; g.fill(); text(label, 44, 10, 26, '#fff', { weight: 800 }); }); }
+function fridge(x, y, open, s = 1) {
+  withScale(x, y, s, () => {
+    rr(-100, -170, 200, 330, 18); g.fillStyle = '#e9edf2'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+    g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.moveTo(-90, -40); g.lineTo(90, -40); g.moveTo(-90, 60); g.lineTo(90, 60); g.stroke();
+    if (open > 0.3) { text('🕸️', 0, 30, 70, '#000', { weight: 400, font: '"Noto Color Emoji"' }); text('LEER', 0, 130, 34, '#ef476f'); }
+    const dw = 200 * (1 - open); rr(-100, -170, Math.max(14, dw), 330, 18); g.fillStyle = '#f8f9fb'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  });
+}
+function letters(x, n, t) { for (let i = 0; i < n; i++) { g.save(); g.translate(x + Math.sin(i * 2.3) * 14, 1150 - i * 26); g.rotate(Math.sin(i * 1.7) * 0.15); rr(-70, -18, 140, 36, 4); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ef476f'; g.fillRect(-60, -8, 50, 6); g.restore(); } if (n > 2) text('RECHNUNG', x, 1150 - n * 26 - 14, 22, '#fff', { weight: 900, lw: 6 }); }
+function donut(x, y, r, frac, col) {
+  g.lineWidth = r * 0.32; g.strokeStyle = 'rgba(255,255,255,0.35)'; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke();
+  g.strokeStyle = col; g.lineCap = 'butt'; g.beginPath(); g.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); g.stroke();
+  g.strokeStyle = INK; g.lineWidth = 6; for (const r2 of [r * 1.16, r * 0.84]) { g.beginPath(); g.arc(x, y, r2, 0, 7); g.stroke(); }
+}
+function tree(x, s, t) {
+  withScale(x, 1165, s, () => { g.fillStyle = '#8d5a3b'; g.strokeStyle = INK; g.lineWidth = 7; rr(-22, -200, 44, 200, 10); g.fill(); g.stroke();
+    g.fillStyle = '#2a9d55'; for (const [cx, cy, r] of [[0, -300, 120], [-90, -230, 80], [90, -230, 80]]) { g.beginPath(); g.arc(cx + Math.sin(t + cx) * 3, cy, r, 0, 7); g.fill(); g.stroke(); } });
+}
+
+const BG = {
+  hook: ['#ff6fb5', '#7b2ff7'], gtp: ['#7f6cf0', '#4834d4'], money: ['#06d6a0', '#118ab2'], spiral: ['#5a4b8a', '#1d1258'],
+  addiction: ['#ff8fb1', '#d6336c'], signs: ['#2b2d42', '#14213d'], aha: ['#8ee3ff', '#4cc9f0'], outro: ['#ffc83d', '#fb5607'],
+};
+const STATIONS = [['Effekte', 'gtp'], ['Geld', 'money'], ['Abtauchen', 'spiral'], ['Sucht', 'addiction'], ['Warnzeichen', 'signs'], ['Draußen', 'aha']];
+const stationIdx = { hook: -1, gtp: 0, money: 1, spiral: 2, addiction: 3, signs: 4, aha: 5, outro: 5.5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (id === 'aha' || id === 'outro') { g.fillStyle = 'rgba(255,240,150,0.9)'; g.beginPath(); g.arc(880, 560, 70, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); }
+  g.fillStyle = id === 'aha' || id === 'outro' ? 'rgba(42,157,85,0.55)' : 'rgba(0,0,0,0.10)'; g.fillRect(0, GROUND, W, H - GROUND);
+  g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke();
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+// main figure placement / pose per scene: keys = [time, pose, expression]
+function kappiState(sc, u, t) {
+  let pos = { x: 300, scale: 0.84 }, keys = [[0, 'stand', 'neutral']], facing = 0, hold = null;
+  switch (sc.id) {
+    case 'hook': hold = gamepad; keys = [[0, 'hold', 'happy'], [at(/^irgendwann/, 'hook', sc, -0.2), 'hold', 'joy']]; break;
+    case 'gtp': keys = [[0, 'scared', 'surprised'], [at(/^Geräusche/, 'gtp', sc, -0.2), 'think', 'thinking']]; break;
+    case 'money': keys = [[0, 'cheer', 'joy'], [at(/^Bestätigt/, 'money', sc, -0.2), 'shrug', 'worried']]; break;
+    case 'spiral': hold = gamepad; keys = [[0, 'hold', 'determined'], [at(/^Kühlschrank/, 'spiral', sc, -0.2), 'hold', 'sick']]; break;
+    case 'addiction': keys = [[0, 'pointUp', 'determined']]; break;
+    case 'signs': keys = [[0, 'think', 'worried']]; break;
+    case 'aha': keys = [[0, 'stretch' in POSES ? 'stretch' : 'cheer', 'joy']]; break;
+    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; keys = [[0, 'point', 'happy']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.3));
+  return { x: pos.x, y: 1165, scale: pos.scale, facing, hold, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2] };
+}
+function sceneBack(sc, u, t) {
+  if (sc.id === 'hook') {   // the game screen grows until it fills the stage
+    const tI = at(/^irgendwann/, 'hook', sc), gs = ease(clamp01((u - tI) / 1.6));
+    monitor(lerp(720, 600, gs), lerp(800, 820, gs), lerp(300, 820, gs), lerp(190, 560, gs), t, gs);
+  }
+  if (sc.id === 'spiral') { const tR = at(/^Rechnungen/, 'spiral', sc); letters(860, Math.floor(clamp01((u - tR + 0.4) / 1.2) * 9), t); }
+  if (sc.id === 'aha') tree(820, 0.9, t);
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  switch (sc.id) {
+    case 'hook': {
+      const tE = at(/^echt/, 'hook', sc), tU = at(/^Unterschied/, 'hook', sc);
+      if (u > tE - 0.2 && u < at(/^irgendwann/, 'hook', sc)) withScale(720, 600, pop(u, tE - 0.2), () => pill(0, 0, 1, 'SPIEL oder ECHT? 🤔', '#fff', INK, 34));
+      break;
+    }
+    case 'gtp': {
+      hud(K, 0.84, sm(0.1, 0.5, u), t);
+      prompt(K.head.x + 190, K.head.y + 40, pop(u, 0.4), 'X', 'Tür öffnen');
+      const tP = at(/^Prozent/, 'gtp', sc), tG = at(/^Geräusche/, 'gtp', sc);
+      if (u > tP - 0.3) withScale(720, 580, pop(u, tP - 0.3), () => { pill(0, 0, 1, '97 % kennen das', YEL, INK, 40); text('Studie, über 2.000 Zocker (2016)', 0, 68, 24, '#fff', { weight: 800, lw: 6 }); });
+      [['🔊 Geräusche', 0], ['👁️ Bilder', 1], ['🖐️ Reflexe', 2]].forEach(([m, i]) => { const tw = at(i === 0 ? /^Geräusche/ : i === 1 ? /^Bilder/ : /^Reflexe/, 'gtp', sc, -0.2); if (u > tw) pill(720, 860 + i * 90, pop(u, tw), m, '#fff', INK, 32); });
+      break;
+    }
+    case 'money': {
+      const tB = at(/^Bestätigt/, 'money', sc), tS = at(/^Streamer/, 'money', sc);
+      for (let i = 0; i < 5; i++) { const q = (u * 0.6 + i / 5) % 1; if (u < tB) { g.globalAlpha = 1 - q; text('💵', 560 + i * 90, 1100 - q * 450, 54, '#000', { weight: 400, font: '"Noto Color Emoji"' }); g.globalAlpha = 1; } }
+      if (u > tB - 0.2) withScale(700, 580, pop(u, tB - 0.2), () => { pill(0, 0, 1, 'GTA 6: Geld? ❓', '#fff', INK, 38); text('offiziell nicht bestätigt', 0, 68, 26, '#fff', { weight: 800, lw: 6 }); });
+      if (u > tS - 0.3) { pill(700, 790, pop(u, tS - 0.3), '🎥 Streamer', YEL, INK, 36); pill(700, 890, pop(u, tS + 0.4), '🛠️ Mod-Entwickler', YEL, INK, 36); withScale(700, 970, pop(u, tS + 0.8), () => text('bisher vor allem bei GTA 5', 0, 0, 24, '#fff', { weight: 800, lw: 6 })); }
+      break;
+    }
+    case 'spiral': {
+      const tF = at(/^Freunde/, 'spiral', sc), tK = at(/^Kühlschrank/, 'spiral', sc);
+      if (u > tF - 0.2) { const n = Math.min(99, Math.floor(3 * Math.pow(1.9, (u - tF) * 2.2))); withScale(660, 580, pop(u, tF - 0.2), () => pill(0, 0, 1, `💬 ${n >= 99 ? '99+' : n} ungelesen`, '#fff', INK, 34)); }
+      if (u > tK - 0.4) fridge(620, 940, sm(tK - 0.1, tK + 0.5, u), 0.75 * pop(u, tK - 0.4));
+      g.fillStyle = `rgba(10,5,30,${0.35 * sm(0, D, u)})`; g.fillRect(-300, 300, 1700, 1400);
+      break;
+    }
+    case 'addiction': {
+      withScale(700, 610, pop(u, 0.2), () => { card(-250, -95, 500, 190, '#fff'); text('WHO (ICD-11):', 0, -30, 32, '#d6336c'); text('Computerspielsucht', 0, 20, 40, INK); text('= Krankheit', 0, 66, 34, INK); });
+      const tP = at(/^Prozent/, 'addiction', sc), f = 0.034 * ease(clamp01((u - tP + 0.5) / 0.8));
+      if (u > tP - 0.5) withScale(700, 900, pop(u, tP - 0.5), () => { donut(0, 0, 100, f * 10, '#ffd23f'); text((f * 100).toFixed(1).replace('.', ',') + ' %', 0, 14, 44, '#fff', { lw: 10 }); });
+      if (u > tP + 0.4) withScale(700, 1060, pop(u, tP + 0.4), () => text('der 10- bis 17-Jährigen (DAK/UKE)', 0, 0, 24, '#fff', { weight: 800, lw: 6 }));
+      break;
+    }
+    case 'signs': {
+      [['⚠️ Kontrolle verloren', /^Kontrolle/], ['⚠️ alles andere unwichtig', /^unwichtig/], ['⚠️ trotzdem weiterzocken', /^weiterzocken/]].forEach(([m, re], i) => { const tw = at(re, 'signs', sc, -0.4); if (u > tw) pill(680, 640 + i * 120, pop(u, tw), m, '#fff', INK, 32); });
+      withScale(680, 1030, pop(u, D - 1.0), () => text('Hilfe: Hausarzt oder Suchtberatung', 0, 0, 26, '#fff', { weight: 800, lw: 6 }));
+      break;
+    }
+    case 'aha': {
+      const tH = at(/^hier/, 'aha', sc);
+      withScale(600, 600, pop(u, 0.3), () => text('🎮 ⏻', 0, 0, 70, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      if (u > tH - 0.3) withScale(600, 720, pop(u, tH - 0.3), () => pill(0, 0, 1, 'Dein Leben: hier draußen ☀️', YEL, INK, 34));
+      break;
+    }
+    case 'outro': {
+      withScale(690, 610, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Wie viele Stunden', 0, -30, 50, INK); text('zockst du? 👇', 0, 55, 58, '#fb5607', { font: EMO }); });
+      withScale(690, 880, pop(u, at(/^markier/, 'outro', sc, -0.2)), () => pill(0, 0, 1, 'Markier wen, der raus muss 🌳', INK, YEL, 32));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 3).join(' · '), 540, 1500, 26, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(3).join(' · '), 540, 1540, 26, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}
+
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  return drawKappi(g, st);
+}
+

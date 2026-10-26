@@ -289,6 +289,48 @@ if 'germany' in sc:  # Folge 07
     for k in range(5): place(fx, star_ping(), sc['aha']['start'] + 0.3 + k * 0.26, 0.12)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'Markier') - 0.2, 0.3)
 
+if 'spiral' in sc:  # Folge 08
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    def notif():
+        n = int(0.18 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 1320 * x) * (x < 0.08) + np.sin(2 * np.pi * 1760 * x) * (x >= 0.08)) * np.exp(-x * 12)
+    def zoom_in(d=1.4):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 300, 5000) * (x / d) ** 2 * np.minimum(1, (d - x) / 0.05) + np.sin(2 * np.pi * np.cumsum(200 + 900 * (x / d) ** 2) / SR) * 0.4 * (x / d)
+    def power_off():
+        n = int(0.5 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 9) + 60) / SR) * np.exp(-x * 7)
+    def birds(d=2.5):
+        out = np.zeros(int(d * SR))
+        for k in range(6):
+            n = int(0.12 * SR); x = np.arange(n) / SR; f0 = 2800 + 600 * hash01(k)
+            s = np.sin(2 * np.pi * np.cumsum(f0 + 900 * np.sin(2 * np.pi * 18 * x)) / SR) * np.sin(np.pi * x / 0.12)
+            i = int((0.2 + k * 0.38) * SR); out[i:i + n] += s[:len(out) - i]
+        return out
+    def hash01(k): return (np.sin(k * 127.1 + 311.7) * 43758.5453) % 1
+    h = sc['hook']; place(fx, popsfx(), h['start'] + 0.2, 0.25); place(fx, popsfx(), wt('hook', 'echt') - 0.2, 0.3); place(fx, zoom_in(1.6), wt('hook', 'irgendwann'), 0.35)
+    s = sc['gtp']; place(fx, ding(1560), s['start'] + 0.4, 0.15); place(fx, ding(1320), wt('gtp', 'Prozent') - 0.3, 0.2)
+    for w_ in ('Geräusche', 'Bilder', 'Reflexe'): place(fx, popsfx(), wt('gtp', w_) - 0.2, 0.28)
+    s = sc['money']
+    for k in range(6): place(fx, sparkle() if k == 0 else tick(), s['start'] + 0.2 + k * 0.3, 0.2)
+    place(fx, bloop(), wt('money', 'Bestätigt') - 0.2, 0.4); place(fx, popsfx(), wt('money', 'Streamer') - 0.3, 0.3); place(fx, popsfx(), wt('money', 'Streamer') + 0.4, 0.3)
+    tf = wt('spiral', 'Freunde')
+    for k in range(9): place(fx, notif(), tf + k * 0.32, 0.18 + 0.02 * k)
+    place(fx, crack(), wt('spiral', 'Kühlschrank') + 0.1, 0.3); tr = wt('spiral', 'Rechnungen')
+    for k in range(9): place(fx, tick(), tr - 0.4 + k * 0.13, 0.35)
+    place(fx, drumhit(), sc['addiction']['start'] + 0.1, 0.4); place(fx, ding(990), wt('addiction', 'Prozent'), 0.2)
+    for w_ in ('Kontrolle', 'unwichtig', 'weiterzocken'): place(fx, drumhit(), wt('signs', w_) - 0.4, 0.25)
+    s = sc['aha']; place(fx, power_off(), s['start'] + 0.3, 0.4); place(fx, birds(2.6), s['start'] + 0.5, 0.15); place(fx, sparkle(), wt('aha', 'hier') - 0.3, 0.25)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
