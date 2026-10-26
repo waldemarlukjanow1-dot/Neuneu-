@@ -183,6 +183,37 @@ if 'jetlag' in sc:  # Folge 04
     place(fx, drumhit(), wt('aha', 'leihst') - 0.1, 0.45)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, ding(1980), s['start'] + 1.4, 0.2)
 
+if 'choice' in sc:  # Folge 05
+    def wt(sid, prefix):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix): return w['t0']
+    def rewind(d=2.0):   # ticking that slows down while the clock turns back
+        out = np.zeros(int(d * SR)); tt = 0.0; k = 0
+        while tt < d - 0.05:
+            n = int(0.03 * SR); s = hp(rng.standard_normal(n), 3000) * env(n, 0.0005, 0.006)
+            i = int(tt * SR); out[i:i + n] += s[:len(out) - i]; tt += 0.06 + 0.12 * (tt / d); k += 1
+        return out
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    h = sc['hook']; place(fx, popsfx(), h['start'] + 0.1, 0.3); place(fx, rewind(2.0), h['start'] + 0.6, 0.5); place(fx, ding(1320), h['start'] + 2.7, 0.18)
+    tg = wt('gift', 'geschenkt'); place(fx, confetti_pop(), tg, 0.5); place(fx, sparkle(), tg + 0.1, 0.3)
+    place(fx, popsfx(), wt('gift', 'schlafen') - 0.3, 0.3)
+    s = sc['body']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, popsfx(), s['start'] + 0.6, 0.25); place(fx, bloop(), wt('body', 'alten') - 0.2, 0.4)
+    p2 = ph['body'][1]['start']
+    for k in range(3): place(fx, popsfx(), p2 + 0.2 + k * 0.15, 0.2)
+    place(fx, ding(990), p2 + 1.2, 0.2)
+    s = sc['vote']
+    for k in range(8): place(fx, tick(), s['start'] + 0.8 + k * 0.2, 0.4)
+    place(fx, ding(1560), wt('vote', 'Prozent'), 0.22)
+    place(fx, popsfx(), wt('choice', 'Sommerzeit') - 0.3, 0.3); place(fx, popsfx(), wt('choice', 'Winterzeit') - 0.3, 0.3); place(fx, drumhit(), wt('choice', 'Winterzeit') + 0.3, 0.35)
+    place(fx, sparkle(), sc['summer']['start'] + 0.3, 0.25)
+    s = sc['dark']; place(fx, drumhit(), s['start'] + 0.1, 0.45); place(fx, popsfx(), wt('dark', 'Schule') - 0.2, 0.3); place(fx, popsfx(), wt('dark', 'Arbeit') - 0.2, 0.3)
+    s = sc['expert']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, ding(1320), wt('expert', 'Licht') - 0.2, 0.18); place(fx, bloop(), ph['expert'][1]['start'] + 0.3, 0.4)
+    s = sc['eu']; place(fx, whoosh(0.5), s['start'] + 0.2, 0.3); place(fx, ding(1760), wt('eu', 'Parlament') - 0.2, 0.2); place(fx, crack(), wt('eu', 'Länder') - 0.2, 0.5)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

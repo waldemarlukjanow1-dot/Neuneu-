@@ -1,0 +1,70 @@
+{
+ "episode": "ep05",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "WIR DIE ZEITUMSTELLUNG ABSCHAFFEN?"
+ ],
+ "sources": "Quellen: DAK/Forsa 2023–24 · EU-Umfrage 2018 · DGSM · EU-Parlament 2019",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn wir die Zeitumstellung einfach abschaffen?",
+   "cap": "Was passiert, wenn wir die *Zeitumstellung einfach *abschaffen?"
+  },
+  {
+   "scene": "gift",
+   "say": "Am Sonntag gab's sogar eine Stunde geschenkt. Endlich mal länger schlafen!",
+   "cap": "Am *Sonntag gab's sogar *eine *Stunde *geschenkt. Endlich mal *länger *schlafen!"
+  },
+  {
+   "scene": "body",
+   "say": "Nur: Dein Körper hat seine Uhr nicht umgestellt. Viele werden trotzdem zur alten Zeit wach.",
+   "cap": "Nur: Dein *Körper hat seine *Uhr *nicht umgestellt. Viele werden trotzdem zur *alten *Zeit wach."
+  },
+  {
+   "scene": "body",
+   "say": "Laut einer DAK-Umfrage hat fast jeder Dritte nach der Umstellung Probleme, meistens Müdigkeit.",
+   "cap": "Laut einer *DAK-Umfrage hat fast *jeder *Dritte nach der Umstellung *Probleme, meistens *Müdigkeit."
+  },
+  {
+   "scene": "vote",
+   "say": "Also weg damit! In einer EU-Umfrage waren vierundachtzig Prozent dafür.",
+   "cap": "Also *weg damit! In einer *EU-Umfrage waren *84 *Prozent dafür."
+  },
+  {
+   "scene": "choice",
+   "say": "Aber dann musst du dich entscheiden: für immer Sommerzeit oder für immer Winterzeit?",
+   "cap": "Aber dann musst du dich *entscheiden: für immer *Sommerzeit oder für immer *Winterzeit?"
+  },
+  {
+   "scene": "summer",
+   "say": "Die meisten wollen ewige Sommerzeit. Lange, helle Abende!",
+   "cap": "Die *meisten wollen ewige *Sommerzeit. Lange, *helle *Abende!"
+  },
+  {
+   "scene": "dark",
+   "say": "Doch im Dezember würde es in Köln erst um halb zehn hell. Schule und Arbeit starten im Dunkeln.",
+   "cap": "Doch im *Dezember würde es in *Köln erst um *halb *zehn hell. *Schule und *Arbeit starten im *Dunkeln."
+  },
+  {
+   "scene": "expert",
+   "say": "Schlafforscher sind deshalb eher für die Winterzeit. Licht am Morgen stellt deine innere Uhr.",
+   "cap": "*Schlafforscher sind deshalb eher für die *Winterzeit. *Licht am *Morgen stellt deine *innere *Uhr."
+  },
+  {
+   "scene": "expert",
+   "say": "Der Haken: Im Sommer geht in Berlin dann schon um Viertel vor vier die Sonne auf.",
+   "cap": "Der *Haken: Im Sommer geht in *Berlin dann schon um *Viertel vor *vier die Sonne auf."
+  },
+  {
+   "scene": "eu",
+   "say": "Und die EU? Das Parlament hat schon zweitausendneunzehn zugestimmt. Aber die Länder können sich bis heute nicht einigen.",
+   "cap": "Und die *EU? Das *Parlament hat schon *2019 zugestimmt. Aber die *Länder können sich bis *heute *nicht einigen."
+  },
+  {
+   "scene": "outro",
+   "say": "Team Sommerzeit oder Team Winterzeit? Schreib's in die Kommentare!",
+   "cap": "Team *Sommerzeit oder Team *Winterzeit? Schreib's in die *Kommentare!"
+  }
+ ]
+}
