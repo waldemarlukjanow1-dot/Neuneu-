@@ -253,6 +253,46 @@ if 'freeze' in sc:  # Folge 06
     place(fx, drumhit(), td + 1.25, 0.5)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), ph['outro'][1]['start'], 0.3)
 
+if 'consoles' in sc:  # Folge 07
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def power_down():
+        n = int(1.0 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(420 * np.exp(-x * 3) + 40) / SR) * np.exp(-x * 2.5)
+    def coin_sfx():
+        n = int(0.4 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 2600 * x) + 0.6 * np.sin(2 * np.pi * 3900 * x)) * np.exp(-x * 10)
+    def buzz(d=0.8):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sign(np.sin(2 * np.pi * 110 * x)) * 0.3 * np.sin(np.pi * x / d)
+    def wind(d=2.5):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 200, 900) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.7 * x)) * np.sin(np.pi * x / d)
+    def star_ping():
+        n = int(0.25 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * 1760 * x) * np.exp(-x * 14)
+    h = sc['hook']; place(fx, whoosh(0.6), h['start'] + 0.0, 0.35); place(fx, popsfx(), h['start'] + 0.1, 0.3)
+    place(fx, popsfx(), wt('hook', 'November') - 0.6, 0.25)
+    ts = wt('hook', 'Start'); place(fx, drumhit(), ts, 0.5); place(fx, crack(), ts, 0.3); place(fx, popsfx(), ph['hook'][1]['start'], 0.3)
+    for sid in ('consoles', 'server', 'power', 'streets', 'money'): place(fx, star_ping(), sc[sid]['start'] + 0.5, 0.3)
+    s = sc['consoles']
+    for k in range(10): place(fx, tick(), s['start'] + 0.3 + k * 0.12, 0.3)
+    place(fx, ding(1320), wt('consoles', 'reicht') - 0.2, 0.18); place(fx, popsfx(), ph['consoles'][1]['start'] + 0.4, 0.35)
+    place(fx, buzz(0.7), wt('server', 'acht') - 0.2, 0.25); place(fx, drumhit(), wt('server', 'Absturz') - 0.2, 0.5); place(fx, power_down(), wt('server', 'Absturz') - 0.1, 0.4)
+    place(fx, popsfx(), sc['power']['start'] + 0.3, 0.3); place(fx, popsfx(), wt('power', 'Mal') - 0.2, 0.3); place(fx, ding(1560), wt('power', 'Mal') + 0.8, 0.2); place(fx, crack(), wt('power', 'Hälfte') + 0.4, 0.4)
+    place(fx, wind(3.0), sc['streets']['start'] + 0.2, 0.35); place(fx, popsfx(), wt('streets', 'Pizza?') - 0.2, 0.3)
+    s = sc['money']
+    for k in range(10): place(fx, coin_sfx(), s['start'] + 0.4 + k * 0.2, 0.12)
+    place(fx, drumhit(), wt('money', 'Rekord') - 0.2, 0.45); place(fx, confetti_pop(), wt('money', 'Rekord') - 0.2, 0.4)
+    tn = wt('aha', 'normaler')
+    for k in range(5): place(fx, star_ping(), tn - 0.3 + k * 0.08, 0.15)
+    place(fx, ding(990), wt('aha', 'Donnerstag'), 0.2)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'Markier') - 0.2, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

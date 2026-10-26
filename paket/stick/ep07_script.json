@@ -1,0 +1,60 @@
+{
+ "episode": "ep07",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DIE GANZE WELT AM 19.11. GTA 6 SPIELT?"
+ ],
+ "sources": "Gedankenexperiment · Sony: 95,3 Mio. PS5 (06/2026) · IEA/Ember 2025 · Take-Two 2013",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "GTA sechs. Neunzehnter November. Und die ganze Welt drückt gleichzeitig auf Start.",
+   "cap": "*GTA *6. *19. *November. Und die *ganze *Welt drückt gleichzeitig auf *Start."
+  },
+  {
+   "scene": "hook",
+   "say": "Ein Gedankenexperiment: Was würde dann passieren?",
+   "cap": "Ein *Gedankenexperiment: Was würde dann *passieren?"
+  },
+  {
+   "scene": "consoles",
+   "say": "Problem eins: Sony hat rund fünfundneunzig Millionen PS5 ausgeliefert. Das reicht nicht mal für jeden achtzigsten Menschen.",
+   "cap": "*Problem *eins: *Sony hat rund *95 *Millionen *PS5 ausgeliefert. Das reicht nicht mal für jeden *80. *Menschen."
+  },
+  {
+   "scene": "consoles",
+   "say": "Auch mit allen Xbox-Konsolen dazu: Die allermeisten hätten gar keine Konsole.",
+   "cap": "Auch mit allen *Xbox-Konsolen dazu: Die *allermeisten hätten gar *keine *Konsole."
+  },
+  {
+   "scene": "server",
+   "say": "Und die Server? Schon beim Start von GTA Online gab es massive Probleme. Bei acht Milliarden Spielern? Wohl kompletter Absturz.",
+   "cap": "Und die *Server? Schon beim Start von *GTA *Online gab es *massive *Probleme. Bei *8 *Milliarden Spielern? Wohl kompletter *Absturz."
+  },
+  {
+   "scene": "power",
+   "say": "Eine PS5 zieht beim Zocken bis zu zweihundert Watt. Mal acht Milliarden wäre das fast die Hälfte des gesamten Stromverbrauchs der Welt, obendrauf.",
+   "cap": "Eine *PS5 zieht beim Zocken bis zu *200 *Watt. Mal *8 *Milliarden wäre das fast die *Hälfte des gesamten *Stromverbrauchs der *Welt, obendrauf."
+  },
+  {
+   "scene": "streets",
+   "say": "Draußen: leere Straßen, kein Stau. Und Pizza? Gibt's nicht. Die Pizzabäcker zocken ja auch.",
+   "cap": "*Draußen: *leere *Straßen, kein *Stau. Und *Pizza? Gibt's *nicht. Die *Pizzabäcker zocken ja auch."
+  },
+  {
+   "scene": "money",
+   "say": "GTA fünf hat in drei Tagen eine Milliarde Dollar eingespielt. GTA sechs würde an einem Tag jeden Rekord sprengen.",
+   "cap": "*GTA *5 hat in *3 *Tagen eine *Milliarde *Dollar eingespielt. *GTA *6 würde an einem Tag jeden *Rekord sprengen."
+  },
+  {
+   "scene": "aha",
+   "say": "Die Wahrheit: Für die meisten Menschen wäre der neunzehnte November ein ganz normaler Donnerstag.",
+   "cap": "Die *Wahrheit: Für die *meisten Menschen wäre der *19. *November ein ganz *normaler *Donnerstag."
+  },
+  {
+   "scene": "outro",
+   "say": "Mit wem zockst du am Neunzehnten? Markier deinen GTA-Partner!",
+   "cap": "Mit *wem zockst du am *19.? *Markier deinen *GTA-Partner!"
+  }
+ ]
+}
