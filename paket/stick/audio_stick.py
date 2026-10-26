@@ -378,48 +378,6 @@ if 'fair' in sc:  # Folge 09
     for k in range(3): place(fx, backfire(), s['start'] + 0.9 + k * 0.5, 0.4)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, backfire(), s['start'] + 0.8, 0.3)
 
-if 'gullu' in sc:  # Folge 10 (Spezialfolge Katzen)
-    def wt(sid, prefix, k=0):
-        for p in ph[sid]:
-            for w in p['words']:
-                if w['say'].startswith(prefix):
-                    if k == 0: return w['t0']
-                    k -= 1
-    def meow(f0=650, d=0.55, up=1.0):   # formant-ish "mi-au": pitch glide + vowel brightness change
-        n = int(d * SR); x = np.arange(n) / SR; k = x / d
-        f = f0 * (1 + 0.45 * up * np.sin(np.pi * k) - 0.25 * k)
-        src = sum(np.sin(2 * np.pi * np.cumsum(f * h) / SR) / h for h in range(1, 7))
-        bright = bp(src, 700, 3500) * (0.4 + 0.6 * np.sin(np.pi * k)) + lp(src, 900) * 0.6
-        return bright * np.sin(np.pi * k) ** 0.6
-    def purr(d=3.0):
-        n = int(d * SR); x = np.arange(n) / SR
-        return lp(rng.standard_normal(n), 300) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 26 * x))) * np.sin(np.pi * x / d) * 2
-    def hiss(d=0.6):
-        n = int(d * SR); x = np.arange(n) / SR
-        return hp(rng.standard_normal(n), 2500) * np.sin(np.pi * x / d) ** 0.5 * 0.5
-    def glass():
-        out = np.zeros(int(0.8 * SR))
-        for k in range(8):
-            n = int(0.35 * SR); x = np.arange(n) / SR; f = 2500 + 3000 * ((k * 0.37) % 1)
-            s = np.sin(2 * np.pi * f * x) * np.exp(-x * (12 + k)); i = int(k * 0.03 * SR); out[i:i + n] += s[:len(out) - i]
-        return out + bp(rng.standard_normal(len(out)), 2000, 8000) * np.exp(-np.arange(len(out)) / SR * 20) * 0.8
-    def scratchy(d=0.8):
-        n = int(d * SR); x = np.arange(n) / SR
-        return bp(rng.standard_normal(n), 1500, 6000) * np.abs(np.sin(2 * np.pi * 6 * x)) * 0.6
-    def stamp():
-        n = int(0.3 * SR); x = np.arange(n) / SR
-        return np.sin(2 * np.pi * np.cumsum(120 * np.exp(-x * 10) + 45) / SR) * np.exp(-x * 14) + bp(rng.standard_normal(n), 300, 2000) * np.exp(-x * 40) * 0.5
-    h = sc['hook']; place(fx, popsfx(), h['start'] + 0.3, 0.3); place(fx, meow(700, 0.5), h['start'] + 0.9, 0.25); place(fx, meow(520, 0.6), h['start'] + 1.5, 0.22)
-    place(fx, drumhit(), ph['hook'][1]['start'], 0.35)
-    s = sc['gullu']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, meow(600, 0.5), s['start'] + 0.6, 0.22)
-    place(fx, crack(), wt('gullu', 'Pennerkatze') - 0.3, 0.3); place(fx, hiss(0.6), ph['gullu'][1]['start'] - 0.2, 0.35)
-    place(fx, sparkle(), wt('gullu', 'Anzug') - 0.3, 0.25); place(fx, popsfx(), wt('gullu', 'Flohmarkt') - 0.2, 0.3); place(fx, ding(1320), ph['gullu'][3]['start'], 0.18)
-    s = sc['nala']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, meow(820, 0.45, 1.3), s['start'] + 0.7, 0.2); place(fx, sparkle(), wt('nala', 'hübsch') - 0.3, 0.3)
-    place(fx, glass(), wt('chaos', 'Gläser') + 0.6, 0.45); place(fx, scratchy(0.9), wt('chaos', 'kratzt') - 0.1, 0.4); place(fx, popsfx(), ph['chaos'][1]['start'] - 0.1, 0.25); place(fx, whoosh(0.5), ph['chaos'][2]['start'] - 0.1, 0.3)
-    place(fx, popsfx(), wt('score', 'Gullu') - 0.2, 0.3); place(fx, popsfx(), wt('score', 'Nala') - 0.2, 0.3); place(fx, stamp(), ph['score'][1]['start'] - 0.1, 0.5)
-    s = sc['twist']; place(fx, purr(min(3.5, s['end'] - s['start'] - 0.3)), s['start'] + 0.2, 0.35); place(fx, sparkle(), wt('twist', 'Ich') - 0.1, 0.3)
-    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, meow(680, 0.5), s['start'] + 1.0, 0.2)
-
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
