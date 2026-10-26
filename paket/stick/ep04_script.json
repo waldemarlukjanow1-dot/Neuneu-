@@ -1,0 +1,70 @@
+{
+ "episode": "ep04",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG BIS SPÄT IN DIE NACHT WACH BIST?"
+ ],
+ "sources": "Quellen: AASM/SRS 2015 · Van Dongen 2003 · Prather 2015 · Wittmann 2006",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du jeden Tag bis spät in die Nacht wach bleibst?",
+   "cap": "Was passiert, wenn du *jeden *Tag bis *spät in die *Nacht wach bleibst?"
+  },
+  {
+   "scene": "n22",
+   "say": "Zweiundzwanzig Uhr. Endlich Ruhe. Keiner will mehr was von dir.",
+   "cap": "*22 *Uhr. Endlich *Ruhe. *Keiner will mehr was von dir."
+  },
+  {
+   "scene": "n0",
+   "say": "Mitternacht. Deine Serie, Snacks, noch eine Folge. Das fühlt sich an wie Freiheit.",
+   "cap": "*Mitternacht. Deine *Serie, *Snacks, noch *eine *Folge. Das fühlt sich an wie *Freiheit."
+  },
+  {
+   "scene": "n2",
+   "say": "Zwei Uhr. Das hat sogar einen Namen: Rache-Schlafaufschub. Du holst dir die Zeit zurück, die dir der Tag geklaut hat.",
+   "cap": "*2 *Uhr. Das hat sogar einen Namen: *Rache-Schlafaufschub. Du holst dir die *Zeit *zurück, die dir der Tag *geklaut hat."
+  },
+  {
+   "scene": "alarm",
+   "say": "Sieben Uhr. Der Wecker. Und jetzt kommt die Rechnung.",
+   "cap": "*7 *Uhr. Der *Wecker. Und jetzt kommt die *Rechnung."
+  },
+  {
+   "scene": "alarm",
+   "say": "Erwachsene brauchen sieben bis neun Stunden Schlaf. Du hattest fünf.",
+   "cap": "Erwachsene brauchen *7 bis *9 *Stunden Schlaf. Du hattest *fünf."
+  },
+  {
+   "scene": "w2",
+   "say": "Nach zwei Wochen mit sechs Stunden pro Nacht arbeitet dein Gehirn ähnlich schlecht wie nach einer durchgemachten Nacht.",
+   "cap": "Nach *2 *Wochen mit *6 *Stunden pro Nacht arbeitet dein *Gehirn ähnlich schlecht wie nach einer *durchgemachten *Nacht."
+  },
+  {
+   "scene": "w2",
+   "say": "Das Fiese: Du selbst merkst es kaum.",
+   "cap": "Das *Fiese: Du selbst *merkst es *kaum."
+  },
+  {
+   "scene": "jetlag",
+   "say": "Am Wochenende schläfst du bis mittags. Das ist sozialer Jetlag, als würdest du jede Woche durch Zeitzonen fliegen.",
+   "cap": "Am *Wochenende schläfst du bis *mittags. Das ist *sozialer *Jetlag, als würdest du jede Woche durch *Zeitzonen fliegen."
+  },
+  {
+   "scene": "body",
+   "say": "In einer Studie war die Chance auf eine Erkältung bei unter sechs Stunden Schlaf rund viermal so hoch.",
+   "cap": "In einer *Studie war die Chance auf eine *Erkältung bei unter *6 *Stunden Schlaf rund *4-mal so hoch."
+  },
+  {
+   "scene": "aha",
+   "say": "Die Zeit für dich ist also nicht geschenkt. Du leihst sie dir vom Schlaf.",
+   "cap": "Die Zeit für dich ist also *nicht *geschenkt. Du *leihst sie dir vom *Schlaf."
+  },
+  {
+   "scene": "outro",
+   "say": "Wann gehst du ehrlich ins Bett? Schreib's in die Kommentare!",
+   "cap": "Wann gehst *du *ehrlich ins *Bett? Schreib's in die *Kommentare!"
+  }
+ ]
+}

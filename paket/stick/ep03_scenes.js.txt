@@ -1,0 +1,202 @@
+// ---------- scene data ----------
+const PX_PER_CM = 2.86;                     // main figure at scale 0.84 ≈ 175 cm ≈ 500 px
+const scaleFor = (cm) => 0.84 * Math.max(0, cm) / 175;
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+// the main figure is "you": it shrinks 1 cm when its name is called in the intro
+const NAME_HIT = wordTime(/^Namen/, 'intro') + 0.15;
+const HOOK_HITS = [1.0, 1.9, 2.8, 3.7];
+const lastMention = (t) => (t >= NAME_HIT ? NAME_HIT : -99);
+function heroCm(sc, u, t) {
+  if (sc.id === 'hook') return 175 - HOOK_HITS.filter(h => u >= h).length;
+  if (sc.id === 'you') return 175 - 10 * youDay(sc, u);
+  return t >= NAME_HIT ? 174 : 175;
+}
+function youDay(sc, u) {
+  const p2 = phStart('you', 1, sc), tWeg = wordTime(/^weg/, 'you') - sc.start;
+  if (u <= p2) return 0;
+  return u < p2 + 2.4 ? 7 * ease(clamp01((u - p2) / 2.2)) : lerp(7, 17.5, ease(clamp01((u - p2 - 2.4) / Math.max(0.5, tWeg - p2 - 2.4))));
+}
+const cmTxt = (cm) => (Math.max(0, cm) / 100).toFixed(2).replace('.', ',') + ' m';
+
+function ruler(x, ground, maxCm, markCm, label) {
+  const h = maxCm * PX_PER_CM;
+  rr(x - 34, ground - h - 10, 68, h + 10, 10); g.fillStyle = '#ffe9a8'; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+  g.strokeStyle = INK; g.lineCap = 'butt';
+  for (let c = 0; c <= maxCm; c += 5) { const y = ground - c * PX_PER_CM; g.lineWidth = c % 50 === 0 ? 5 : 2.5; g.beginPath(); g.moveTo(x - 34, y); g.lineTo(x - 34 + (c % 50 === 0 ? 34 : c % 10 === 0 ? 22 : 12), y); g.stroke(); if (c % 50 === 0 && c > 0) text(String(c), x + 10, y + 9, 24, INK, { weight: 800 }); }
+  const my = ground - markCm * PX_PER_CM;
+  g.fillStyle = '#ef476f'; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.moveTo(x - 44, my); g.lineTo(x - 74, my - 18); g.lineTo(x - 74, my + 18); g.closePath(); g.fill(); g.stroke();
+  g.strokeStyle = '#ef476f'; g.lineWidth = 4; g.setLineDash([10, 8]); g.beginPath(); g.moveTo(x - 74, my); g.lineTo(x - 260, my); g.stroke(); g.setLineDash([]);
+  if (label) { const ty = ground - h - 60; rr(x - 95, ty - 34, 190, 64, 32); g.fillStyle = INK; g.fill(); text(label, x, ty + 10, 38, YEL); }
+}
+function bubble(x, y, s, txt, col = '#fff', tailDir = -1) {
+  withScale(x, y, s, () => {
+    g.font = '900 46px Inter'; const w = g.measureText(txt).width + 50;
+    g.fillStyle = col; g.strokeStyle = INK; g.lineWidth = 6;
+    g.beginPath(); g.moveTo(tailDir * 10, 30); g.lineTo(tailDir * 40, 62); g.lineTo(tailDir * 40 - tailDir * 20, 30); g.closePath(); g.fill(); g.stroke();
+    rr(-w / 2, -40, w, 76, 38); g.fill(); g.stroke();
+    text(txt, 0, 14, 46, INK);
+  });
+}
+function minusCm(x, y, age, txt = '−1 cm') { if (age < 0 || age > 1.0) return; g.save(); g.globalAlpha = 1 - sm(0.6, 1.0, age); text(txt, x, y - age * 70, 50, '#ef476f', { lw: 10, stroke: '#fff' }); g.restore(); }
+function poof(x, y, age, s = 1) {
+  if (age < 0 || age > 1.2) return;
+  for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2; const d = (30 + age * 140) * s; g.fillStyle = `rgba(255,255,255,${0.9 * (1 - age / 1.2)})`; g.beginPath(); g.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * 0.6, (34 - age * 18) * s, 0, 7); g.fill(); }
+  text('POFF!', x, y - 20 - age * 30, 70 * s, '#fff', { lw: 12 });
+}
+function side(x, cm, extra, opts = {}) {
+  return drawKappi(g, { x, y: 1165, scale: scaleFor(cm), facing: opts.facing ?? 0, pose: opts.pose || POSES.stand, expr: opts.expr || 'neutral', blink: opts.blink || 0, extra });
+}
+function tag(hx, hy, txt, s = 1) { withScale(hx, hy - 120 * s, 1, () => { g.font = '900 30px Inter'; const w = g.measureText(txt).width + 30; rr(-w / 2, -24, w, 48, 12); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 4; g.stroke(); text(txt, 0, 11, 30, INK); }); }
+function clockMini(x, y, hours, label) { clock(x, y, 80, hours * 60, null, true); if (label) { rr(x - 75, y + 92, 150, 50, 25); g.fillStyle = INK; g.fill(); text(label, x, y + 128, 32, YEL); } }
+
+const BG = {
+  hook: ['#ff9a5c', '#ff5e62'], intro: ['#3fd0c1', '#159a8f'], you: ['#7f6cf0', '#4834d4'], school: ['#ffd166', '#f4a261'],
+  mama: ['#ff8fb1', '#d6336c'], star: ['#2ee6b0', '#118ab2'], rescue: ['#2b2d42', '#14213d'], meta: ['#ffc83d', '#fb5607'], outro: ['#4f95ff', '#1f4fd6'],
+};
+const STATIONS = [['Start', 'intro'], ['Du', 'you'], ['Schule', 'school'], ['Mama', 'mama'], ['Stadion', 'star'], ['Rettung', 'rescue']];
+const stationIdx = { hook: -1, intro: 0, you: 1, school: 2, mama: 3, star: 4, rescue: 5, meta: 5.4, outro: 5.5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(0,0,0,0.10)'; g.fillRect(0, GROUND, W, H - GROUND);
+  g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke();
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+// main figure placement / pose per scene (host = small at the left)
+function kappiState(sc, u, t) {
+  const D = sc.end - sc.start;
+  const host = { x: 165, scale: 0.6 };
+  const cmNow = heroCm(sc, u, t);
+  let pos = { x: 230, scale: scaleFor(cmNow) }, keys;
+  switch (sc.id) {
+    case 'hook': pos = { x: 520, scale: scaleFor(cmNow) }; keys = [[0, 'stand', 'neutral', 0], [HOOK_HITS[0], 'scared', 'surprised', 0]]; break;
+    case 'intro': pos = { x: 430, scale: scaleFor(cmNow) }; keys = [[0, 'wave', 'happy', 0], [NAME_HIT - sc.start, 'scared', 'surprised', 0]]; break;
+    case 'you': pos = { x: 520, scale: scaleFor(cmNow) }; keys = [[0, 'stand', 'happy', 0], [phStart('you', 1, sc) + 1.6, 'scared', 'worried', 0]]; break;
+    case 'school': pos = host; keys = [[0, 'point', 'talk', 1], [wordTime(/^Max$/, 'school') - sc.start - 0.2, 'pointUp', 'determined', 1]]; break;
+    case 'mama': pos = host; keys = [[0, 'chest', 'joy', 1]]; break;
+    case 'star': pos = host; keys = [[0, 'point', 'talk', 1], [phStart('star', 1, sc) - 0.6, 'scared', 'surprised', 1]]; break;
+    case 'rescue': pos = { x: 470, scale: scaleFor(cmNow) }; keys = [[0, 'flex', 'proud', 0]]; break;
+    case 'meta': pos = { x: 380, scale: scaleFor(cmNow) }; keys = [[0, 'think', 'thinking', 0]]; break;
+    case 'outro': pos = { x: 290, scale: scaleFor(cmNow) }; keys = [[0, 'point', 'happy', 1]]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.3));
+  // little squash right after each mention of his name
+  const age = t - lastMention(t); const squash = age >= 0 && age < 0.35 ? Math.sin(age / 0.35 * Math.PI) * 0.5 : 0;
+  return { x: pos.x, y: 1165, scale: pos.scale, facing: cur[3], pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2], squash };
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  switch (sc.id) {
+    case 'hook': {
+      const cm = heroCm(sc, u, t);
+      ruler(840, 1165, 180, cm, cmTxt(cm));
+      HOOK_HITS.forEach((h, i) => { if (u >= h && u < h + 0.9) bubble(i % 2 ? 690 : 300, 640 + i * 18, pop(u, h, 0.25), 'DEIN NAME!', '#fff', i % 2 ? -1 : 1); minusCm(K.head.x - 170, K.head.y + 60, u - h); });
+      break;
+    }
+    case 'intro': {
+      const cm = heroCm(sc, u, t);
+      ruler(760, 1165, 180, cm, cmTxt(cm));
+      minusCm(K.head.x + 120, K.head.y - 60, t - NAME_HIT);
+      break;
+    }
+    case 'you': {
+      const p2 = phStart('you', 1, sc);
+      const tWeg = wordTime(/^weg/, 'you') - sc.start;
+      const day = youDay(sc, u);
+      const cm = 175 - 10 * day;
+      withScale(880, 545, pop(u, 0.1), () => { calendar(0, 0, 0.55, String(Math.floor(day)), 'TAG'); });
+      if (u < tWeg && K) tag(K.head.x, K.head.y - 20, `DU · ${cmTxt(cm)}`, Math.max(0.5, cm / 175));
+      poof(520, 1080, u - tWeg);
+      if (u < p2) withScale(560, 560, pop(u, 0.6), () => { rr(-210, -45, 420, 90, 45); g.fillStyle = INK; g.fill(); text('10 × pro Tag', 0, 17, 50, YEL); });
+      if (u > p2 + 1.8) { const Hk = side(790, 105, { hair: 'kid', color: '#e0a640' }, { expr: 'happy', pose: POSES.wave }); tag(Hk.head.x, Hk.head.y, 'Kita-Kind 1,05 m', 0.6); }
+      if (u > tWeg) withScale(520, 700, pop(u, tWeg + 0.3), () => text('nach 17,5 Tagen', 0, 0, 56, '#fff', { lw: 10 }));
+      break;
+    }
+    case 'school': {
+      const tMax = wordTime(/^Max$/, 'school') - sc.start;
+      const shouts = [tMax, tMax + 1.3, tMax + 2.1];
+      const n = shouts.filter(s => u >= s).length;
+      const cols = ['#5a3b22', '#e0a640', '#222', '#a0522d', '#c94f2a'];
+      const base = [152, 146, 160, 140, 156];
+      for (let i = 0; i < 5; i++) {
+        const cm = base[i] - n * 4;   // exaggerated ×4 so it is visible
+        const Hm = side(330 + i * 150, cm, { hair: i % 2 ? 'kid' : 'short', color: cols[i] }, { expr: n ? 'surprised' : 'happy' });
+        tag(Hm.head.x, Hm.head.y, 'MAX', 0.7);
+        for (const s of shouts) minusCm(Hm.head.x, Hm.head.y - 70, (u - s) * 1.2, '−1');
+      }
+      shouts.forEach((s, i) => { if (u >= s && u < s + 0.8) bubble(K.head.x + 170, K.head.y - 120 - i * 30, pop(u, s, 0.2), 'MAX!', YEL, -1); });
+      break;
+    }
+    case 'mama': {
+      const p2 = phStart('mama', 1, sc);
+      const prog = clamp01((u - 0.6) / Math.max(1, p2 - 0.4));
+      const calls = Math.floor(100 * ease(prog));
+      const cm = 166 - calls;
+      withScale(880, 545, 1, () => clockMini(0, 0, lerp(7, 19, ease(prog)), calls ? `${calls}×` : 'Mama'));
+      const Hm = side(560, cm, { hair: 'ponytail', color: '#7a3b1e' }, { expr: calls > 60 ? 'worried' : 'happy' });
+      tag(Hm.head.x, Hm.head.y, `MAMA · ${cmTxt(cm)}`, Math.max(0.5, cm / 166));
+      const Hk = side(770, 90, { hair: 'kid', color: '#e0a640' }, { expr: 'joy', pose: POSES.cheer, facing: -1 });
+      tag(Hk.head.x, Hk.head.y, 'KIND · 0,90 m', 0.55);
+      for (let i = 0; i < 6; i++) { const tt = (u * 2.2 + i / 6) % 1; if (u < p2 + 0.5) bubble(Hk.head.x - 20 + Math.sin(i * 2.1) * 60, Hk.head.y - 150 - tt * 300, 0.55 * (1 - tt * 0.4), 'MAMA!', '#fff', 1); }
+      if (u > p2) withScale(500, 760, pop(u, p2 + 0.2), () => text('KLEINER ALS DAS KIND 😱', 0, 0, 48, YEL, { lw: 10, font: 'Inter, "Noto Color Emoji"' }));
+      break;
+    }
+    case 'star': {
+      const tR = wordTime(/^rufen/, 'star') - sc.start;
+      const p2 = phStart('star', 1, sc);
+      // stadium crowd
+      for (let r = 0; r < 4; r++) for (let i = 0; i < 26; i++) { const x = 300 + i * 26 + (r % 2) * 13, y = 520 + r * 34 + Math.sin(i * 0.25) * 10; const jump = u > tR - 1 ? Math.abs(Math.sin(t * 9 + i + r)) * 8 : 0; g.fillStyle = ['#ef476f', '#ffd23f', '#06d6a0', '#fff', '#118ab2'][(i + r) % 5]; g.beginPath(); g.arc(x, y - jump, 11, 0, 7); g.fill(); }
+      g.fillStyle = 'rgba(255,255,255,0.85)'; rr(280, 660, 700, 26, 13); g.fill();
+      if (u > tR - 1.2 && u < tR + 0.6) for (let i = 0; i < 5; i++) bubble(360 + i * 140, 590 - (i % 2) * 40, pop(u, tR - 1.2 + i * 0.12, 0.25) * 0.62, 'RONALDO!', YEL, i % 2 ? -1 : 1);
+      withScale(500, 745, pop(u, 0.5), () => { rr(-220, -42, 440, 84, 42); g.fillStyle = INK; g.fill(); text('60.000 × 1 cm', 0, 16, 46, '#fff'); });
+      const gone = u >= tR;
+      if (!gone) { const Hp = side(820, 187, { hair: 'short', color: '#1c120c' }, { expr: 'proud', pose: POSES.flex }); tag(Hp.head.x, Hp.head.y, 'FUSSBALLSTAR', 0.8); g.fillStyle = '#fff'; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.arc(900, 1140, 26, 0, 7); g.fill(); g.stroke(); }
+      poof(820, 1060, u - tR, 1.2);
+      if (gone) withScale(640, 900, pop(u, tR + 0.3) * (1 + 0.03 * Math.sin(t * 8)), () => { text('−600 m', 0, 0, 150, '#ef476f', { lw: 18, stroke: '#fff' }); });
+      if (u > p2) { g.fillStyle = '#fff'; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.arc(900, 1140, 26, 0, 7); g.fill(); g.stroke(); withScale(820, 1060, pop(u, p2 + 0.4), () => text('SIUUU…?', 0, 0, 44, '#fff', { lw: 9 })); }
+      break;
+    }
+    case 'rescue': {
+      // incognito: sunglasses + fake moustache + name sticker
+      const hx = K.head.x, hy = K.head.y, s = scaleFor(heroCm(sc, u, t));
+      const a = pop(u, 0.3);
+      g.save(); g.translate(hx, hy); g.scale(s * a, s * a);
+      g.fillStyle = INK; rr(-58, -2, 50, 30, 10); g.fill(); rr(8, -2, 50, 30, 10); g.fill(); g.fillRect(-10, 6, 20, 6);
+      g.fillStyle = '#5a3b22'; g.beginPath(); g.moveTo(0, 40); g.quadraticCurveTo(-40, 30, -48, 52); g.quadraticCurveTo(-20, 44, 0, 50); g.quadraticCurveTo(20, 44, 48, 52); g.quadraticCurveTo(40, 30, 0, 40); g.fill();
+      g.restore();
+      withScale(hx, hy + 240 * s, pop(u, 0.7), () => { rr(-95, -40, 190, 80, 12); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = '#ef476f'; g.lineWidth = 6; g.stroke(); text('HALLO, ICH BIN', 0, -10, 18, '#ef476f'); text('???', 0, 28, 40, INK); });
+      withScale(740, 600, pop(u, 0.2), () => text('GEHEIMER SPITZNAME 🤫', 0, 0, 52, YEL, { lw: 10, font: 'Inter, "Noto Color Emoji"' }));
+      break;
+    }
+    case 'meta': {
+      const spin = Math.floor(t * 14) % 90 + 10;
+      withScale(600, 520, pop(u, 0.1), () => { rr(-280, -62, 560, 124, 30); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke(); text(`Dein Name heute: ${u < 2.6 ? spin : '?'}×`, 0, 20, 50, INK); });
+      for (let i = 0; i < 5; i++) { const q = (u * 0.9 + i / 5) % 1; g.globalAlpha = 1 - q; text('?', 620 + Math.sin(i * 2.3) * 200, 1000 - q * 320, 90, '#fff', { lw: 12 }); g.globalAlpha = 1; }
+      break;
+    }
+    case 'outro': {
+      withScale(690, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-290, -120, 580, 240, '#fff'); text('Wer wäre als', 0, -35, 60, INK); text('Erstes weg? 👇', 0, 50, 62, '#ef476f', { font: 'Inter, "Noto Color Emoji"' }); });
+      withScale(690, 880, pop(u, 1.4), () => { rr(-210, -45, 420, 90, 45); g.fillStyle = INK; g.fill(); text('Markier ihn! 🏷️', 0, 17, 48, YEL, { font: 'Inter, "Noto Color Emoji"' }); });
+      g.globalAlpha = sm(0.5, 1.2, u); text(TL.sources, 540, 1560, 28, 'rgba(255,255,255,0.92)', { weight: 700 }); g.globalAlpha = 1;
+      break;
+    }
+  }
+}
+
+function drawKappiFor(sc, u, t) {
+  if (sc.id === 'you' && u >= wordTime(/^weg/, 'you') - sc.start) return null;
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  return drawKappi(g, st);
+}
+

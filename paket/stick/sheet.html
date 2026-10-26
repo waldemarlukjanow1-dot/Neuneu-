@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">
+<canvas id="c" width="2400" height="1500"></canvas>
+<script type="module">
+import { drawKappi, POSES, walkPose, mixPose } from './character.js';
+const g = document.getElementById('c').getContext('2d');
+await document.fonts.load('900 40px Inter');
+const bg = g.createLinearGradient(0,0,0,1500); bg.addColorStop(0,'#fff3d6'); bg.addColorStop(1,'#ffd9a8'); g.fillStyle=bg; g.fillRect(0,0,2400,1500);
+g.fillStyle='#16181d'; g.font='900 64px Inter'; g.fillText('Hauptfigur – Charakter-Referenz  „Was passiert, wenn …?“', 60, 90);
+g.font='600 30px Inter'; g.fillText('Blaue Kappe (#1F6BFF) mit weißem „?“-Logo · Goldkette mit „?“-Anhänger · runder heller Kopf · schwarze Linien 12 px · immer identisch', 60, 140);
+const views = [['Vorne', 0, POSES.stand, 'neutral'], ['Seite rechts', 1, POSES.stand, 'neutral'], ['Seite links', -1, POSES.point, 'talk'], ['Gehen', 1, {...POSES.stand, ...walkPose(0.8)}, 'happy'], ['Rennen', 1, {...POSES.stand, ...walkPose(1.2, 1)}, 'determined']];
+views.forEach(([l,f,p,e],i)=>{ drawKappi(g,{x:240+i*470,y:820,scale:0.95,facing:f,pose:p,expr:e}); g.fillStyle='#16181d'; g.font='800 34px Inter'; g.textAlign='center'; g.fillText(l,240+i*470,880); g.textAlign='left'; });
+const ex = [['neutral','stand'],['happy','wave'],['joy','cheer'],['surprised','scared'],['worried','shrug'],['determined','flex'],['thinking','think'],['sick','cough'],['proud','chest']];
+ex.forEach(([e,p],i)=>{ drawKappi(g,{x:150+i*262,y:1400,scale:0.55,facing:0,pose:POSES[p],expr:e}); g.fillStyle='#16181d'; g.font='700 26px Inter'; g.textAlign='center'; g.fillText(e,150+i*262,1450); g.textAlign='left'; });
+window.done=true;
+</script></body></html>

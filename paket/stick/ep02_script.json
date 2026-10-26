@@ -1,0 +1,95 @@
+{
+ "episode": "ep02",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG 10 € SPARST?"
+ ],
+ "sources": "Beispielrechnung: 10 €/Tag, 7 % p. a. angenommen · vor Kosten, Steuern & Inflation · keine Anlageberatung",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du jeden Tag zehn Euro nicht für Döner ausgibst, sondern sparst?",
+   "cap": "Was passiert, wenn du jeden *Tag *10 *Euro nicht für *Döner ausgibst, sondern *sparst?"
+  },
+  {
+   "scene": "month",
+   "say": "Zehn Euro am Tag klingen nach wenig.",
+   "cap": "*10 *Euro am Tag klingen nach *wenig."
+  },
+  {
+   "scene": "month",
+   "say": "Aber im Monat sind das schon rund dreihundert Euro.",
+   "cap": "Aber im *Monat sind das schon rund *300 *Euro."
+  },
+  {
+   "scene": "year",
+   "say": "Nach einem Jahr hast du dreitausendsechshundertfünfzig Euro gespart.",
+   "cap": "Nach *1 *Jahr hast du *3.650 *Euro gespart."
+  },
+  {
+   "scene": "year",
+   "say": "Das ist ein Urlaub oder ein neues Handy.",
+   "cap": "Das ist ein *Urlaub oder ein neues *Handy."
+  },
+  {
+   "scene": "y5",
+   "say": "Nach fünf Jahren liegen im Sparschwein schon über achtzehntausend Euro.",
+   "cap": "Nach *5 *Jahren liegen im *Sparschwein schon über *18.000 *Euro."
+  },
+  {
+   "scene": "etf",
+   "say": "Aber jetzt wird es spannend.",
+   "cap": "Aber jetzt wird es *spannend."
+  },
+  {
+   "scene": "etf",
+   "say": "Legst du das Geld in einen weltweiten Aktienfonds, arbeitet es für dich.",
+   "cap": "Legst du das Geld in einen *weltweiten *Aktienfonds, arbeitet es für *dich."
+  },
+  {
+   "scene": "etf",
+   "say": "Das nennt man Zinseszins.",
+   "cap": "Das nennt man *Zinseszins."
+  },
+  {
+   "scene": "etf",
+   "say": "Wir rechnen mit sieben Prozent pro Jahr. Das ist ein Durchschnitt aus der Vergangenheit, keine Garantie.",
+   "cap": "Wir rechnen mit *7 *Prozent pro Jahr. Das ist ein *Durchschnitt aus der Vergangenheit, *keine *Garantie."
+  },
+  {
+   "scene": "y10",
+   "say": "Nach zehn Jahren hast du schon rund zweiundfünfzigtausend Euro.",
+   "cap": "Nach *10 *Jahren hast du schon rund *52.000 *Euro."
+  },
+  {
+   "scene": "y20",
+   "say": "Nach zwanzig Jahren sind es schon rund hundertachtundfünfzigtausend Euro.",
+   "cap": "Nach *20 *Jahren sind es schon rund *158.000 *Euro."
+  },
+  {
+   "scene": "y40",
+   "say": "Und nach vierzig Jahren?",
+   "cap": "Und nach *40 *Jahren?"
+  },
+  {
+   "scene": "y40",
+   "say": "Fast achthunderttausend Euro.",
+   "cap": "Fast *800.000 *Euro."
+  },
+  {
+   "scene": "y40",
+   "say": "Dabei hast du selbst nur hundertsechsundvierzigtausend eingezahlt. Den Rest hat der Zinseszins erledigt.",
+   "cap": "Dabei hast du selbst nur *146.000 eingezahlt. Den Rest hat der *Zinseszins erledigt."
+  },
+  {
+   "scene": "outro",
+   "say": "Du musst nicht auf jeden Döner verzichten. Aber jeder gesparte Euro zählt.",
+   "cap": "Du musst nicht auf jeden *Döner verzichten. Aber jeder *gesparte *Euro *zählt."
+  },
+  {
+   "scene": "outro",
+   "say": "Was würdest du mit dem Geld machen? Schreib es in die Kommentare!",
+   "cap": "Was würdest du mit dem *Geld machen? Schreib es in die *Kommentare!"
+  }
+ ]
+}

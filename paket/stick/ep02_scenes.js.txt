@@ -1,0 +1,229 @@
+// ---------- scene data ----------
+const fmt = (n) => Math.round(n).toLocaleString('de-DE');
+function doener(x, y, s, t) {
+  g.save(); g.translate(x, y); g.scale(s, s); g.rotate(-0.15 + Math.sin(t * 2) * 0.03);
+  // bread pocket (half-moon), filling peeking out on top
+  g.strokeStyle = INK; g.lineWidth = 6;
+  g.fillStyle = '#7a3e1d'; g.beginPath(); g.ellipse(0, -18, 62, 22, 0, Math.PI, 0); g.fill(); g.stroke();      // meat
+  g.fillStyle = '#5bbf4a'; for (let i = -2; i <= 2; i++) { g.beginPath(); g.ellipse(i * 22, -30 - Math.abs(i) * -2, 14, 9, i * 0.4, 0, 7); g.fill(); g.stroke(); } // salad
+  g.fillStyle = '#e63946'; g.beginPath(); g.arc(-16, -36, 8, 0, 7); g.fill(); g.stroke(); g.beginPath(); g.arc(20, -34, 8, 0, 7); g.fill(); g.stroke(); // tomato
+  g.fillStyle = '#fff7e8'; g.beginPath(); g.ellipse(4, -40, 16, 6, 0.2, 0, 7); g.fill();                       // sauce
+  g.fillStyle = '#f2c27b'; g.beginPath(); g.moveTo(-70, -18); g.quadraticCurveTo(0, 95, 70, -18); g.lineTo(62, -6); g.quadraticCurveTo(0, 70, -62, -6); g.closePath(); g.fill(); g.stroke();
+  g.fillStyle = '#f2c27b'; g.beginPath(); g.moveTo(-70, -18); g.quadraticCurveTo(0, 95, 70, -18); g.quadraticCurveTo(0, 30, -70, -18); g.fill(); g.stroke();
+  g.fillStyle = 'rgba(160,90,30,0.35)'; for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(-34 + i * 17, 14 + (i % 2) * 8, 3.5, 0, 7); g.fill(); }
+  g.restore();
+}
+function bill(x, y, s, rot = 0, val = '10') {
+  g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
+  rr(-80, -42, 160, 84, 10); g.fillStyle = '#e8836b'; g.fill(); g.strokeStyle = INK; g.lineWidth = 5; g.stroke();
+  rr(-68, -30, 136, 60, 8); g.strokeStyle = 'rgba(120,40,30,0.5)'; g.lineWidth = 3; g.stroke();
+  g.fillStyle = 'rgba(255,255,255,0.45)'; g.beginPath(); g.arc(-38, 0, 20, 0, 7); g.fill();
+  text(val, 30, 16, 44, '#fff', { lw: 6, stroke: '#8a2f1e' }); text('€', -38, 11, 28, '#8a2f1e');
+  g.restore();
+}
+function coin(x, y, s) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.fillStyle = '#d4a017'; g.strokeStyle = INK; g.lineWidth = 4; g.beginPath(); g.ellipse(0, 6, 34, 12, 0, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#f6c445'; g.beginPath(); g.ellipse(0, 0, 34, 12, 0, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#fff1b0'; g.beginPath(); g.ellipse(-8, -3, 12, 3.5, 0, 0, 7); g.fill();
+  g.restore();
+}
+function coinStack(x, y, n, s = 1) { for (let i = 0; i < n; i++) coin(x, y - i * 11 * s, s); }
+function piggy(x, y, s, t) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.strokeStyle = INK; g.lineWidth = 7; g.fillStyle = '#ff9fbf';
+  for (const lx of [-60, -20, 25, 62]) { rr(lx - 13, 55, 26, 50, 8); g.fill(); g.stroke(); }
+  g.beginPath(); g.ellipse(0, 0, 130, 95, 0, 0, 7); g.fill(); g.stroke();
+  g.beginPath(); g.ellipse(-120, -10, 30, 34, 0, 0, 7); g.fill(); g.stroke();                        // snout
+  g.fillStyle = '#d96c93'; g.beginPath(); g.ellipse(-128, -18, 6, 9, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(-112, -18, 6, 9, 0, 0, 7); g.fill();
+  g.fillStyle = '#ff9fbf'; g.beginPath(); g.moveTo(-70, -80); g.lineTo(-50, -125); g.lineTo(-25, -86); g.closePath(); g.fill(); g.stroke(); // ear
+  g.fillStyle = INK; g.beginPath(); g.arc(-75, -35, 8, 0, 7); g.fill();                                // eye
+  g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.moveTo(128, -10); g.bezierCurveTo(165, -40, 165, 20, 140, 5); g.stroke(); // tail
+  rr(-35, -96, 70, 12, 6); g.fillStyle = INK; g.fill();                                                  // slot
+  g.fillStyle = 'rgba(255,255,255,0.35)'; g.beginPath(); g.ellipse(-20, -45, 50, 18, -0.3, 0, 7); g.fill();
+  g.restore();
+}
+function globe(x, y, r, t) {
+  g.save(); g.translate(x, y);
+  g.fillStyle = '#4cc9f0'; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill(); g.stroke();
+  g.save(); g.beginPath(); g.arc(0, 0, r - 3, 0, 7); g.clip(); g.fillStyle = '#06d6a0';
+  const off = (t * 30) % (r * 4);
+  for (const [cx, cy, rx, ry] of [[-0.4, -0.3, 0.35, 0.25], [0.3, -0.1, 0.3, 0.4], [-0.1, 0.45, 0.25, 0.15], [0.9, 0.3, 0.2, 0.3]]) for (const k of [-1, 0, 1]) { g.beginPath(); g.ellipse(cx * r + off - k * r * 4 - r, cy * r, rx * r, ry * r, 0.4, 0, 7); g.fill(); }
+  g.restore();
+  g.strokeStyle = 'rgba(22,24,29,0.35)'; g.lineWidth = 3; g.beginPath(); g.ellipse(0, 0, r * 0.45, r, 0, 0, 7); g.stroke(); g.beginPath(); g.moveTo(-r, 0); g.lineTo(r, 0); g.stroke();
+  g.restore();
+}
+function chartLine(x0, y0, w, h, prog, wobble, col = '#06d6a0') {
+  // rising line with realistic ups and downs; prog 0..1 draws it from left to right
+  g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
+  const pts = []; const n = 60;
+  for (let i = 0; i <= n * prog; i++) { const q = i / n; const trend = Math.pow(q, 1.6); const noise = (Math.sin(q * 23) * 0.5 + Math.sin(q * 51 + 1) * 0.3 + (q > 0.45 && q < 0.55 ? -0.9 : 0)) * wobble; pts.push([x0 + q * w, y0 - (trend + noise * 0.08) * h]); }
+  if (pts.length > 1) {
+    g.fillStyle = 'rgba(6,214,160,0.18)'; g.beginPath(); g.moveTo(pts[0][0], y0); for (const p of pts) g.lineTo(p[0], p[1]); g.lineTo(pts[pts.length - 1][0], y0); g.closePath(); g.fill();
+    g.strokeStyle = INK; g.lineWidth = 16; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.stroke();
+    g.strokeStyle = col; g.lineWidth = 9; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.stroke();
+    const e = pts[pts.length - 1]; g.fillStyle = col; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.arc(e[0], e[1], 13, 0, 7); g.fill(); g.stroke();
+  }
+  g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.moveTo(x0, y0 - h - 20); g.lineTo(x0, y0); g.lineTo(x0 + w + 20, y0); g.stroke();
+  g.restore();
+}
+function snowball(u, t) {
+  // slope from upper left to lower right, the ball grows and collects coins while rolling
+  g.save();
+  g.fillStyle = 'rgba(255,255,255,0.9)'; g.strokeStyle = INK; g.lineWidth = 7;
+  g.beginPath(); g.moveTo(420, 600); g.lineTo(1000, 1000); g.lineTo(1000, 1080); g.lineTo(420, 1080); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(420, 600); g.lineTo(1000, 1000); g.stroke();
+  const p = clamp01(u); const x = lerp(470, 900, p), yS = lerp(634, 931, p); const r = lerp(22, 95, Math.pow(p, 1.4));
+  const cx = x, cy = yS - r * 1.2;
+  g.translate(cx, cy); g.rotate(p * 9);
+  g.fillStyle = '#f6c445'; g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#fff1b0'; for (let i = 0; i < 9; i++) { const a = i * 0.7, d = r * (0.3 + 0.5 * hash(i)); g.beginPath(); g.ellipse(Math.cos(a) * d, Math.sin(a) * d, r * 0.16, r * 0.1, a, 0, 7); g.fill(); }
+  g.rotate(-p * 9); text('€', 0, r * 0.3, r * 0.9, '#b8860b', { weight: 900 });
+  g.restore();
+}
+function compareBars(u, vals, maxV, label) {
+  // vals: { saved, total } -> left bar: Sparschwein (saved), right bar: investiert = saved (blue) + Zinseszins (gold)
+  const base = 1120, H = 520, bw = 170, xL = 540, xR = 820;
+  const grow = ease(clamp01((u - 0.15) / 1.2));
+  const hS = H * vals.saved / maxV * grow, hT = H * vals.total / maxV * grow;
+  // axis
+  g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 4; g.setLineDash([10, 10]); for (let k = 1; k <= 4; k++) { const yy = base - H * k / 4; g.beginPath(); g.moveTo(430, yy); g.lineTo(1010, yy); g.stroke(); } g.setLineDash([]);
+  const barRect = (x, h0, h, col) => { if (h <= 1) return; rr(x - bw / 2, base - h0 - h, bw, h, h0 === 0 ? 18 : 6); g.fillStyle = col; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke(); };
+  barRect(xL, 0, hS, '#ff9fbf');
+  barRect(xR, 0, hS, '#4cc9f0');
+  barRect(xR, hS, Math.max(0, hT - hS), YEL);
+  text('🐷', xL, base + 70, 56, '#000', { weight: 400, font: '"Noto Color Emoji"' });
+  text('📈', xR, base + 70, 56, '#000', { weight: 400, font: '"Noto Color Emoji"' });
+  text(`${fmt(vals.saved * grow)} €`, xL, base - hS - 22, 44, '#fff', { lw: 9 });
+  text(`${fmt(vals.total * grow)} €`, xR, base - hT - 22, 52, YEL, { lw: 10 });
+  if (hT - hS > 70) text('Zinseszins', xR, base - hS - (hT - hS) / 2 + 12, 30, INK, { weight: 900 });
+  if (hS > 60) text('eingezahlt', xR, base - hS / 2 + 10, 26, INK, { weight: 800 });
+  withScale(320, 545, pop(u, 0.05), () => { rr(-170, -55, 340, 110, 55); g.fillStyle = INK; g.fill(); text(label, 0, 21, 58, YEL); });
+  g.globalAlpha = sm(0.6, 1.2, u); text('* Annahme 7 % p. a., keine Garantie', 720, base + 125, 24, 'rgba(255,255,255,0.9)', { weight: 700 }); g.globalAlpha = 1;
+}
+const BG = {
+  hook: ['#ff9a5c', '#ff5e62'], month: ['#3fd0c1', '#159a8f'], year: ['#ffd166', '#f4a261'], y5: ['#ff8fb1', '#d6336c'],
+  etf: ['#2b2d42', '#14213d'], y10: ['#4f95ff', '#1f4fd6'], y20: ['#7f6cf0', '#4834d4'], y40: ['#ffc83d', '#fb5607'], outro: ['#2ee6b0', '#118ab2'],
+};
+const STATIONS = [['1 Monat', 'month'], ['1 Jahr', 'year'], ['5 Jahre', 'y5'], ['10 J.', 'y10'], ['20 J.', 'y20'], ['40 J.', 'y40']];
+const stationIdx = { hook: -1, month: 0, year: 1, y5: 2, etf: 2.5, y10: 3, y20: 4, y40: 5, outro: 5.5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(0,0,0,0.10)'; g.fillRect(0, GROUND, W, H - GROUND);
+  g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke();
+}
+
+function kappiState(sc, u, t) {
+  const D = sc.end - sc.start;
+  let base = { x: 230, y: 1165, scale: 0.84, facing: 1 };
+  let keys;
+  switch (sc.id) {
+    case 'hook': keys = [[0, 'hold', 'happy', 1], [D - 1.6, 'hold', 'thinking', 1], [D - 0.9, 'point', 'determined', 1]]; break;
+    case 'month': keys = [[0, 'point', 'talk', 1]]; break;
+    case 'year': keys = [[0, 'chest', 'happy', 0], [phStart('year', 1, sc), 'shrug', 'joy', 0]]; break;
+    case 'y5': keys = [[0, 'point', 'proud', 1]]; break;
+    case 'etf': keys = [[0, 'scared', 'surprised', 0], [phStart('etf', 1, sc), 'point', 'talk', 1], [phStart('etf', 2, sc), 'pointUp', 'happy', 1], [phStart('etf', 3, sc), 'think', 'thinking', 0]]; break;
+    case 'y10': keys = [[0, 'pointUp', 'happy', 1]]; break;
+    case 'y20': keys = [[0, 'pointUp', 'surprised', 1]]; break;
+    case 'y40': keys = [[0, 'think', 'thinking', 0], [phStart('y40', 1, sc), 'scared', 'surprised', 0], [phStart('y40', 2, sc) + 0.4, 'cheer', 'joy', 0]]; break;
+    case 'outro': keys = [[0, 'hold', 'happy', 1], [phStart('outro', 1, sc), 'wave', 'joy', 0]]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.3));
+  return { ...base, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2], facing: cur[3] };
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  switch (sc.id) {
+    case 'hook': {
+      withScale(770, 640, pop(u, 0.3), () => { rr(-150, -70, 300, 140, 30); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke(); text('10 €', 0, 30, 96, '#e63946'); text('PRO TAG', 0, 105, 40, '#fff', { lw: 8 }); });
+      const fly = sm(D - 1.3, D - 0.4, u);
+      withScale(800, 1010, pop(u, D - 1.5), () => piggy(0, 0, 0.75, t));
+      if (fly > 0) { const x = lerp(K.handR.x + 40, 800, fly), y = lerp(K.handR.y - 40, 920, fly) - Math.sin(fly * Math.PI) * 220; bill(x, y, 0.8 * (1 - fly * 0.5), fly * 6); }
+      break;
+    }
+    case 'month': {
+      withScale(860, 560, pop(u, 0.05), () => calendar(0, 0, 0.6, '30', 'TAGE'));
+      const p2 = phStart('month', 1, sc);
+      const n = Math.floor(clamp01((u - 0.4) / Math.max(1, p2 + 1.2)) * 30);
+      for (let i = 0; i < n; i++) bill(560 + (i % 3) * 150 + hash(i) * 20, 1110 - Math.floor(i / 3) * 26, 0.8, (hash(i + 3) - 0.5) * 0.4);
+      if (u < p2) withScale(700, 700, pop(u, 0.2), () => { text('10 €', 0, 0, 120, '#fff', { lw: 16 }); text('= wenig?', 0, 80, 54, YEL, { lw: 10 }); });
+      else withScale(700, 700, pop(u, p2 + 0.1), () => { text(`${fmt(Math.min(300, n * 10 + (n >= 29 ? 10 : 0)))} €`, 0, 0, 140, YEL, { lw: 18 }); text('PRO MONAT', 0, 75, 48, '#fff', { lw: 10 }); });
+      break;
+    }
+    case 'year': {
+      const v = 3650 * ease(clamp01((u - 0.2) / 2.0));
+      withScale(700, 620, pop(u, 0.05), () => { text(`${fmt(v)} €`, 0, 0, 140, YEL, { lw: 18 }); text('NACH 1 JAHR', 0, 70, 46, '#fff', { lw: 10 }); });
+      for (let s = 0; s < 4; s++) coinStack(560 + s * 120, 1150, Math.floor(clamp01((u - 0.3 - s * 0.2) / 1.6) * (6 + s * 3)), 1.1);
+      const p2 = phStart('year', 1, sc);
+      badge(590, 860, '✈️', 'Urlaub', pop(u, p2 + 0.1) * 0.9);
+      badge(890, 860, '📱', 'Handy', pop(u, p2 + 0.6) * 0.9);
+      break;
+    }
+    case 'y5': {
+      const v = 18250 * ease(clamp01((u - 0.2) / 2.4));
+      const sp = lerp(0.9, 1.35, ease(clamp01(u / 3)));
+      withScale(740, 980, pop(u, 0.05), () => piggy(0, 0, sp, t));
+      for (let i = 0; i < 5; i++) { const p = ((u * 1.4 + i / 5) % 1); coin(740 + (hash(i) - 0.5) * 40, lerp(520, 980 - 96 * sp, p), 0.9); }
+      withScale(700, 620, pop(u, 0.2), () => { text(`${fmt(v)} €`, 0, 0, 130, YEL, { lw: 18 }); text('IM SPARSCHWEIN', 0, 68, 44, '#fff', { lw: 10 }); });
+      break;
+    }
+    case 'etf': {
+      const p1 = phStart('etf', 1, sc), p2 = phStart('etf', 2, sc), p3 = phStart('etf', 3, sc);
+      if (u < p1) {
+        withScale(700, 800, pop(u, 0.05) * (1 + 0.04 * Math.sin(t * 8)), () => { text('ABER…', 0, 0, 150, YEL, { lw: 18 }); text('jetzt wird’s spannend', 0, 90, 52, '#fff', { lw: 10 }); });
+      } else if (u < p2) {
+        withScale(870, 600, pop(u, p1), () => { globe(0, 0, 95, t); rr(-70, 110, 140, 64, 32); g.fillStyle = YEL; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke(); text('ETF', 0, 156, 44, INK); });
+        chartLine(470, 1110, 520, 380, ease(clamp01((u - p1 - 0.3) / 2.2)), 0.6);
+      } else if (u < p3) {
+        snowball((u - p2) / Math.max(0.8, p3 - p2), t);
+        withScale(700, 560, pop(u, p2), () => text('ZINSESZINS', 0, 0, 96, YEL, { lw: 16 }));
+        withScale(700, 640, pop(u, p2 + 0.3), () => text('Zinsen bringen neue Zinsen', 0, 0, 40, '#fff', { lw: 9 }));
+      } else {
+        withScale(760, 620, pop(u, p3), () => { rr(-210, -90, 420, 180, 40); g.fillStyle = '#06a77d'; g.fill(); g.strokeStyle = INK; g.lineWidth = 8; g.stroke(); text('7 %', 0, 20, 120, '#fff', { lw: 12 }); text('pro Jahr (Ø)', 0, 75, 38, '#fff', { weight: 800 }); });
+        chartLine(470, 1110, 520, 300, 1, 1.6);
+        withScale(740, 790, pop(u, p3 + 2.2), () => { rr(-220, -40, 440, 80, 40); g.fillStyle = '#ef476f'; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke(); text('⚠️ keine Garantie', 0, 15, 40, '#fff', { font: 'Inter, "Noto Color Emoji"' }); });
+      }
+      break;
+    }
+    case 'y10': compareBars(u, { saved: 36500, total: 52647 }, 60000, '10 JAHRE'); break;
+    case 'y20': compareBars(u, { saved: 73000, total: 158449 }, 170000, '20 JAHRE'); break;
+    case 'y40': {
+      const p1 = phStart('y40', 1, sc);
+      const maxV = u < p1 ? 170000 : lerp(170000, 820000, ease(clamp01((u - p1) / 0.9)));
+      const total = u < p1 ? 158449 : 798381, saved = u < p1 ? 73000 : 146000;
+      if (u > p1) { confetti(sc.start + p1 + 0.6, t, 80); for (let i = 0; i < 14; i++) { const p = ((u - p1) * 0.9 + hash(i)) % 1; coin(440 + hash(i + 2) * 480, lerp(450, 1200, p), 0.8); } }
+      compareBars(u < p1 ? 99 : u - p1 + 0.15, { saved, total }, maxV, '40 JAHRE');   // bars + numbers on top of the coin rain
+      break;
+    }
+    case 'outro': {
+      const p2 = phStart('outro', 1, sc);
+      withScale(720, 680, pop(u, 0.4), () => { card(-290, -130, 580, 260, '#fff'); text('Jeder gesparte', 0, -30, 58, INK); text('Euro zählt! 💪', 0, 50, 64, '#06a77d', { font: 'Inter, "Noto Color Emoji"' }); });
+      if (u > p2) withScale(720, 1000, pop(u, p2 + 0.1), () => { rr(-350, -62, 700, 124, 62); g.fillStyle = INK; g.fill(); text('Was würdest du kaufen? 👇', 0, 20, 46, YEL, { font: 'Inter, "Noto Color Emoji"' }); });
+      g.globalAlpha = sm(0.5, 1.2, u);
+      text('Beispielrechnung: 10 €/Tag, 7 % p. a. angenommen', 540, 1545, 26, 'rgba(255,255,255,0.92)', { weight: 700 });
+      text('vor Kosten, Steuern & Inflation · keine Anlageberatung', 540, 1582, 26, 'rgba(255,255,255,0.92)', { weight: 700 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}
+
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  if (sc.id === 'hook') { const D = sc.end - sc.start; const gone = sm(D - 1.3, D - 1.1, u); if (gone < 1) st.hold = (gg, aR) => doener(aR.hx + 45, aR.hy - 25, 1.15 * (1 - gone), t); }
+  if (sc.id === 'outro') { const p2 = phStart('outro', 1, sc); if (u < p2) st.hold = (gg, aR) => doener(aR.hx + 45, aR.hy - 25, 1.1, t); }
+  return drawKappi(g, st);
+}
+

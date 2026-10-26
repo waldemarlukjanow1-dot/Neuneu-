@@ -1,0 +1,75 @@
+{
+ "episode": "ep03",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU BEI JEDEM NAMEN 1 CM SCHRUMPFST?"
+ ],
+ "sources": "Gedankenexperiment · Zahlen sind Schätzungen zum Spaß",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du jedes Mal einen Zentimeter schrumpfst, sobald jemand deinen Namen sagt?",
+   "cap": "Was passiert, wenn du jedes Mal *1 *Zentimeter *schrumpfst, sobald jemand deinen *Namen sagt?"
+  },
+  {
+   "scene": "intro",
+   "say": "Stell dir vor, du bist ein Meter fünfundsiebzig groß.",
+   "cap": "Stell dir vor, du bist *1 *Meter *75 groß."
+  },
+  {
+   "scene": "intro",
+   "say": "Dann ruft jemand deinen Namen. Zack: nur noch ein Meter vierundsiebzig.",
+   "cap": "Dann ruft jemand deinen *Namen. *Zack: nur noch *1 *Meter *74."
+  },
+  {
+   "scene": "you",
+   "say": "Bei dir wäre es erst mal harmlos. Sagen wir, dein Name fällt zehnmal am Tag.",
+   "cap": "Bei dir wäre es erst mal *harmlos. Sagen wir, dein Name fällt *10-mal am *Tag."
+  },
+  {
+   "scene": "you",
+   "say": "Nach einer Woche bist du so groß wie ein Kindergartenkind. Nach zweieinhalb Wochen: weg.",
+   "cap": "Nach *1 *Woche bist du so groß wie ein *Kindergartenkind. Nach *2,5 *Wochen: *weg."
+  },
+  {
+   "scene": "school",
+   "say": "Richtig übel wird es auf dem Schulhof. Einmal Max gerufen, und alle Maxe schrumpfen gleichzeitig.",
+   "cap": "Richtig übel wird es auf dem *Schulhof. Einmal *Max gerufen, und *alle *Maxe schrumpfen gleichzeitig."
+  },
+  {
+   "scene": "mama",
+   "say": "Noch härter trifft es Mamas. Ein Kleinkind ruft gefühlt hundertmal am Tag Mama.",
+   "cap": "Noch härter trifft es *Mamas. Ein Kleinkind ruft gefühlt *100-mal am Tag *Mama."
+  },
+  {
+   "scene": "mama",
+   "say": "Am Abend ist Mama kleiner als ihr Kind.",
+   "cap": "Am *Abend ist Mama *kleiner als ihr *Kind."
+  },
+  {
+   "scene": "star",
+   "say": "Und Fußballstars? Wenn sechzigtausend Fans im Stadion einmal Ronaldo rufen, sind das sechshundert Meter.",
+   "cap": "Und *Fußballstars? Wenn *60.000 *Fans im Stadion einmal *Ronaldo rufen, sind das *600 *Meter."
+  },
+  {
+   "scene": "star",
+   "say": "Auf einen Schlag. Er wäre weg, bevor er jubeln kann.",
+   "cap": "Auf *einen *Schlag. Er wäre *weg, bevor er jubeln kann."
+  },
+  {
+   "scene": "rescue",
+   "say": "Die einzige Rettung: ein geheimer Spitzname.",
+   "cap": "Die einzige *Rettung: ein *geheimer *Spitzname."
+  },
+  {
+   "scene": "meta",
+   "say": "Und jetzt überleg mal: Wie oft wurde dein Name heute schon gesagt?",
+   "cap": "Und jetzt *überleg mal: Wie oft wurde dein *Name *heute schon gesagt?"
+  },
+  {
+   "scene": "outro",
+   "say": "Wer in deinem Umfeld wäre als Erstes verschwunden? Markier ihn in den Kommentaren!",
+   "cap": "Wer in deinem *Umfeld wäre als *Erstes *verschwunden? *Markier ihn in den *Kommentaren!"
+  }
+ ]
+}
