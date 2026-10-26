@@ -14,12 +14,24 @@ def check_tokens():
         assert len(a) == len(b), (p['say'], len(a), len(b))
 check_tokens()
 
-import subprocess, tempfile
+import subprocess, tempfile, re
+# pronunciation fixes (English loanwords, misread compounds) – applied to the spoken text only, captions stay as written
+LEX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'aussprache.json')
+LEX = {k: v for k, v in json.load(open(LEX_PATH)).items() if not k.startswith('_')} if os.path.exists(LEX_PATH) else {}
+def apply_lex(txt):
+    out = []
+    for tok in txt.split():
+        m = re.match(r"^([^\wäöüÄÖÜß]*)(.*?)([^\wäöüÄÖÜß'-]*)$", tok)
+        pre, core, post = m.groups()
+        rep = LEX.get(core, core)
+        if rep.startswith('[[') and rep.endswith(']]') and post: rep, post = rep[:-2] + post + ']]', ''   # keep pauses from punctuation
+        out.append(pre + rep + post)
+    return ' '.join(out)
 # Piper (ONNX) backend: model_dir is the .onnx file
 def synth(txt):
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f: path = f.name
     subprocess.run([sys.executable, '-m', 'piper', '-m', model_dir, '-f', path, '--length-scale', str(round(0.95 * PITCH, 4)), '--noise-scale', '0.6', '--noise-w-scale', '0.75'],
-                   input=txt.encode(), check=True, capture_output=True)
+                   input=apply_lex(txt).encode(), check=True, capture_output=True)
     with wave.open(path) as w: rate = w.getframerate(); x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
     os.unlink(path); return x, rate
 

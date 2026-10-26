@@ -7,6 +7,7 @@
 - `epXX_scenes.js.txt` – nur der Szenen-Teil jeder Folge (zwischen `// ---------- scene data ----------` und `// ---------- captions ----------` in `video.html` einsetzen → `video_epXX.html`)
 - `epXX_script.json` – Sprechtext (`say`) + Untertitel (`cap`, gleiche Wortanzahl, `*` = gelb hervorheben) pro Satz und Szene
 - `build_voice.py` – erzeugt Stimme (Piper, Thorsten, +1,3 Halbtöne) und `epXX/timeline.json` mit Wort-Timings
+- `aussprache.json` – Aussprache-Wörterbuch für die Stimme (englische Wörter, falsch gelesene Komposita). Wert = Lautschrift in `[[ ]]`; gilt nur für den Sprechtext, die Untertitel bleiben unverändert. Neue Wörter vorher prüfen: `python3 -c "from piper import PiperVoice; v=PiperVoice.load('voice/de-thorsten-low.onnx'); print(v.phonemize('Wort'))"`
 - `audio_stick.py` – Mikro-Klangkette für die Stimme + Soundeffekte (keine Musik); pro Folge ein `if '<szene>' in sc:`-Block
 - `render.js` – rendert die Frames per Playwright/Chromium; `sheet.html` + `shot.js` – Charakter-Referenzbild
 
