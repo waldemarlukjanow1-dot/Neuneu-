@@ -5,3 +5,4 @@ paket/stick/voice/
 paket/stick/thorsten.tgz
 paket/stick/**/*.wav
 node_modules/
+paket/stick/voice_*/

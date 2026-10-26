@@ -28,9 +28,15 @@ def apply_lex(txt):
         out.append(pre + rep + post)
     return ' '.join(out)
 # Piper (ONNX) backend: model_dir is the .onnx file
-def synth(txt):
+# optional extra speakers: script['voices'] = {name: {'model': path, 'pitch': semitones}}, phrase['voice'] = name
+VOICES = script.get('voices', {})
+def voice_of(p):
+    v = VOICES.get(p.get('voice'), {})
+    return v.get('model', model_dir), 2 ** (v.get('pitch', 1.3) / 12)
+
+def synth(txt, model=None, pitch=PITCH):
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f: path = f.name
-    subprocess.run([sys.executable, '-m', 'piper', '-m', model_dir, '-f', path, '--length-scale', str(round(0.95 * PITCH, 4)), '--noise-scale', '0.6', '--noise-w-scale', '0.75'],
+    subprocess.run([sys.executable, '-m', 'piper', '-m', model or model_dir, '-f', path, '--length-scale', str(round(0.95 * pitch, 4)), '--noise-scale', '0.6', '--noise-w-scale', '0.75'],
                    input=apply_lex(txt).encode(), check=True, capture_output=True)
     with wave.open(path) as w: rate = w.getframerate(); x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
     os.unlink(path); return x, rate
@@ -43,11 +49,12 @@ def trim(x, thr=0.012):
 
 clips = []
 for i, p in enumerate(script['phrases']):
-    wav, sr = synth(p['say'])
+    model, pf = voice_of(p)
+    wav, sr = synth(p['say'], model, pf)
     wav = trim(wav)
     # resample to 44.1k
-    n = int(len(wav) * SR_OUT / (sr * PITCH))
-    wav = np.interp(np.arange(n) * PITCH / SR_OUT, np.arange(len(wav)) / sr, wav).astype(np.float32)
+    n = int(len(wav) * SR_OUT / (sr * pf))
+    wav = np.interp(np.arange(n) * pf / SR_OUT, np.arange(len(wav)) / sr, wav).astype(np.float32)
     clips.append(wav)
     print(i, f'{len(wav)/SR_OUT:.2f}s', p['say'])
 
@@ -70,7 +77,7 @@ for p, wav in zip(script['phrases'], clips):
         hl = cw.startswith('*'); cw = cw.lstrip('*')
         words.append({'say': w, 'cap': cw, 't0': round(c, 3), 't1': round(c + d * (0.82 if w[-1] in ',.?!:' else 1.0), 3), 'hl': hl})
         c += d
-    phrases.append({'scene': p['scene'], 'start': round(t, 3), 'end': round(t + dur, 3), 'words': words})
+    phrases.append({'scene': p['scene'], 'start': round(t, 3), 'end': round(t + dur, 3), 'words': words, **({'voice': p['voice']} if 'voice' in p else {})})
     t += dur; prev_scene = p['scene']
 total = t + 2.2
 scenes = []
