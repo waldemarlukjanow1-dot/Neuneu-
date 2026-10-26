@@ -16,9 +16,9 @@ check_tokens()
 
 import subprocess, tempfile
 # Piper (ONNX) backend: model_dir is the .onnx file
-def synth(txt, ls=1.0):
+def synth(txt):
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f: path = f.name
-    subprocess.run([sys.executable, '-m', 'piper', '-m', model_dir, '-f', path, '--length-scale', str(round(0.95 * ls, 4)), '--noise-scale', '0.6', '--noise-w-scale', '0.75'],
+    subprocess.run([sys.executable, '-m', 'piper', '-m', model_dir, '-f', path, '--length-scale', str(round(0.95 * PITCH, 4)), '--noise-scale', '0.6', '--noise-w-scale', '0.75'],
                    input=txt.encode(), check=True, capture_output=True)
     with wave.open(path) as w: rate = w.getframerate(); x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
     os.unlink(path); return x, rate
@@ -31,20 +31,18 @@ def trim(x, thr=0.012):
 
 clips = []
 for i, p in enumerate(script['phrases']):
-    # optional per-phrase delivery: rate (>1 = slower), pitch (extra semitones), gain
-    pf = PITCH * 2 ** (p.get('pitch', 0) / 12)
-    wav, sr = synth(p['say'], pf * p.get('rate', 1.0))
-    wav = trim(wav) * p.get('gain', 1.0)
+    wav, sr = synth(p['say'])
+    wav = trim(wav)
     # resample to 44.1k
-    n = int(len(wav) * SR_OUT / (sr * pf))
-    wav = np.interp(np.arange(n) * pf / SR_OUT, np.arange(len(wav)) / sr, wav).astype(np.float32)
+    n = int(len(wav) * SR_OUT / (sr * PITCH))
+    wav = np.interp(np.arange(n) * PITCH / SR_OUT, np.arange(len(wav)) / sr, wav).astype(np.float32)
     clips.append(wav)
     print(i, f'{len(wav)/SR_OUT:.2f}s', p['say'])
 
 # timeline
 t = 0.35; phrases = []; prev_scene = None
 for p, wav in zip(script['phrases'], clips):
-    if prev_scene is not None: t += (0.5 if p['scene'] != prev_scene else 0.22) + p.get('gap', 0)
+    if prev_scene is not None: t += 0.5 if p['scene'] != prev_scene else 0.22
     dur = len(wav) / SR_OUT
     say, cap = p['say'].split(), p['cap'].split()
     # word weights ~ syllable-ish length; punctuation adds a small pause after the word
@@ -62,7 +60,7 @@ for p, wav in zip(script['phrases'], clips):
         c += d
     phrases.append({'scene': p['scene'], 'start': round(t, 3), 'end': round(t + dur, 3), 'words': words})
     t += dur; prev_scene = p['scene']
-total = t + script.get('tail', 2.2)   # short tail for videos that loop back to the start
+total = t + 2.2
 scenes = []
 for ph in phrases:
     if not scenes or scenes[-1]['id'] != ph['scene']: scenes.append({'id': ph['scene'], 'start': ph['start'] - (0.3 if scenes else ph['start']), 'end': ph['end']})

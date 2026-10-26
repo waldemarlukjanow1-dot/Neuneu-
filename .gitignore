@@ -1,6 +1,6 @@
 # generated / large build files
 paket/stick/frames/
-paket/stick/test*/
+paket/stick/test/
 paket/stick/voice/
 paket/stick/thorsten.tgz
 paket/stick/**/*.wav

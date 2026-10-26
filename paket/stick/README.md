@@ -3,12 +3,10 @@
 ## Dateien
 - `character.js` – die Hauptfigur (Kappe, Goldkette, Posen, Gesichter) + Nebenfiguren (`st.extra`). Intern heißt die Zeichenfunktion `drawKappi` – im Video wird nie ein Name genannt.
 - `video.html` – Folge 1 (Rauchen) – Grundvorlage: Header, Zeitleiste, Untertitel, Sicherheitszone (`SAFE = 0.82`), Szenen-Wipes
-- `video_ep04v2.html` – Folge 4 v2 mit Kamera (`camera()`: Punch-in/Wackeln, Bühne auf Sicherheitszone geclippt), „?-Moment“ (`qMoment`) und Loop-Ende
 - `video_ep02.html`, `video_ep03.html` – Folge 2 und 3 (gleiche Vorlage, andere Szenen)
 - `epXX_scenes.js.txt` – nur der Szenen-Teil jeder Folge (zwischen `// ---------- scene data ----------` und `// ---------- captions ----------` in `video.html` einsetzen → `video_epXX.html`)
 - `epXX_script.json` – Sprechtext (`say`) + Untertitel (`cap`, gleiche Wortanzahl, `*` = gelb hervorheben) pro Satz und Szene
-- `build_voice.py` – erzeugt Stimme (optional pro Satz: `rate` >1 = langsamer, `pitch` in Halbtönen, `gain`, `gap` = Extra-Pause; pro Skript: `tail` = Nachlauf in s, für Loop-Videos kurz halten)
-   (Piper, Thorsten, +1,3 Halbtöne) und `epXX/timeline.json` mit Wort-Timings
+- `build_voice.py` – erzeugt Stimme (Piper, Thorsten, +1,3 Halbtöne) und `epXX/timeline.json` mit Wort-Timings
 - `audio_stick.py` – Mikro-Klangkette für die Stimme + Soundeffekte (keine Musik); pro Folge ein `if '<szene>' in sc:`-Block
 - `render.js` – rendert die Frames per Playwright/Chromium; `sheet.html` + `shot.js` – Charakter-Referenzbild
 
