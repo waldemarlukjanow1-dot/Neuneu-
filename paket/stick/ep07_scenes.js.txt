@@ -61,19 +61,43 @@ function tinyPerson(x, y, col, ctrl) {
 }
 function moneyStack(x, h, col = '#2a9d55') { for (let i = 0; i < h; i++) { rr(x - 50, 1150 - i * 22, 100, 20, 5); g.fillStyle = i % 2 ? col : '#38b26a'; g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); } if (h > 0) text('$', x, 1150 - (h - 1) * 22 + 16, 18, '#fff', { weight: 900 }); }
 
+function gameCard(x, y, s, name, to, col) {
+  withScale(x, y, s, () => { card(-170, -50, 340, 100, '#fff'); rr(-160, -40, 16, 80, 6); g.fillStyle = col; g.fill(); text(name, -130, -4, 28, INK, { align: 'left' }); text('→ ' + to, -130, 32, 24, '#ef476f', { align: 'left', weight: 800 }); });
+}
+function downChart(x, y, w, h, p) {
+  rr(x, y, w, h, 16); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+  g.save(); rr(x, y, w, h, 16); g.clip(); g.strokeStyle = '#ef233c'; g.lineWidth = 9; g.lineJoin = 'round'; g.beginPath();
+  const pts = [[0, 0.2], [0.2, 0.3], [0.35, 0.25], [0.5, 0.5], [0.65, 0.45], [0.8, 0.75], [1, 0.9]];
+  pts.forEach(([px, py], i) => { if (px > p) return; const X = x + 20 + px * (w - 40), Y = y + 20 + py * (h - 40); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke(); g.restore();
+}
+function desk(x, t) {   // empty office desk with sick note
+  g.strokeStyle = INK; g.lineWidth = 7; rr(x - 170, 1000, 340, 26, 8); g.fillStyle = '#c98b5a'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 155, 1026, 14, 139); g.fillRect(x + 141, 1026, 14, 139);
+  rr(x - 70, 880, 140, 100, 10); g.fillStyle = '#2b2d42'; g.fill(); g.stroke(); g.fillRect(x - 8, 980, 16, 20);
+  g.save(); g.translate(x + 40, 900); g.rotate(0.08); rr(-70, -60, 140, 110, 6); g.fillStyle = '#fff59d'; g.fill(); g.lineWidth = 3; g.stroke(); text('bin krank', 0, -14, 22, INK, { weight: 800 }); text('🤒🎮', 0, 30, 30, '#000', { weight: 400, font: '"Noto Color Emoji"' }); g.restore();
+  g.lineWidth = 7; g.strokeStyle = INK; g.beginPath(); g.moveTo(x + 230, 1165); g.lineTo(x + 230, 960); g.moveTo(x + 210, 1060); g.lineTo(x + 300, 1060); g.stroke();
+}
+function bus(x, t) {
+  g.save(); g.translate(x, 0); rr(-170, 930, 340, 170, 22); g.fillStyle = '#ffd23f'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  for (let i = 0; i < 4; i++) { rr(-150 + i * 78, 950, 62, 60, 8); g.fillStyle = '#bde0fe'; g.fill(); g.lineWidth = 4; g.stroke(); }
+  for (const wx of [-100, 100]) { g.fillStyle = INK; g.beginPath(); g.arc(wx, 1105, 30, 0, 7); g.fill(); g.fillStyle = '#888'; g.beginPath(); g.arc(wx, 1105, 12, 0, 7); g.fill(); }
+  rr(-90, 900, 180, 34, 8); g.fillStyle = INK; g.fill(); text('FÄLLT AUS', 0, 926, 22, '#ff5a5f', { weight: 900 });
+  g.restore();
+}
+
 const BG = {
-  hook: ['#ff6fb5', '#ff9a5c'], consoles: ['#7f6cf0', '#4834d4'], server: ['#2b2d42', '#14213d'], power: ['#ffc83d', '#fb5607'],
-  streets: ['#ff9a5c', '#ff5e62'], money: ['#06d6a0', '#118ab2'], aha: ['#4cc9f0', '#4361ee'], outro: ['#f72585', '#7209b7'],
+  hook: ['#ff6fb5', '#ff9a5c'], others: ['#7f6cf0', '#4834d4'], work: ['#4cc9f0', '#4361ee'], germany: ['#3fd0c1', '#159a8f'],
+  still: ['#ff9a5c', '#ff5e62'], risk: ['#2b2d42', '#14213d'], aha: ['#ffd166', '#f4a261'], outro: ['#f72585', '#7209b7'],
 };
-const PALMS = new Set(['hook', 'streets', 'outro']);
-const STATIONS = [['Konsolen', 'consoles'], ['Server', 'server'], ['Strom', 'power'], ['Straßen', 'streets'], ['Rekord', 'money'], ['Wahrheit', 'aha']];
-const stationIdx = { hook: -1, consoles: 0, server: 1, power: 2, streets: 3, money: 4, aha: 5, outro: 5.5 };
-const CHAOS = { hook: 0, consoles: 1, server: 2, power: 3, streets: 4, money: 5, aha: 5, outro: 0 };
+const PALMS = new Set(['hook', 'still', 'aha', 'outro']);
+const STATIONS = [['Spiele', 'others'], ['Arbeit', 'work'], ['Deutschland', 'germany'], ['Stillstand', 'still'], ['Kündigung', 'risk']];
+const stationIdx = { hook: -1, others: 0, work: 1, germany: 2, still: 3, risk: 4, aha: 4.5, outro: 4.5 };
+const CHAOS = { hook: 0, others: 1, work: 2, germany: 3, still: 5, risk: 5, aha: 5, outro: 0 };
 const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
 const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
 const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
 const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
-const at = (re, sid, sc, d = 0) => wordTime(re, sid) - sc.start + d;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
 
 function drawBG(id, t) {
   const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -94,14 +118,14 @@ function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.
 function kappiState(sc, u, t) {
   let pos = { x: 300, scale: 0.84 }, keys = [[0, 'stand', 'neutral']], facing = 0, hold = null;
   switch (sc.id) {
-    case 'hook': hold = gamepad; keys = [[0, 'hold', 'happy'], [at(/^Start/, 'hook', sc, -0.3), 'cheer', 'joy'], [phStart('hook', 1, sc), 'think', 'thinking']]; break;
-    case 'consoles': keys = [[0, 'point', 'talk'], [phStart('consoles', 1, sc), 'shrug', 'worried']]; break;
-    case 'server': keys = [[0, 'think', 'thinking'], [at(/^Absturz/, 'server', sc, -0.3), 'scared', 'surprised']]; break;
-    case 'power': keys = [[0, 'point', 'talk'], [at(/^Hälfte/, 'power', sc, -0.2), 'scared', 'surprised']]; break;
-    case 'streets': pos = { x: 230, scale: 0.7 }; keys = [[0, 'shrug', 'neutral'], [at(/^Pizzabäcker/, 'streets', sc, -0.2), 'shrug', 'worried']]; break;
-    case 'money': keys = [[0, 'point', 'happy'], [wordTime(/^GTA/, 'money', 1) - sc.start - 0.2, 'cheer', 'joy']]; break;
-    case 'aha': keys = [[0, 'think', 'thinking'], [at(/^normaler/, 'aha', sc, -0.2), 'shrug', 'happy']]; break;
-    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; hold = null; keys = [[0, 'point', 'happy']]; break;
+    case 'hook': hold = gamepad; keys = [[0, 'hold', 'joy'], [phStart('hook', 1, sc), 'think', 'thinking']]; break;
+    case 'others': keys = [[0, 'point', 'talk'], [phStart('others', 1, sc), 'shrug', 'worried']]; break;
+    case 'work': pos = { x: 230, scale: 0.7 }; keys = [[0, 'point', 'talk'], [at(/^krankmelden/, 'work', sc, -0.3), 'shrug', 'surprised']]; break;
+    case 'germany': keys = [[0, 'point', 'talk'], [at(/^fehlen/, 'germany', sc, -0.2), 'scared', 'surprised']]; break;
+    case 'still': pos = { x: 230, scale: 0.7 }; keys = [[0, 'shrug', 'worried']]; break;
+    case 'risk': keys = [[0, 'pointUp', 'determined'], [at(/^fristlose/, 'risk', sc, -0.3), 'scared', 'worried']]; break;
+    case 'aha': keys = [[0, 'flex', 'proud']]; break;
+    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; keys = [[0, 'point', 'happy']]; break;
   }
   let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
   const cur = keys[k], prev = keys[Math.max(0, k - 1)];
@@ -109,89 +133,86 @@ function kappiState(sc, u, t) {
   return { x: pos.x, y: 1165, scale: pos.scale, facing, hold, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2] };
 }
 function sceneBack(sc, u, t) {
-  if (sc.id === 'streets') {   // empty road + closed pizza place
+  if (sc.id === 'work') desk(700, t);
+  if (sc.id === 'still') {
     g.fillStyle = '#4a4e5a'; g.fillRect(-200, 1085, 1500, 80); g.strokeStyle = '#fff'; g.lineWidth = 6; g.setLineDash([40, 30]); g.beginPath(); g.moveTo(-200, 1125); g.lineTo(1300, 1125); g.stroke(); g.setLineDash([]);
-    rr(600, 720, 330, 365, 10); g.fillStyle = '#fff1d6'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
-    rr(620, 740, 290, 70, 10); g.fillStyle = '#ef233c'; g.fill(); g.stroke(); text('PIZZA 🍕', 765, 790, 40, '#fff', { font: EMO });
-    rr(715, 880, 100, 205, 8); g.fillStyle = '#8d5a3b'; g.fill(); g.stroke();
-    rr(650, 830, 230, 46, 8); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke(); text('ZU – wir zocken 🎮', 765, 862, 22, '#ef233c', { font: EMO });
   }
 }
 
 function sceneContent(sc, u, t, K) {
   const D = sc.end - sc.start, prevS = prevScene(sc);
   const cA = CHAOS[sc.id], cP = CHAOS[prevS.id] ?? 0;
-  chaosStars(sc.id === 'aha' ? Math.round(lerp(5, 0, sm(at(/^normaler/, 'aha', sc, -0.3), at(/^Donnerstag/, 'aha', sc), u))) : (u < 0.5 ? cP : cA), sc.id === 'hook' || sc.id === 'outro' ? 0 : 1);
+  chaosStars(sc.id === 'aha' ? Math.round(lerp(5, 0, sm(0.3, 1.6, u))) : (u < 0.5 ? cP : cA), sc.id === 'hook' || sc.id === 'outro' ? 0 : 1);
   switch (sc.id) {
     case 'hook': {
-      const tS = at(/^Start/, 'hook', sc), p2 = phStart('hook', 1, sc);
-      withScale(680, 610, pop(u, 0.05, 0.35), () => neon('GTA 6', 0, 40, 130, '#ff4fd8', '#ff4fd8'));
-      withScale(680, 730, pop(u, at(/^November/, 'hook', sc, -0.6)), () => digi(0, 0, 0.7, '19.11.', '#4cf0e0'));
-      withScale(680, 900, pop(u, at(/^ganze/, 'hook', sc, -0.2)), () => startButton(0, 0, 80, u > tS ? 1 : 0, t));
-      if (u > tS + 0.2 && u < p2) withScale(680, 1060, pop(u, tS + 0.2), () => pill(0, 0, 1, '🌍 8 Mrd. gleichzeitig', '#fff', INK, 34));
-      if (u > p2) withScale(680, 1060, pop(u, p2), () => pill(0, 0, 1, '🧪 GEDANKENEXPERIMENT', YEL, INK, 34));
-      break;
-    }
-    case 'consoles': {
-      const p2 = phStart('consoles', 1, sc), tR = at(/^reicht/, 'consoles', sc);
-      for (let r = 0; r < 10; r++) for (let c = 0; c < 8; c++) {
-        const i = r * 8 + c, a = clamp01((u - 0.3 - i * 0.015) / 0.2); if (a <= 0) continue;
-        const first = i === 0, col = first ? '#ffd23f' : (u > p2 + 0.4 ? 'rgba(255,255,255,0.35)' : '#fff6e6');
-        g.save(); g.globalAlpha = a; tinyPerson(570 + c * 44, 640 + r * 44, col, first); g.restore();
+      const tA = at(/^alle/, 'hook', sc), p2 = phStart('hook', 1, sc);
+      withScale(680, 600, pop(u, 0.05, 0.35), () => neon('GTA 6', 0, 40, 130, '#ff4fd8', '#ff4fd8'));
+      // crowd of gamers – every screen switches to GTA 6
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 7; c++) {
+        const i = r * 7 + c, x = 545 + c * 50, y = 780 + r * 62, sw = u > tA - 0.2 + i * 0.03;
+        tinyPerson(x, y, '#fff6e6', false);
+        rr(x - 15, y - 12, 30, 18, 4); g.fillStyle = sw ? '#ff4fd8' : ['#4cc9f0', '#06d6a0', '#ffd23f', '#ef476f'][i % 4]; g.fill(); g.strokeStyle = INK; g.lineWidth = 2; g.stroke();
       }
-      withScale(730, 560, pop(u, 0.2), () => pill(0, 0, 1, '🎮 95 Mio. PS5', '#fff', INK, 34));
-      if (u > tR - 0.2 && u < p2 + 0.2) withScale(730, 1100, pop(u, tR - 0.2), () => pill(0, 0, 1, 'nur 1 von 80+', YEL, INK, 36));
-      if (u > p2 + 0.4) withScale(730, 1100, pop(u, p2 + 0.4), () => pill(0, 0, 1, '❌ keine Konsole', '#ef476f', '#fff', 36));
+      if (u > tA + 1.0 && u < p2) withScale(680, 1060, pop(u, tA + 1.0), () => pill(0, 0, 1, '🎮 100 % GTA 6', '#fff', INK, 34));
+      if (u > p2 - 0.1) withScale(680, 1060, pop(u, p2 - 0.1), () => pill(0, 0, 1, '🧪 GEDANKENEXPERIMENT', YEL, INK, 34));
       break;
     }
-    case 'server': {
-      const tO = at(/^Online/, 'server', sc), tA = at(/^Absturz/, 'server', sc), tB = at(/^acht/, 'server', sc);
-      const state = u > tA - 0.2 ? 2 : u > tB - 0.2 ? 1 : 0;
-      serverRack(740, 880, t, state, u > tA - 0.2);
-      if (u > tA - 0.2) { smokePuffs(740, 660, t, 1); withScale(740, 640, pop(u, tA - 0.2), () => pill(0, 0, 1, '💥 ABSTURZ', '#ef233c', '#fff', 46)); }
-      else if (u > tO - 0.3) withScale(700, 580, pop(u, tO - 0.3), () => { pill(0, 0, 1, 'GTA Online 2013', '#fff', INK, 34); text('Serverprobleme zum Start', 0, 66, 26, '#fff', { weight: 800, lw: 6 }); });
-      break;
-    }
-    case 'power': {
-      const tM = at(/^Mal/, 'power', sc), tH = at(/^Hälfte/, 'power', sc);
-      pill(700, 570, pop(u, 0.3), '1 PS5 ≈ 200 W', '#fff', INK, 36);
-      if (u > tM - 0.2) pill(700, 660, pop(u, tM - 0.2), '× 8 Mrd.', '#fff', INK, 36);
-      if (u > tM + 0.8) pill(700, 750, pop(u, tM + 0.8), '= 1,6 TW ⚡', YEL, INK, 40);
-      if (u > tH - 0.4) {
-        const w = 400, x0 = 500, y = 900, fW = 3.6 / 5.2, grow = ease(clamp01((u - tH + 0.4) / 0.8));
-        text('Strombedarf der Welt (⌀)', x0, y - 22, 24, '#fff', { weight: 800, lw: 6, align: 'left' });
-        rr(x0, y, w, 60, 14); g.fillStyle = 'rgba(255,255,255,0.4)'; g.fill();
-        g.save(); rr(x0, y, w, 60, 14); g.clip(); g.fillStyle = '#06d6a0'; g.fillRect(x0, y, w * fW, 60); g.fillStyle = '#ef233c'; g.fillRect(x0 + w * fW, y, w * (1 - fW) * grow, 60); g.restore();
-        rr(x0, y, w, 60, 14); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
-        text('3,6 TW', x0 + w * fW / 2, y + 42, 30, INK); if (grow > 0.6) text('+1,6', x0 + w * fW + w * (1 - fW) / 2, y + 42, 28, '#fff', { lw: 5 });
-        if (grow >= 1) withScale(700, 1050, pop(u, tH + 0.5), () => pill(0, 0, 1, '≈ +44 % 😱', '#ef233c', '#fff', 40));
+    case 'others': {
+      const p2 = phStart('others', 1, sc);
+      if (u < p2 + 0.2) {
+        const a = 1 - sm(p2 - 0.2, p2 + 0.2, u), tV = at(/^verschoben/, 'others', sc);
+        g.save(); g.globalAlpha = a;
+        withScale(700, 560, pop(u, 0.2), () => pill(0, 0, 1, '19.11. = GTA 6', '#ff4fd8', '#fff', 36));
+        [['Fable', 'Feb. 2027', '#06d6a0'], ['Squadron 42', '2027', '#4cc9f0'], ['Danganronpa 2×2', 'Jan. 2027', '#ffd23f']].forEach(([n, to, c], i) => {
+          const slide = sm(tV - 0.2 + i * 0.25, tV + 0.5 + i * 0.25, u);
+          gameCard(700 + slide * 40, 680 + i * 120, pop(u, 0.8 + i * 0.4), n, to, c);
+        });
+        withScale(700, 1050, pop(u, tV), () => text('echt passiert (Stand Okt. 2026)', 0, 0, 24, '#fff', { weight: 800, lw: 6 }));
+        g.restore();
+      } else {
+        const v = u - p2, tT = at(/^Twitch/, 'others', sc), tM = at(/^Minus/, 'others', sc);
+        withScale(700, 570, pop(v, 0.2), () => pill(0, 0, 1, 'Lobby: 0 / 100', '#fff', INK, 36));
+        if (u > tT - 0.3) withScale(700, 670, pop(u, tT - 0.3), () => pill(0, 0, 1, '📺 Twitch: nur GTA', '#9146ff', '#fff', 34));
+        if (u > tM - 0.8) { downChart(560, 760, 280, 200, ease(clamp01((u - tM + 0.8) / 1.0))); withScale(700, 1010, pop(u, tM - 0.2), () => pill(0, 0, 1, '📉 MINUS', '#ef233c', '#fff', 40)); }
       }
       break;
     }
-    case 'streets': {
-      // tumbleweed rolling over the empty road
-      const tx = ((u * 160) % 1400) - 200; g.save(); g.translate(tx, 1095); g.rotate(u * 5); g.strokeStyle = '#a07a3c'; g.lineWidth = 5; for (let i = 0; i < 6; i++) { g.beginPath(); g.ellipse(0, 0, 34, 18, i, 0, 7); g.stroke(); } g.restore();
-      withScale(560, 560, pop(u, 0.3), () => pill(0, 0, 1, '🚗 0 Autos · kein Stau', '#fff', INK, 32));
-      const tP = at(/^Pizza\?/, 'streets', sc);
-      if (u > tP - 0.2) withScale(765, 660, pop(u, tP - 0.2), () => pill(0, 0, 1, '🍕 ❌', '#fff', INK, 40));
+    case 'work': {
+      const tP = at(/^Prozent/, 'work', sc), tH = at(/^Hälfte/, 'work', sc);
+      if (u > tP - 0.3) withScale(690, 560, pop(u, tP - 0.3), () => { pill(0, 0, 1, '18 % wollen frei', YEL, INK, 38); text('US-Umfrage (BambooHR)', 0, 66, 24, '#fff', { weight: 800, lw: 6 }); });
+      if (u > tH - 0.2) withScale(690, 720, pop(u, tH - 0.2), () => pill(0, 0, 1, '½ davon: lieber krank 🤒', '#fff', INK, 32));
       break;
     }
-    case 'money': {
-      const p2 = wordTime(/^GTA/, 'money', 1) - sc.start - 0.2, grow = ease(clamp01((u - 0.4) / 2.0));
-      [560, 680, 800].forEach((x, i) => moneyStack(x, Math.round(grow * (8 + i * 3))));
-      withScale(680, 570, pop(u, 0.2), () => pill(0, 0, 1, 'GTA 5: 1 Mrd. $ in 3 Tagen', '#fff', INK, 32));
-      if (u > p2) withScale(680, 670, pop(u, p2), () => pill(0, 0, 1, 'GTA 6: an 1 Tag? 🤯', YEL, INK, 36));
-      if (u > at(/^Rekord/, 'money', sc, -0.2)) withScale(680, 770, pop(u, at(/^Rekord/, 'money', sc, -0.2)), () => { g.rotate(-0.08); pill(0, 0, 1, 'REKORD', '#ef233c', '#fff', 46); });
+    case 'germany': {
+      const tZ = at(/^Zehnte/, 'germany', sc), tF = at(/^fehlen/, 'germany', sc);
+      withScale(700, 560, pop(u, 0.2), () => pill(0, 0, 1, '🎮 41,2 Mio. Zocker in DE', '#fff', INK, 32));
+      for (let i = 0; i < 10; i++) { const x = 520 + i * 44, sick = i === 9 && u > tZ - 0.2; tinyPerson(x, 780, sick ? '#ef476f' : '#fff6e6', !sick); if (sick) withScale(x, 720, pop(u, tZ - 0.2), () => text('🤒', 0, 0, 34, '#000', { weight: 400, font: '"Noto Color Emoji"' })); }
+      withScale(700, 860, pop(u, tZ - 0.2), () => text('jeder Zehnte', 0, 0, 30, '#fff', { weight: 900, lw: 8 }));
+      if (u > tF - 0.2) withScale(700, 990, pop(u, tF - 0.2), () => pill(0, 0, 1, '= 4 Mio. fehlen 😱', '#ef233c', '#fff', 42));
+      break;
+    }
+    case 'still': {
+      const tB = at(/^Busse/, 'still', sc), tL = at(/^Läden/, 'still', sc), tP = at(/^Pizza/, 'still', sc), tG = at(/^GTA/, 'still', sc);
+      if (u > tB - 0.3) bus(720, t);
+      if (u > tL - 0.2) pill(700, 600, pop(u, tL - 0.2), '🏪 Läden: ZU', '#fff', INK, 34);
+      if (u > tP - 0.2) pill(700, 700, pop(u, tP - 0.2), '🍕 kommt nicht', '#fff', INK, 34);
+      if (u > tG - 0.3) withScale(700, 800, pop(u, tG - 0.3) * (1 + 0.03 * Math.sin(t * 8)), () => neon('nur GTA läuft', 0, 15, 44, '#ff4fd8', '#ff4fd8'));
+      break;
+    }
+    case 'risk': {
+      const tF = at(/^fristlose/, 'risk', sc);
+      withScale(700, 640, pop(u, 0.2), () => { card(-260, -120, 520, 240, '#fff'); text('⚠️ Krank spielen', 0, -45, 42, '#ef233c', { font: EMO }); text('statt krank sein?', 0, 10, 36, INK); text('Arbeitsrecht: § 626 BGB', 0, 75, 24, '#666', { weight: 700 }); });
+      if (u > tF - 0.2) withScale(700, 900, pop(u, tF - 0.2), () => { g.rotate(-0.08); pill(0, 0, 1, 'FRISTLOS GEKÜNDIGT?', '#ef233c', '#fff', 40); });
       break;
     }
     case 'aha': {
-      withScale(720, 680, pop(u, 0.2), () => calendar(0, 0, 0.75, '19', 'NOV'));
-      const tN = at(/^normaler/, 'aha', sc);
-      if (u > tN - 0.2) withScale(720, 940, pop(u, tN - 0.2), () => pill(0, 0, 1, 'ganz normaler Donnerstag ☕', '#fff', INK, 32));
+      withScale(720, 650, pop(u, 0.2), () => calendar(0, 0, 0.7, '19', 'NOV'));
+      const tU = at(/^Urlaub/, 'aha', sc);
+      if (u > tU - 0.3) withScale(720, 680, pop(u, tU - 0.3), () => { g.rotate(-0.15); pill(0, 0, 1, 'URLAUB ✅', '#06d6a0', INK, 44); });
       break;
     }
     case 'outro': {
-      withScale(690, 610, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Mit wem zockst du', 0, -30, 48, INK); text('am 19.11.? 🎮', 0, 55, 60, '#f72585', { font: EMO }); });
+      withScale(690, 610, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('19.11. schon', 0, -30, 52, INK); text('freigenommen? 🎮', 0, 55, 54, '#f72585', { font: EMO }); });
       withScale(690, 880, pop(u, at(/^Markier/, 'outro', sc, -0.2)), () => pill(0, 0, 1, 'Markier deinen GTA-Partner 👇', INK, YEL, 34));
       g.globalAlpha = sm(0.5, 1.2, u);
       const parts = TL.sources.split(' · ');
