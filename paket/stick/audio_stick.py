@@ -183,6 +183,73 @@ if 'jetlag' in sc:  # Folge 04
     place(fx, drumhit(), wt('aha', 'leihst') - 0.1, 0.45)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, ding(1980), s['start'] + 1.4, 0.2)
 
+if 'tease' in sc:  # Folge 04 v2
+    def wt(sid, prefix):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix): return w['t0']
+    def ring(d=1.8):
+        n = int(d * SR); x = np.arange(n) / SR
+        gate = (np.sin(2 * np.pi * 22 * x) > 0).astype(float)
+        return (np.sin(2 * np.pi * 2400 * x) + 0.6 * np.sin(2 * np.pi * 3150 * x)) * gate * np.minimum(1, x / 0.01) * np.minimum(1, (d - x) / 0.05)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    def scratch():   # record scratch
+        n = int(0.3 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 600, 4000) * np.abs(np.sin(2 * np.pi * 7 * x)) * np.exp(-x * 6)
+    def printer(d=1.0):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 1500, 5000) * (0.5 + 0.5 * (np.sin(2 * np.pi * 18 * x) > 0)) * np.minimum(1, (d - x) / 0.1)
+    def pour(d=1.2):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 300, 1800) * (0.6 + 0.4 * np.sin(2 * np.pi * 11 * x)) * np.sin(np.pi * x / d)
+    def snore(d=1.6):
+        n = int(d * SR); x = np.arange(n) / SR
+        return lp(rng.standard_normal(n), 400) * (np.sin(2 * np.pi * 45 * x) * 0.5 + 0.5) * np.sin(np.pi * x / d) ** 2 * 3
+    def sneeze():
+        n = int(0.6 * SR); x = np.arange(n) / SR
+        inhale = bp(rng.standard_normal(n), 800, 3000) * np.where(x < 0.35, x / 0.35 * 0.4, 0)
+        burst = bp(rng.standard_normal(n), 1500, 7000) * np.where(x >= 0.35, np.exp(-(x - 0.35) * 14), 0)
+        return inhale + burst * 1.4
+    def coin_sfx():
+        n = int(0.4 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 2600 * x) + 0.6 * np.sin(2 * np.pi * 3900 * x)) * np.exp(-x * 10)
+    def q_moment():   # series sound logo for the "?-Moment": three rising bell tones + shimmer
+        out = np.zeros(int(1.6 * SR))
+        for k, f in enumerate((1046.5, 1318.5, 1568.0)):
+            n = int(1.2 * SR); x = np.arange(n) / SR
+            s = (np.sin(2 * np.pi * f * x) + 0.3 * np.sin(2 * np.pi * f * 2 * x)) * np.exp(-x * 3.5)
+            i = int(k * 0.11 * SR); out[i:i + n] += s[:len(out) - i]
+        sp = np.pad(sparkle(), (int(0.3 * SR), 0)); out[:len(sp)] += sp[:len(out)] * 0.6
+        return out
+    h = sc['hook']; tN = wt('hook', 'Noch')
+    for k in range(int(tN / 0.5)): place(fx, tick(), h['start'] + 0.2 + k * 0.5, 0.25)
+    place(fx, scratch(), tN - 0.05, 0.5); place(fx, ring(0.5), tN, 0.25); place(fx, drumhit(), tN, 0.4)
+    s = sc['n22']
+    for k in range(3): place(fx, popsfx(), s['start'] + 0.3 + k * 0.25, 0.25)
+    tk = wt('n22', 'Keiner')
+    for k in range(3): place(fx, whoosh(0.3), tk + 0.3 + k * 0.15, 0.25)
+    place(fx, ding(1320), tk + 1.2, 0.18)
+    tf = wt('n0', 'Folge') - 0.2
+    for k in range(3): place(fx, tick(), tf + k * 0.8, 0.6)
+    place(fx, popsfx(), wt('n0', 'Klar'), 0.35)
+    place(fx, popsfx(), wt('n2', 'Rache') - 0.2, 0.3); place(fx, sparkle(), wt('n2', 'zurück') - 0.2, 0.22)
+    place(fx, printer(1.1), wt('tease', 'Rechnung') - 0.3, 0.18); place(fx, popsfx(), wt('tease', 'Wochenende'), 0.3); place(fx, drumhit(), wt('tease', 'fies') - 0.15, 0.45)
+    s = sc['alarm']; place(fx, drumhit(), s['start'] + 0.05, 0.5); place(fx, ring(1.5), s['start'] + 0.1, 0.22)
+    place(fx, bloop(), wt('alarm', 'Körper'), 0.4)
+    s = sc['w2']; place(fx, pour(1.2), s['start'] + 1.1, 0.35); place(fx, popsfx(), s['start'] + 3.0, 0.3); place(fx, crack(), s['start'] + 3.4, 0.3)
+    place(fx, bloop(), wt('w2', 'durchgemachten'), 0.45); place(fx, popsfx(), ph['w2'][1]['start'], 0.3)
+    s = sc['weekend']; place(fx, snore(1.6), s['start'] + 0.3, 0.3); place(fx, snore(1.6), s['start'] + 2.2, 0.25); place(fx, whoosh(0.9), wt('weekend', 'Flug'), 0.35); place(fx, whoosh(0.9), wt('weekend', 'Flug') + 1.45, 0.3)
+    s = sc['immune']; place(fx, snore(1.4), s['start'] + 0.4, 0.2)
+    for k in range(6): place(fx, popsfx(), s['start'] + 0.5 + k * 0.6, 0.08)
+    place(fx, sneeze(), wt('immune', 'viermal') - 0.35, 0.6); place(fx, popsfx(), wt('immune', 'Studie') - 0.2, 0.3)
+    s = sc['aha']
+    for k in range(5): place(fx, coin_sfx(), s['start'] + 0.3 + k * 0.28, 0.12)
+    tl = wt('aha', 'leihst'); place(fx, q_moment(), tl - 0.35, 0.3); place(fx, drumhit(), tl + 1.3, 0.4)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35)
+    s = sc['loop']; place(fx, tick(), s['start'] + 0.4, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
@@ -215,7 +282,7 @@ ma = (c[np.clip(np.arange(N) + k // 2, 0, N)] - c[np.clip(np.arange(N) - k // 2,
 duck = lp(np.clip(ma * 4, 0, 1), 5)
 mix = fx * 0.35 + voice * 1.0   # keine Musik
 mix = hp(mix, 30); mix = np.tanh(mix * 1.1); mix /= np.max(np.abs(mix)) * 1.05
-fo = int(0.8 * SR); mix[-fo:] *= np.linspace(1, 0, fo)
+fo = int((0.15 if 'loop' in sc else 0.8) * SR); mix[-fo:] *= np.linspace(1, 0, fo)
 with wave.open(f'{ep}/mix.wav', 'wb') as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype(np.int16).tobytes())
 print('mix', round(T, 2))
