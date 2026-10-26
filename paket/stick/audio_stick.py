@@ -214,6 +214,45 @@ if 'choice' in sc:  # Folge 05
     s = sc['eu']; place(fx, whoosh(0.5), s['start'] + 0.2, 0.3); place(fx, ding(1760), wt('eu', 'Parlament') - 0.2, 0.2); place(fx, crack(), wt('eu', 'Länder') - 0.2, 0.5)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35)
 
+if 'freeze' in sc:  # Folge 06
+    def wt(sid, prefix):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix): return w['t0']
+    def rewind(d=1.0):   # tape rewind: fast falling chirps
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(1800 - 1200 * (x / d) + 400 * np.sin(2 * np.pi * 14 * x)) / SR) * np.sin(np.pi * x / d) * 0.6
+    def boing():
+        n = int(0.35 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(220 + 180 * np.sin(2 * np.pi * 9 * x) * np.exp(-x * 6)) / SR) * env(n, 0.003, 0.15)
+    def thud():
+        n = int(0.25 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(140 * np.exp(-x * 12) + 50) / SR) * np.exp(-x * 18)
+    def bark():
+        n = int(0.18 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 500, 2200) * np.exp(-x * 20) + np.sin(2 * np.pi * np.cumsum(600 - 1500 * x) / SR) * np.exp(-x * 15) * 0.6
+    def crowd(d=2.5):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 300, 3000) * np.sin(np.pi * x / d) ** 0.7
+    ty = wt('hook', 'zweitausend'); place(fx, rewind(1.0), ty - 0.4, 0.4); place(fx, confetti_pop(), ty + 0.6, 0.5); place(fx, ding(1560), ty + 0.6, 0.2)
+    place(fx, popsfx(), wt('wake', 'jünger') - 0.3, 0.3); place(fx, popsfx(), wt('wake', 'Handy') - 0.4, 0.3)
+    s = sc['apps']
+    for k in range(3): place(fx, popsfx(), s['start'] + 0.2 + k * 0.35, 0.22); place(fx, whoosh(0.25), s['start'] + 0.6 + k * 0.35, 0.25)
+    place(fx, popsfx(), ph['apps'][1]['start'] + 0.1, 0.25); place(fx, bark(), wt('apps', 'Snapchat') - 0.2, 0.35); place(fx, sparkle(), wt('apps', 'Streaks') - 0.3, 0.25)
+    s = sc['games']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, whoosh(0.25), s['start'] + 0.6, 0.25)
+    td = wt('games', 'Dafür')
+    for k in range(8): place(fx, boing(), td + 0.2 + k * 0.4, 0.12)
+    place(fx, ding(1760), wt('games', 'Pokémon') - 0.2, 0.22)
+    tb = wt('school', 'Bottle'); place(fx, whoosh(0.9), tb - 0.9, 0.3); place(fx, thud(), tb + 0.2, 0.6); place(fx, ding(1320), tb + 0.25, 0.18)
+    place(fx, drumhit(), wt('school', 'Dab') - 0.05, 0.45)
+    tf = wt('freeze', 'erstarren'); place(fx, crack(), tf - 0.25, 0.5); place(fx, sparkle(), tf - 0.2, 0.25)
+    s = sc['summer']; place(fx, crowd(2.8), s['start'] + 0.3, 0.3)
+    for k in range(5): place(fx, thud(), s['start'] + 0.4 + k * 0.78, 0.25)
+    s = sc['aha']; place(fx, popsfx(), wt('aha', 'gestern') - 0.3, 0.3); td = wt('aha', 'Dabei')
+    for k in range(10): place(fx, tick(), td + k * 0.12, 0.4)
+    place(fx, drumhit(), td + 1.25, 0.5)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), ph['outro'][1]['start'], 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

@@ -1,0 +1,65 @@
+{
+ "episode": "ep06",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "ES AUF EINMAL WIEDER 2016 WÄRE?"
+ ],
+ "sources": "Gedankenexperiment · Fortnite ab 2017 · Reels ab 2020 · Shorts in DE ab 2021",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du morgen aufwachst, und es ist wieder zweitausendsechzehn?",
+   "cap": "Was passiert, wenn du *morgen aufwachst, und es ist wieder *2016?"
+  },
+  {
+   "scene": "wake",
+   "say": "Erstmal: Du bist zehn Jahre jünger. Und am Handy hängt noch ein Kopfhörerkabel.",
+   "cap": "Erstmal: Du bist *10 *Jahre *jünger. Und am *Handy hängt noch ein *Kopfhörerkabel."
+  },
+  {
+   "scene": "apps",
+   "say": "Kein TikTok, kein endloses Scrollen durch Kurzvideos.",
+   "cap": "Kein *TikTok, kein *endloses *Scrollen durch Kurzvideos."
+  },
+  {
+   "scene": "apps",
+   "say": "Stattdessen: Musically, der Snapchat-Hundefilter und deine heiligen Streaks.",
+   "cap": "Stattdessen: *musical.ly, der *Snapchat-Hundefilter und deine heiligen *Streaks."
+  },
+  {
+   "scene": "games",
+   "say": "Kein Fortnite, das kommt erst zweitausendsiebzehn. Dafür rennt die halbe Stadt mit dem Handy durch den Park: Pokémon Go!",
+   "cap": "Kein *Fortnite, das kommt erst *2017. Dafür rennt die *halbe *Stadt mit dem Handy durch den *Park: *Pokémon *Go!"
+  },
+  {
+   "scene": "school",
+   "say": "Auf dem Schulhof fliegen Wasserflaschen: Bottle Flip. Und jedes Foto braucht einen Dab.",
+   "cap": "Auf dem *Schulhof fliegen *Wasserflaschen: *Bottle *Flip. Und jedes *Foto braucht einen *Dab."
+  },
+  {
+   "scene": "freeze",
+   "say": "Und plötzlich erstarren alle: Mannequin Challenge.",
+   "cap": "Und plötzlich *erstarren *alle: *Mannequin *Challenge."
+  },
+  {
+   "scene": "summer",
+   "say": "Im Sommer: EM in Frankreich und Public Viewing an jeder Ecke.",
+   "cap": "Im *Sommer: *EM in *Frankreich und *Public *Viewing an jeder Ecke."
+  },
+  {
+   "scene": "aha",
+   "say": "Das Verrückte: Es fühlt sich an wie gestern. Dabei ist es zehn Jahre her.",
+   "cap": "Das *Verrückte: Es fühlt sich an wie *gestern. Dabei ist es *10 *Jahre her."
+  },
+  {
+   "scene": "outro",
+   "say": "Schick das Video der Person, mit der du damals Pokémon gejagt hast!",
+   "cap": "Schick das Video der *Person, mit der du damals *Pokémon *gejagt hast!"
+  },
+  {
+   "scene": "outro",
+   "say": "Und was vermisst du am meisten? Schreib's in die Kommentare.",
+   "cap": "Und was *vermisst du am *meisten? Schreib's in die *Kommentare."
+  }
+ ]
+}

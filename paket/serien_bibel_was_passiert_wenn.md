@@ -37,3 +37,4 @@ Diese Datei ist die feste Referenz für **jede** neue Folge. Vor jeder Produktio
 3. Was passiert, wenn du bei jedem Namen 1 cm schrumpfst? – fertig (Gedankenexperiment; Hauptfigur = „du“, Ende: Freunde markieren)
 4. Was passiert, wenn du jeden Tag bis spät in die Nacht wach bist? – fertig (Dramaturgie: erst verlockend „Zeit für dich“, Kipp-Punkt Wecker; Quellen AASM/SRS 2015, Van Dongen 2003, Prather 2015, Wittmann 2006)
 5. Was passiert, wenn wir die Zeitumstellung abschaffen? – fertig (Anlass: Umstellung am 25.10.2026; erst „Stunde geschenkt“, dann Haken Sommer- vs. Winterzeit; Stand EU Oktober 2026: Rat ohne Einigung; Sonnenzeiten selbst berechnet)
+6. Was passiert, wenn es auf einmal wieder 2016 wäre? – fertig (Gedankenexperiment, Nostalgie; geprüft: Fortnite 2017, Reels 2020, Shorts in DE 2021, TikTok 2016 noch nicht in DE; Ende: an „2016-Buddy“ schicken)
