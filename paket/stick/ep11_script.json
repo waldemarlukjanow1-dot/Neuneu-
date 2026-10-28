@@ -1,0 +1,61 @@
+{
+ "episode": "ep11",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "JEDER SEINE RESTLICHE LEBENSZEIT SIEHT?"
+ ],
+ "sources": "Gedankenexperiment · Destatis 2026 · life2vec (Dänemark, 2023) · Gigerenzer & Garcia-Retamero 2017",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Stell dir vor, über jedem Kopf schwebt eine Uhr. Sie zeigt, wie viel Lebenszeit dir noch bleibt.",
+   "cap": "Stell dir vor, über *jedem *Kopf schwebt eine *Uhr. Sie zeigt, wie viel *Lebenszeit dir noch *bleibt."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert dann?",
+   "cap": "Was passiert *dann?"
+  },
+  {
+   "scene": "avg",
+   "say": "In Deutschland werden Frauen im Schnitt fast vierundachtzig, Männer rund neunundsiebzig.",
+   "cap": "In *Deutschland werden *Frauen im Schnitt fast *84, *Männer rund *79."
+  },
+  {
+   "scene": "avg",
+   "say": "Klingt viel. Aber das sind nur rund viertausend Wochen.",
+   "cap": "Klingt *viel. Aber das sind nur rund *4.000 *Wochen."
+  },
+  {
+   "scene": "society",
+   "say": "Versicherungen würden nach deiner Uhr abrechnen. Und beim Date fragt jeder: Wie viel Zeit hast du noch?",
+   "cap": "*Versicherungen würden nach deiner *Uhr abrechnen. Und beim *Date fragt jeder: Wie viel *Zeit hast du *noch?"
+  },
+  {
+   "scene": "ai",
+   "say": "Gruselig: Eine KI aus Dänemark lag in einer Studie zu rund achtundsiebzig Prozent richtig, wer die nächsten vier Jahre überlebt.",
+   "cap": "*Gruselig: Eine *KI aus *Dänemark lag in einer Studie zu rund *78 *Prozent *richtig, wer die nächsten *4 *Jahre überlebt."
+  },
+  {
+   "scene": "behave",
+   "say": "Manche würden endlich leben, statt alles zu verschieben. Andere würden leichtsinnig, weil ihre Uhr ja noch lange läuft.",
+   "cap": "Manche würden *endlich *leben, statt alles zu *verschieben. Andere würden *leichtsinnig, weil ihre Uhr ja noch *lange läuft."
+  },
+  {
+   "scene": "study",
+   "say": "Aber in einer Studie wollten fast neun von zehn Menschen schlechte Dinge aus ihrer Zukunft lieber nicht wissen.",
+   "cap": "Aber in einer *Studie wollten fast *9 von *10 Menschen *schlechte Dinge aus ihrer *Zukunft lieber *nicht wissen."
+  },
+  {
+   "scene": "aha",
+   "say": "Die Uhr läuft sowieso. Du siehst sie nur nicht.",
+   "gap": 0.2,
+   "cap": "Die Uhr *läuft *sowieso. Du *siehst sie nur *nicht."
+  },
+  {
+   "scene": "outro",
+   "say": "Würdest du deine Zahl sehen wollen? Und markier jemanden, mit dem du deine Zeit verbringen willst.",
+   "cap": "Würdest *du deine *Zahl sehen wollen? Und *markier jemanden, mit dem du deine *Zeit verbringen willst."
+  }
+ ]
+}

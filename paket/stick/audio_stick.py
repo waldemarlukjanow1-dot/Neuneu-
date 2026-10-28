@@ -419,6 +419,43 @@ if 'closeup' in sc:  # Folge 10 (Vape)
     s = sc['fair']; place(fx, popsfx(), wt('fair', 'weniger') - 0.2, 0.3); place(fx, crack(), wt('fair', 'Harmlos') - 0.2, 0.4)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, ding(1560), s['start'] + 0.6, 0.18)
 
+if 'behave' in sc:  # Folge 11 (Lebenszeit)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def clock_tick(hi=True):
+        n = int(0.05 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 2500 if hi else 1500, 7000) * np.exp(-x * 160)
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def beep(f=1800, d=0.08):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * f * x) * np.minimum(1, (d - x) / 0.01) * np.minimum(1, x / 0.005)
+    def ticking(t0, t1, g_, fade_out=False):
+        k = 0; tt = t0
+        while tt < t1:
+            a_ = g_ * ((1 - (tt - t0) / max(0.1, t1 - t0)) if fade_out else 1)
+            place(fx, clock_tick(k % 2 == 0), tt, a_); tt += 0.5; k += 1
+    h = sc['hook']; ticking(h['start'] + 0.2, h['end'], 0.35)
+    place(fx, ding(1320), wt('hook', 'Uhr') - 0.2, 0.2); place(fx, low_boom(), ph['hook'][1]['start'] - 0.1, 0.4)
+    s = sc['avg']; place(fx, popsfx(), wt('avg', 'Frauen') - 0.2, 0.28); place(fx, popsfx(), wt('avg', 'Männer') - 0.2, 0.28)
+    p2 = ph['avg'][1]['start']
+    for k in range(12): place(fx, tick(), p2 + k * 0.11, 0.3)
+    place(fx, drumhit(), p2 + 1.25, 0.4)
+    s = sc['society']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, crack(), s['start'] + 1.6, 0.3); place(fx, popsfx(), wt('society', 'Date') - 0.3, 0.3)
+    s = sc['ai']; place(fx, low_boom(), s['start'] + 0.1, 0.45)
+    for k in range(6): place(fx, beep(1600 + 200 * (k % 3)), s['start'] + 0.4 + k * 0.15, 0.15)
+    place(fx, ding(990), wt('ai', 'Prozent'), 0.2)
+    s = sc['behave']; place(fx, sparkle(), s['start'] + 0.3, 0.25); place(fx, whoosh(0.5), wt('behave', 'Andere') - 0.3, 0.3)
+    s = sc['study']
+    for k in range(10): place(fx, popsfx(), s['start'] + 0.6 + k * 0.12, 0.12)
+    s = sc['aha']; ticking(s['start'] + 0.1, s['end'] + 1.2, 0.4, fade_out=True)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
