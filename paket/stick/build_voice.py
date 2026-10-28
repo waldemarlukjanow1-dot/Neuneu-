@@ -54,7 +54,7 @@ for i, p in enumerate(script['phrases']):
 # timeline
 t = 0.35; phrases = []; prev_scene = None
 for p, wav in zip(script['phrases'], clips):
-    if prev_scene is not None: t += 0.5 if p['scene'] != prev_scene else 0.22
+    if prev_scene is not None: t += (0.5 if p['scene'] != prev_scene else 0.22) + p.get('gap', 0)   # optional extra pause
     dur = len(wav) / SR_OUT
     say, cap = p['say'].split(), p['cap'].split()
     # word weights ~ syllable-ish length; punctuation adds a small pause after the word

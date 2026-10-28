@@ -1,0 +1,72 @@
+{
+ "episode": "ep10",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG AN EINER VAPE ZIEHST?"
+ ],
+ "sources": "TPD/TabakerzG: max. 2 ml, 20 mg/ml · Drogenaffinitätsstudie 2025 (BIÖG) · DKFZ",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Himbeerkuchen, Blaubeer-Eis, Mango Ice: Vapes schmecken wie Nachtisch.",
+   "cap": "*Himbeerkuchen, *Blaubeer-Eis, *Mango *Ice: Vapes schmecken wie *Nachtisch."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du jeden Tag daran ziehst?",
+   "cap": "Was passiert, wenn du *jeden *Tag daran ziehst?"
+  },
+  {
+   "scene": "day1",
+   "say": "Tag eins: Ein Zug, und das Nikotin ist in Sekunden im Gehirn. Kurz fühlst du dich wach und entspannt.",
+   "cap": "*Tag *1: Ein Zug, und das *Nikotin ist in *Sekunden im *Gehirn. Kurz fühlst du dich *wach und *entspannt."
+  },
+  {
+   "scene": "week",
+   "say": "Nach ein paar Wochen will dein Körper mehr. Ohne Vape wirst du gereizt und unruhig.",
+   "cap": "Nach ein paar *Wochen will dein Körper *mehr. Ohne Vape wirst du *gereizt und *unruhig."
+  },
+  {
+   "scene": "device",
+   "say": "In einer Einweg-Vape stecken bis zu vierzig Milligramm Nikotin: zwei Milliliter mit zwanzig Milligramm pro Milliliter.",
+   "cap": "In einer *Einweg-Vape stecken bis zu *40 *Milligramm *Nikotin: *2 *Milliliter mit *20 *Milligramm pro Milliliter."
+  },
+  {
+   "scene": "body",
+   "say": "Nikotin lässt Puls und Blutdruck steigen. Und dein Gehirn entwickelt sich noch bis etwa Mitte zwanzig.",
+   "cap": "Nikotin lässt *Puls und *Blutdruck steigen. Und dein *Gehirn entwickelt sich noch bis etwa *Mitte *zwanzig."
+  },
+  {
+   "scene": "youth",
+   "say": "Bei Jugendlichen in Deutschland hat sich das Vapen seit zweitausendeinundzwanzig mehr als verdoppelt.",
+   "cap": "Bei *Jugendlichen in Deutschland hat sich das *Vapen seit *2021 mehr als *verdoppelt."
+  },
+  {
+   "scene": "money",
+   "say": "Und dein Geld? Drei Vapes pro Woche für je neun Euro: über vierzehnhundert Euro im Jahr.",
+   "cap": "Und dein *Geld? *3 Vapes pro Woche für je *9 *Euro: über *1.400 *Euro im *Jahr."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Musst du wirklich an Himbeerkuchen-Vapes ziehen?",
+   "cap": "Musst du *wirklich an *Himbeerkuchen-Vapes ziehen?",
+   "gap": 0.7
+  },
+  {
+   "scene": "fair",
+   "say": "Für Raucher ist Dampfen wohl weniger schädlich als Zigaretten. Harmlos ist es trotzdem nicht.",
+   "cap": "Für *Raucher ist Dampfen wohl *weniger *schädlich als Zigaretten. *Harmlos ist es trotzdem *nicht.",
+   "gap": 0.5
+  },
+  {
+   "scene": "outro",
+   "say": "Aufhören? Die Rauchfrei-Hotline hilft kostenlos. Und markier jemanden, der das hier sehen muss.",
+   "cap": "*Aufhören? Die *Rauchfrei-Hotline hilft *kostenlos. Und *markier jemanden, der das hier *sehen muss."
+  }
+ ]
+}

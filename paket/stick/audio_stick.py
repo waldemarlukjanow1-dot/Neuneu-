@@ -331,7 +331,7 @@ if 'spiral' in sc:  # Folge 08
     s = sc['aha']; place(fx, power_off(), s['start'] + 0.3, 0.4); place(fx, birds(2.6), s['start'] + 0.5, 0.15); place(fx, sparkle(), wt('aha', 'hier') - 0.3, 0.25)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
 
-if 'fair' in sc:  # Folge 09
+if 'fair' in sc and 'amg' in sc:  # Folge 09
     def wt(sid, prefix, k=0):
         for p in ph[sid]:
             for w in p['words']:
@@ -377,6 +377,47 @@ if 'fair' in sc:  # Folge 09
     s = sc['aha']; place(fx, v8(2.2, 900, 3600), s['start'] + 0.05, 0.5)
     for k in range(3): place(fx, backfire(), s['start'] + 0.9 + k * 0.5, 0.4)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, backfire(), s['start'] + 0.8, 0.3)
+
+if 'closeup' in sc:  # Folge 10 (Vape)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def inhale(d=0.9):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 400, 3000) * (x / d) ** 1.5 * np.minimum(1, (d - x) / 0.05) * 0.6
+    def exhale(d=1.2):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 200, 1800) * np.exp(-x * 2.5) * np.minimum(1, x / 0.05) * 0.7
+    def heartbeat2():
+        n = int(0.18 * SR); x = np.arange(n) / SR; return np.sin(2 * np.pi * 55 * x) * np.exp(-x * 25)
+    def coin_sfx():
+        n = int(0.4 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 2600 * x) + 0.6 * np.sin(2 * np.pi * 3900 * x)) * np.exp(-x * 10)
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    for re_ in ('Himbeerkuchen', 'Blaubeer', 'Mango'): place(fx, popsfx(), wt('hook', re_) - 0.3, 0.25)
+    place(fx, exhale(1.2), wt('hook', 'Nachtisch') - 0.4, 0.3); place(fx, ding(1320), wt('hook', 'Nachtisch') - 0.2, 0.15)
+    s = sc['day1']; place(fx, inhale(0.9), s['start'] + 0.3, 0.35); place(fx, exhale(1.3), s['start'] + 1.3, 0.3); place(fx, sparkle(), wt('day1', 'Sekunden') - 0.3, 0.25)
+    s = sc['week']
+    for k in range(10): place(fx, tick(), s['start'] + 0.2 + k * 0.25, 0.3)
+    place(fx, popsfx(), wt('week', 'gereizt') - 0.2, 0.3); place(fx, popsfx(), wt('week', 'unruhig') - 0.2, 0.3)
+    s = sc['device']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, ding(990), s['start'] + 0.6, 0.18)
+    s = sc['body']
+    for k in range(10): place(fx, heartbeat2(), s['start'] + 0.3 + k * 0.42, 0.55); place(fx, heartbeat2(), s['start'] + 0.45 + k * 0.42, 0.35)
+    s = sc['youth']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, whoosh(0.6), s['start'] + 1.0, 0.3); place(fx, bloop(), wt('youth', 'verdoppelt') - 0.2, 0.4)
+    s = sc['money']
+    for k in range(14): place(fx, coin_sfx(), s['start'] + 0.8 + k * 0.18, 0.1)
+    place(fx, drumhit(), s['end'] - 2.0, 0.35)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'Himbeerkuchen') + 0.6, 0.25)
+    s = sc['fair']; place(fx, popsfx(), wt('fair', 'weniger') - 0.2, 0.3); place(fx, crack(), wt('fair', 'Harmlos') - 0.2, 0.4)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, ding(1560), s['start'] + 0.6, 0.18)
 
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
