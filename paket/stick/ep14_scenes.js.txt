@@ -1,0 +1,218 @@
+// ---------- scene data ----------
+// extra poses for this episode (sitting on the sofa: legs bent 90°, figure lowered by SIT_BOB)
+POSES.sit = { torso: -0.12, head: 0.06, armL: [0.45, 0.9], armR: [0.9, 1.6], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.sitSnack = { torso: -0.1, head: 0.02, armL: [0.45, 0.9], armR: [0.75, 1.9], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.stretch = { torso: 0, head: -0.12, armL: [2.9, 0.15], armR: [2.9, 0.15], legL: [0.14, 0], legR: [0.14, 0] };
+const SIT_BOB = -118;
+const NIGHT = new Set(['hook', 'n22', 'n0', 'n2']);
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const hhmm = (m) => { m = ((Math.floor(m / 5) * 5) % 1440 + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function sofa(x, s = 0.84) {
+  const G = 1165, seat = G - 96 * s;
+  g.save(); g.strokeStyle = INK; g.lineWidth = 7; g.lineJoin = 'round';
+  rr(x - 150 * s, seat - 220 * s, 72 * s, 240 * s, 22 * s); g.fillStyle = '#ef476f'; g.fill(); g.stroke();
+  rr(x - 185 * s, seat, 300 * s, G - seat - 18 * s, 18 * s); g.fillStyle = '#d63a5c'; g.fill(); g.stroke();
+  rr(x - 110 * s, seat - 22 * s, 225 * s, 34 * s, 14 * s); g.fillStyle = '#ff7096'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 170 * s, G - 20 * s, 16 * s, 20 * s); g.fillRect(x + 90 * s, G - 20 * s, 16 * s, 20 * s);
+  g.restore();
+}
+function phone(g2, h) {
+  g.save(); g.translate(h.hx + 6, h.hy - 20); g.rotate(-0.25);
+  rr(-17, -32, 34, 62, 8); g.fillStyle = INK; g.fill(); rr(-12, -26, 24, 48, 4); g.fillStyle = '#bfe6ff'; g.fill(); g.restore();
+}
+function popcorn(g2, h) {
+  g.save(); g.translate(h.hx + 4, h.hy - 16);
+  g.fillStyle = '#fff6e6'; g.strokeStyle = INK; g.lineWidth = 3;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(-18 + i * 7, -34 - (i % 2) * 8, 10, 0, 7); g.fill(); g.stroke(); }
+  g.beginPath(); g.moveTo(-26, -30); g.lineTo(26, -30); g.lineTo(18, 24); g.lineTo(-18, 24); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#ef476f'; for (const sx of [-14, 2]) { g.beginPath(); g.moveTo(sx, -30); g.lineTo(sx + 9, -30); g.lineTo(sx + 7, 24); g.lineTo(sx - 1, 24); g.closePath(); g.fill(); }
+  g.restore();
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function tv(x, y, u, t, tNext) {
+  g.save(); g.strokeStyle = INK; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - 60, y + 115); g.lineTo(x - 100, 1165); g.moveTo(x + 60, y + 115); g.lineTo(x + 100, 1165); g.stroke();
+  rr(x - 175, y - 118, 350, 236, 22); g.fillStyle = '#14161c'; g.fill(); g.lineWidth = 7; g.stroke();
+  const gr = g.createLinearGradient(0, y - 100, 0, y + 100); gr.addColorStop(0, '#4cc9f0'); gr.addColorStop(1, '#7209b7');
+  rr(x - 155, y - 98, 310, 196, 12); g.fillStyle = gr; g.fill();
+  const cd = tNext === null ? 99 : u - tNext;
+  if (cd < 0) { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 6', x, y + 70, 30, '#fff', { lw: 6 }); }
+  else if (cd < 2.4) { text('Nächste Folge in', x, y - 20, 28, '#fff', { weight: 800 }); text(String(3 - Math.floor(cd / 0.8)), x, y + 62, 84, YEL, { lw: 10 }); }
+  else { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 7', x, y + 70, 30, YEL, { lw: 6 }); }
+  g.restore();
+}
+function alarmClock(x, y, s, shake, t) {
+  withScale(x, y, s, () => {
+    g.rotate(Math.sin(t * 55) * 0.09 * shake);
+    for (const sd of [-1, 1]) { g.save(); g.rotate(sd * 0.62); g.fillStyle = YEL; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, -150, 50, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    g.strokeStyle = INK; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(-70, 100); g.lineTo(-105, 155); g.moveTo(70, 100); g.lineTo(105, 155); g.stroke();
+    g.fillStyle = '#ef476f'; g.lineWidth = 9; g.beginPath(); g.arc(0, 0, 138, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#fff'; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 106, 0, 7); g.fill(); g.stroke();
+    text('07:00', 0, 22, 64, INK);
+    if (shake > 0.5) {
+      g.strokeStyle = '#fff'; g.lineWidth = 8;
+      for (let k = 0; k < 3; k++) { g.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 12 + k)); for (const a0 of [-0.45, Math.PI - 0.45]) { g.beginPath(); g.arc(0, 0, 175 + k * 30, a0, a0 + 0.9); g.stroke(); } }
+      g.globalAlpha = 1;
+    }
+  });
+}
+function battery(x, y, w, h, level) {
+  rr(x - w / 2, y - h / 2, w, h, 20); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  rr(x + w / 2 + 2, y - h * 0.22, 20, h * 0.44, 6); g.fillStyle = INK; g.fill();
+  g.save(); rr(x - w / 2 + 12, y - h / 2 + 12, w - 24, h - 24, 12); g.clip();
+  g.fillStyle = level > 0.5 ? '#06d6a0' : level > 0.28 ? YEL : '#ef476f'; g.fillRect(x - w / 2 + 12, y - h / 2 + 12, (w - 24) * level, h - 24); g.restore();
+  text(Math.round(level * 100) + ' %', x, y + 16, 46, INK);
+}
+
+
+// ---------- Handy-am-Morgen-Folge ----------
+function person(x, y, s, hair, color, expr, pose = POSES.stand, facing = 0) { return drawKappi(g, { x, y, scale: s, facing, pose, expr, extra: { hair, color } }); }
+function donut(x, y, r, frac, col) {
+  g.lineWidth = r * 0.32; g.strokeStyle = 'rgba(255,255,255,0.35)'; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke();
+  g.strokeStyle = col; g.lineCap = 'butt'; g.beginPath(); g.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); g.stroke();
+  g.strokeStyle = INK; g.lineWidth = 6; for (const r2 of [r * 1.16, r * 0.84]) { g.beginPath(); g.arc(x, y, r2, 0, 7); g.stroke(); }
+}
+function bigPhone(x, y, s, screen) {
+  withScale(x, y, s, () => { rr(-110, -200, 220, 400, 30); g.fillStyle = INK; g.fill(); rr(-96, -180, 192, 360, 18); g.fillStyle = '#f1f3f5'; g.fill(); screen && screen(); });
+}
+function notifPill(x, y, s, txt) { withScale(x, y, s, () => { g.font = `800 28px ${EMO}`; const w = g.measureText(txt).width + 36; rr(-w / 2, -26, w, 52, 18); g.fillStyle = 'rgba(255,255,255,0.95)'; g.fill(); g.strokeStyle = INK; g.lineWidth = 4; g.stroke(); text(txt, 0, 10, 28, INK, { weight: 800, font: EMO }); }); }
+function windowSun(x, y, s, rise, t) {
+  withScale(x, y, s, () => {
+    rr(-140, -150, 280, 300, 14); g.save(); g.clip(); const gr = g.createLinearGradient(0, -150, 0, 150); gr.addColorStop(0, '#8ee3ff'); gr.addColorStop(1, '#ffd6a5'); g.fillStyle = gr; g.fillRect(-140, -150, 280, 300);
+    g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(0, lerp(170, 20, rise), 60, 0, 7); g.fill(); g.restore();
+    g.strokeStyle = INK; g.lineWidth = 8; rr(-140, -150, 280, 300, 14); g.stroke(); g.beginPath(); g.moveTo(0, -150); g.lineTo(0, 150); g.moveTo(-140, 0); g.lineTo(140, 0); g.stroke();
+  });
+}
+function glassW(x, y, s, t) { withScale(x, y, s, () => { g.save(); g.beginPath(); g.moveTo(-40, -120); g.lineTo(40, -120); g.lineTo(32, 0); g.lineTo(-32, 0); g.closePath(); g.clip(); g.fillStyle = '#4cc9f0'; g.fillRect(-50, -90 + Math.sin(t * 3) * 2, 100, 100); g.restore(); g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.moveTo(-40, -120); g.lineTo(-32, 0); g.lineTo(32, 0); g.lineTo(40, -120); g.stroke(); }); }
+function door(x, s) { withScale(x, 1165, s, () => { rr(-90, -380, 180, 380, 8); g.fillStyle = '#c98b5a'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke(); g.fillStyle = INK; g.beginPath(); g.arc(60, -190, 10, 0, 7); g.fill(); }); }
+
+const BG = {
+  hook: ['#3a2a9e', '#1d1258'], stat: ['#7f6cf0', '#4834d4'], react: ['#ff8fb1', '#d6336c'], focus: ['#2b2d42', '#14213d'],
+  morning: ['#ffd6a5', '#ff9f68'], study: ['#3fd0c1', '#159a8f'], tip: ['#a0c4ff', '#4361ee'], outro: ['#ffc83d', '#fb5607'],
+};
+const STATIONS = [['Statistik', 'stat'], ['Reaktion', 'react'], ['Fokus', 'focus'], ['Morgen', 'morning'], ['Studie', 'study'], ['Trick', 'tip']];
+const stationIdx = { hook: -1, stat: 0, react: 1, focus: 2, morning: 3, study: 4, tip: 5, outro: 5.5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255,255,255,0.08)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(0,0,0,0.10)'; g.fillRect(0, GROUND, W, H - GROUND);
+  g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke();
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function kappiState(sc, u, t) {
+  let pos = { x: 260, scale: 0.8 }, keys = [[0, 'stand', 'neutral']], facing = 0, hold = null;
+  switch (sc.id) {
+    case 'hook': { const tH = at(/^Handy/, 'hook', sc, -0.4); keys = [[0, 'stretch', 'sick'], [tH, 'hold', 'neutral'], [phStart('hook', 1, sc), 'think', 'thinking']]; if (u > tH && u < phStart('hook', 1, sc)) hold = phone; break; }
+    case 'stat': keys = [[0, 'point', 'talk']]; break;
+    case 'react': hold = phone; keys = [[0, 'hold', 'worried'], [at(/^fremde/, 'react', sc, -0.3), 'scared', 'sick']]; break;
+    case 'focus': keys = [[0, 'think', 'thinking'], [at(/^23|^dreiundzwanzig/, 'focus', sc, -0.3), 'shrug', 'surprised']]; break;
+    case 'morning': keys = [[0, 'stretch', 'joy'], [at(/^Wasser/, 'morning', sc, -0.3), 'chest', 'happy']]; break;
+    case 'study': keys = [[0, 'point', 'talk'], [phStart('study', 1, sc), 'flex', 'proud']]; break;
+    case 'tip': keys = [[0, 'pointUp', 'determined']]; break;
+    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; keys = [[0, 'point', 'happy']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.3));
+  return { x: pos.x, y: 1165, scale: pos.scale, facing, hold, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2] };
+}
+function sceneBack(sc, u, t) {
+  if (sc.id === 'tip') door(800, 0.9);
+  if (sc.id === 'morning') windowSun(760, 700, 0.95, ease(clamp01(u / 3)), t);
+}
+function drawKappiFor(sc, u, t) { const st = kappiState(sc, u, t); st.blink = blink(t); st.mouth = talkingMouth(t); return drawKappi(g, st); }
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  switch (sc.id) {
+    case 'hook': {
+      const tW = at(/^Wecker/, 'hook', sc, -0.3), tH = at(/^Handy/, 'hook', sc, -0.4), p2 = phStart('hook', 1, sc);
+      alarmClock(780, 760, 0.6 * pop(u, tW), u < tH ? 1 : 0, t);
+      digi(780, 560, 0.55 * pop(u, tW), '06:30', YEL);
+      if (u > tH && u < p2) ['💬 12', '📩 5', '📰 News', '🔔 3'].forEach((m, i) => notifPill(lerp(500, 920, (i % 2)), 960 + Math.floor(i / 2) * 75, pop(u, tH + 0.2 + i * 0.12) * 0.9, m));
+      if (u > p2) withScale(700, 1000, pop(u, p2), () => pill(0, 0, 1, '📵 einfach mal lassen?', YEL, INK, 34));
+      break;
+    }
+    case 'stat': {
+      const tD = at(/^Drittel/, 'stat', sc, -0.3), tJ = at(/^jeder/, 'stat', sc, -0.3);
+      const f = 0.362 * ease(clamp01((u - tD) / 0.9));
+      if (u > tD) withScale(720, 760, pop(u, tD), () => { donut(0, 0, 120, f, '#ffd23f'); text((f * 100).toFixed(1).replace('.', ',') + ' %', 0, 16, 46, '#fff', { lw: 10 }); });
+      withScale(720, 560, pop(u, tD + 0.3), () => pill(0, 0, 1, '📱 direkt nach dem Aufwachen', '#fff', INK, 30));
+      if (u > tJ) withScale(720, 980, pop(u, tJ), () => pill(0, 0, 1, '16–30 Jahre: jeder Zweite', YEL, INK, 32));
+      withScale(720, 1060, pop(u, tD + 1.0), () => text('IU-Studie 2026 · 2.000 Befragte', 0, 0, 22, '#fff', { weight: 800, lw: 6 }));
+      break;
+    }
+    case 'react': {
+      const items = ['📩 Mail vom Chef', '💬 Gruppenchat: 47', '📰 Eilmeldung', '🔔 Erinnerung', '📸 neue Story', '💸 Rechnung'];
+      items.forEach((m, i) => { const t0 = 0.3 + i * 0.5; if (u > t0) { const fall = ease(clamp01((u - t0) / 0.5)); notifPill(600 + (i % 2) * 110, lerp(520, 610 + i * 85, fall), 0.85, m); } });
+      if (u > at(/^Reaktionsmodus/, 'react', sc, -0.3)) withScale(K.head.x + 30, K.head.y - 150, pop(u, at(/^Reaktionsmodus/, 'react', sc, -0.3)), () => text('😵‍💫', 0, 0, 60, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      break;
+    }
+    case 'focus': {
+      const tU = at(/^Unterbrechung/, 'focus', sc, -0.3), tM = at(/^Minuten/, 'focus', sc, -0.3);
+      withScale(700, 620, pop(u, 0.3), () => pill(0, 0, 1, '🎯 Aufgabe', '#fff', INK, 34));
+      if (u > tU) { withScale(700, 720, pop(u, tU), () => text('⚡ Unterbrechung', 0, 0, 40, YEL, { lw: 10, font: EMO })); }
+      if (u > tM - 0.6) { const m = Math.round(23 * ease(clamp01((u - tM + 0.6) / 1.2))); withScale(700, 880, pop(u, tM - 0.6), () => digi(0, 0, 0.8, `${m} min`, '#ff5a5f')); }
+      if (u > tM + 0.8) withScale(700, 1010, pop(u, tM + 0.8), () => text('⌀ zurück zur Aufgabe · Studie (UC Irvine)', 0, 0, 22, '#fff', { weight: 800, lw: 6 }));
+      break;
+    }
+    case 'morning': {
+      const tW = at(/^Wasser/, 'morning', sc, -0.3), tD = at(/^dich/, 'morning', sc, -0.4);
+      if (u > tW) glassW(560, 1160, pop(u, tW), t);
+      [['☀️ Tageslicht', /^Tageslicht/], ['💧 Wasser', /^Wasser/], ['🧘 Zeit für dich', /^dich/]].forEach(([m, re], i) => { const tw = at(re, 'morning', sc, -0.3); if (u > tw) pill(760, 920 + i * 75, pop(u, tw), '✅ ' + m, '#fff', INK, 26); });
+      break;
+    }
+    case 'study': {
+      const p2 = phStart('study', 1, sc), tP = at(/^Prozent/, 'study', sc);
+      if (u < p2) {
+        bigPhone(560, 820, pop(u, 0.2) * 0.7, () => { text('🚫', 0, -20, 110, '#000', { weight: 400, font: '"Noto Color Emoji"' }); text('mobiles', 0, 80, 30, INK); text('Internet', 0, 115, 30, INK); });
+        withScale(860, 540, pop(u, at(/^Wochen/, 'study', sc, -0.3)), () => calendar(0, 0, 0.5, '14', 'TAGE'));
+        const f = 0.91 * ease(clamp01((u - tP + 0.6) / 1.0));
+        if (u > tP - 0.6) withScale(820, 860, pop(u, tP - 0.6), () => { donut(0, 0, 90, f, '#06d6a0'); text(Math.round(f * 100) + ' %', 0, 14, 40, '#fff', { lw: 8 }); });
+        if (u > tP + 0.5) withScale(700, 1010, pop(u, tP + 0.5), () => text('besser: Psyche, Wohlbefinden oder Fokus', 0, 0, 22, '#fff', { weight: 800, lw: 6 }));
+      } else {
+        withScale(680, 700, pop(u, p2), () => pill(0, 0, 1, '🧠 Fokus wie mit', '#fff', INK, 32));
+        withScale(680, 810, pop(u, p2 + 0.4), () => text('−10 Jahren 🔥', 0, 0, 72, YEL, { lw: 14, font: EMO }));
+        withScale(700, 920, pop(u, p2 + 0.9), () => text('467 Teilnehmende · PNAS Nexus 2025', 0, 0, 22, '#fff', { weight: 800, lw: 6 }));
+      }
+      break;
+    }
+    case 'tip': {
+      const tS = at(/^Schlafzimmer/, 'tip', sc, -0.3), tE = at(/^echten/, 'tip', sc, -0.3);
+      if (u > tS) { withScale(890, 870, pop(u, tS), () => { rr(-30, -55, 60, 110, 10); g.fillStyle = INK; g.fill(); rr(-24, -48, 48, 96, 6); g.fillStyle = '#4cc9f0'; g.fill(); text('🔌', 0, 14, 34, '#000', { weight: 400, font: '"Noto Color Emoji"' }); }); withScale(800, 560, pop(u, tS + 0.2), () => pill(0, 0, 1, '📱 lädt draußen', '#fff', INK, 32)); }
+      if (u > tE) { alarmClock(560, 1060, 0.45 * pop(u, tE), 0, t); withScale(560, 900, pop(u, tE + 0.2), () => pill(0, 0, 1, '⏰ echter Wecker', YEL, INK, 30)); }
+      break;
+    }
+    case 'outro': {
+      withScale(690, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Was machst du', 0, -30, 52, INK); text('als Erstes? ☀️📱👇', 0, 55, 48, '#fb5607', { font: EMO }); });
+      withScale(690, 880, pop(u, at(/^markier/, 'outro', sc, -0.2)), () => pill(0, 0, 1, 'Markier den Bett-Scroller 🛌📱', INK, YEL, 32));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 2).join(' · '), 540, 1500, 26, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(2).join(' · '), 540, 1540, 26, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}
+

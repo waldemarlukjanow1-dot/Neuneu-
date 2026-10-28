@@ -1,0 +1,60 @@
+{
+ "episode": "ep14",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU MORGENS NICHT SOFORT AUFS HANDY SCHAUST?"
+ ],
+ "sources": "IU-Studie 2026 · Bitkom · Mark u. a. (UC Irvine) · Castelo u. a., PNAS Nexus 2025",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Der Wecker klingelt, und bevor deine Augen richtig offen sind, hast du schon das Handy in der Hand.",
+   "cap": "Der *Wecker klingelt, und bevor deine *Augen richtig offen sind, hast du schon das *Handy in der *Hand."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du das einfach lässt?",
+   "cap": "Was passiert, wenn du das einfach *lässt?"
+  },
+  {
+   "scene": "stat",
+   "say": "Du bist nicht allein: Über ein Drittel greift direkt nach dem Aufwachen zum Gerät. Bei Sechzehn- bis Dreißigjährigen jeder Zweite.",
+   "cap": "Du bist nicht *allein: Über ein *Drittel greift *direkt nach dem Aufwachen zum Gerät. Bei *16- bis *30-Jährigen *jeder *Zweite."
+  },
+  {
+   "scene": "react",
+   "say": "Das Problem: Du startest im Reaktionsmodus. Nachrichten, Mails, News. Dein Kopf arbeitet schon fremde Aufgaben ab.",
+   "cap": "Das *Problem: Du startest im *Reaktionsmodus. *Nachrichten, *Mails, *News. Dein Kopf arbeitet schon *fremde *Aufgaben ab."
+  },
+  {
+   "scene": "focus",
+   "say": "In einer Studie brauchten Menschen nach einer Unterbrechung im Schnitt dreiundzwanzig Minuten, bis sie wieder bei ihrer Aufgabe waren.",
+   "cap": "In einer *Studie brauchten Menschen nach einer *Unterbrechung im Schnitt *23 *Minuten, bis sie wieder bei ihrer *Aufgabe waren."
+  },
+  {
+   "scene": "morning",
+   "say": "Ohne Handy startest du anders: erst Tageslicht, ein Glas Wasser, ein paar Minuten nur für dich.",
+   "cap": "Ohne *Handy startest du *anders: erst *Tageslicht, ein Glas *Wasser, ein paar Minuten nur für *dich."
+  },
+  {
+   "scene": "study",
+   "say": "In einer Studie blockierten Leute zwei Wochen lang das mobile Internet am Handy. Einundneunzig Prozent ging es danach in mindestens einem Bereich besser.",
+   "cap": "In einer Studie *blockierten Leute *2 *Wochen lang das *mobile *Internet am Handy. *91 *Prozent ging es danach in mindestens einem Bereich *besser."
+  },
+  {
+   "scene": "study",
+   "say": "Ihre Aufmerksamkeit war so gut wie bei zehn Jahre Jüngeren.",
+   "cap": "Ihre *Aufmerksamkeit war so gut wie bei *10 *Jahre *Jüngeren."
+  },
+  {
+   "scene": "tip",
+   "say": "Der Trick: Lade dein Handy nachts außerhalb vom Schlafzimmer und nimm einen echten Wecker.",
+   "cap": "Der *Trick: Lade dein Handy nachts *außerhalb vom *Schlafzimmer und nimm einen *echten *Wecker."
+  },
+  {
+   "scene": "outro",
+   "say": "Was machst du als Erstes nach dem Aufwachen? Und markier jemanden, der schon im Bett scrollt!",
+   "cap": "Was machst du als *Erstes nach dem *Aufwachen? Und *markier jemanden, der schon im *Bett *scrollt!"
+  }
+ ]
+}
