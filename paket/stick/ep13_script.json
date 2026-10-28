@@ -1,0 +1,65 @@
+{
+ "episode": "ep13",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "24 STUNDEN NIEMAND LÜGEN KANN?"
+ ],
+ "sources": "Gedankenexperiment · Serota u. a. 2010 · Bond & DePaulo 2006 · „Der Dummschwätzer“ (1997)",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Ab Mitternacht kann vierundzwanzig Stunden lang niemand mehr lügen. Kein einziges Mal.",
+   "cap": "Ab *Mitternacht kann *24 *Stunden lang *niemand mehr *lügen. Kein *einziges Mal."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert?",
+   "cap": "Was *passiert?"
+  },
+  {
+   "scene": "h7",
+   "say": "Sieben Uhr. Wie seh ich aus? Ehrlich? Müde.",
+   "cap": "*7 *Uhr. Wie seh ich *aus? *Ehrlich? *Müde."
+  },
+  {
+   "scene": "h9",
+   "say": "Neun Uhr, im Büro. Wie war dein Wochenende? Zu kurz. Und Ihr Meeting ist unnötig.",
+   "cap": "*9 *Uhr, im *Büro. Wie war dein *Wochenende? Zu *kurz. Und Ihr *Meeting ist *unnötig."
+  },
+  {
+   "scene": "h12",
+   "say": "Zwölf Uhr, bei Oma. Schmeckt's? Zu salzig.",
+   "cap": "*12 *Uhr, bei *Oma. Schmeckt's? Zu *salzig."
+  },
+  {
+   "scene": "h15",
+   "say": "Fünfzehn Uhr. Wo sind deine Hausaufgaben? Hatte keine Lust.",
+   "cap": "*15 *Uhr. Wo sind deine *Hausaufgaben? Hatte *keine *Lust."
+  },
+  {
+   "scene": "h20",
+   "say": "Zwanzig Uhr, im Gruppenchat. Bin gleich da! Ich lieg noch im Bett.",
+   "cap": "*20 *Uhr, im *Gruppenchat. Bin *gleich *da! Ich lieg noch im *Bett."
+  },
+  {
+   "scene": "stats",
+   "say": "Dabei lügen Menschen im Schnitt nur ein- bis zweimal am Tag. In einer US-Studie lagen sechzig Prozent sogar bei null.",
+   "cap": "Dabei lügen Menschen im *Schnitt nur *1- bis *2-mal am Tag. In einer *US-Studie lagen *60 *Prozent sogar bei *null."
+  },
+  {
+   "scene": "detect",
+   "say": "Und erkennen können wir Lügen kaum: Nur in vierundfünfzig Prozent der Fälle. Kaum besser als Raten.",
+   "cap": "Und *erkennen können wir Lügen *kaum: Nur in *54 *Prozent der Fälle. Kaum besser als *Raten."
+  },
+  {
+   "scene": "film",
+   "say": "Genau das passiert übrigens Jim Carrey im Film Der Dummschwätzer.",
+   "cap": "Genau das passiert übrigens *Jim *Carrey im Film *Der *Dummschwätzer."
+  },
+  {
+   "scene": "outro",
+   "say": "Welche Notlüge würdest du am meisten vermissen? Und markier den größten Lügner in deinem Freundeskreis!",
+   "cap": "Welche *Notlüge würdest du am meisten *vermissen? Und *markier den *größten *Lügner in deinem Freundeskreis!"
+  }
+ ]
+}

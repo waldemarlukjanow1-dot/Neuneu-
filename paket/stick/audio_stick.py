@@ -498,6 +498,42 @@ if 'price' in sc and 'tip' in sc:  # Folge 12 (Wasser)
     place(fx, sparkle(), wt('tip', 'hellgelb') - 0.4, 0.25)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
 
+if 'detect' in sc and 'h7' in sc:  # Folge 13 (Lügen)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def stampS():
+        n = int(0.3 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(120 * np.exp(-x * 10) + 45) / SR) * np.exp(-x * 14) + bp(rng.standard_normal(n), 300, 2000) * np.exp(-x * 40) * 0.5
+    def notif():
+        n = int(0.18 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 1320 * x) * (x < 0.08) + np.sin(2 * np.pi * 1760 * x) * (x >= 0.08)) * np.exp(-x * 12)
+    def buzzer():
+        n = int(0.5 * SR); x = np.arange(n) / SR
+        return np.sign(np.sin(2 * np.pi * 140 * x)) * 0.3 * np.minimum(1, (0.5 - x) / 0.05)
+    def bell():
+        n = int(1.2 * SR); x = np.arange(n) / SR
+        return sum(np.sin(2 * np.pi * f * x) * np.exp(-x * d) for f, d in ((523, 2.5), (784, 3.5), (1046, 4)))
+    h = sc['hook']; place(fx, bell(), wt('hook', 'Mitternacht') - 0.3, 0.3); place(fx, buzzer(), wt('hook', 'lügen') + 0.2, 0.35); place(fx, popsfx(), wt('hook', 'lügen') + 0.8, 0.3)
+    for sid in ('h7', 'h9', 'h12', 'h15'):
+        p = ph[sid][0]; ws = [w for w in p['words']]
+        place(fx, popsfx(), sc[sid]['start'] + 0.15, 0.25)
+    place(fx, popsfx(), wt('h7', 'Wie') - 0.2, 0.25); place(fx, popsfx(), wt('h7', 'Ehrlich') - 0.2, 0.25); place(fx, stampS(), wt('h7', 'Ehrlich') + 0.2, 0.45)
+    place(fx, popsfx(), wt('h9', 'Wie') - 0.2, 0.25); place(fx, stampS(), wt('h9', 'Zu') + 0.2, 0.45)
+    place(fx, popsfx(), wt('h12', 'Schmeckt') - 0.2, 0.25); place(fx, stampS(), wt('h12', 'Zu') + 0.2, 0.45)
+    place(fx, popsfx(), wt('h15', 'Wo') - 0.2, 0.25); place(fx, stampS(), wt('h15', 'Hatte') + 0.2, 0.45)
+    tI = wt('h20', 'Ich'); place(fx, notif(), sc['h20']['start'] + 0.4, 0.3); place(fx, notif(), tI - 1.6, 0.3); place(fx, crack(), tI - 0.2, 0.3); place(fx, notif(), tI, 0.3)
+    s = sc['stats']; place(fx, popsfx(), s['start'] + 0.3, 0.3); tn = wt('stats', 'null')
+    for k in range(10): place(fx, popsfx(), tn - 0.3 + k * 0.06, 0.12)
+    s = sc['detect']; tp = wt('detect', 'Prozent')
+    for k in range(10): place(fx, tick(), tp - 1.0 + k * 0.1, 0.35)
+    place(fx, buzzer(), wt('detect', 'Raten') - 0.3, 0.25)
+    s = sc['film']; place(fx, whoosh(0.5), s['start'] + 0.2, 0.3); place(fx, ding(1320), s['start'] + 0.5, 0.2)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
