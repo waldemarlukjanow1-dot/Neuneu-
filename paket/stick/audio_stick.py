@@ -456,6 +456,48 @@ if 'behave' in sc:  # Folge 11 (Lebenszeit)
     s = sc['aha']; ticking(s['start'] + 0.1, s['end'] + 1.2, 0.4, fade_out=True)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35)
 
+if 'price' in sc and 'tip' in sc:  # Folge 12 (Wasser)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def fizz(d=1.2):
+        n = int(d * SR); x = np.arange(n) / SR
+        return hp(rng.standard_normal(n), 4000) * (rng.random(n) < 0.08) * np.exp(-x * 1.5) * 1.5
+    def clink():
+        n = int(0.4 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 3200 * x) + 0.6 * np.sin(2 * np.pi * 4700 * x)) * np.exp(-x * 14)
+    def drip():
+        n = int(0.15 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(600 + 1800 * x / 0.15) / SR) * np.exp(-x * 30)
+    def tap(d=2.4):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 400, 4000) * (0.7 + 0.3 * np.sin(2 * np.pi * 7 * x)) * np.minimum(1, x / 0.2) * np.minimum(1, (d - x) / 0.3) * 0.5
+    def click():
+        n = int(0.04 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 1500, 5000) * np.exp(-x * 120)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    place(fx, popsfx(), wt('hook', 'Kaffee') - 0.3, 0.3); place(fx, fizz(1.0), wt('hook', 'Cola') - 0.3, 0.4); place(fx, clink(), wt('hook', 'Eistee') - 0.3, 0.25)
+    place(fx, crack(), wt('hook', 'Wasser') - 0.1, 0.35)
+    s = sc['body']; place(fx, drip(), s['start'] + 0.3, 0.4)
+    for w_ in ('Atmen', 'Schwitzen', 'Klo'): place(fx, drip(), wt('body', w_) - 0.3, 0.35)
+    s = sc['low']; place(fx, bloop(), s['start'] + 0.2, 0.4); place(fx, popsfx(), wt('low', 'Aufmerksamkeit') - 0.3, 0.25); place(fx, popsfx(), wt('low', 'Ausdauer') - 0.3, 0.25)
+    s = sc['sugar']; place(fx, fizz(1.4), s['start'] + 0.2, 0.4); tw = wt('sugar', 'Würfel')
+    for k in range(17): place(fx, click(), tw - 2.2 + k * 0.12, 0.5)
+    p2 = ph['sugar'][1]['start']
+    for k in range(3): place(fx, popsfx(), p2 + k * 0.4, 0.22)
+    place(fx, crack(), p2 + 1.0, 0.3)
+    for w_ in ('Karies', 'Übergewicht', 'Typ'): place(fx, popsfx(), wt('long', w_) - 0.3, 0.28)
+    s = sc['price']; place(fx, tap(2.6), s['start'] + 0.4, 0.4); place(fx, ding(1560), wt('price', 'halben') - 0.3, 0.2)
+    s = sc['tip']; tl = wt('tip', 'anderthalb') if wt('tip', 'anderthalb') else wt('tip', '1,5')
+    for k in range(6): place(fx, drip(), tl - 0.4 + k * 0.15, 0.3)
+    place(fx, sparkle(), wt('tip', 'hellgelb') - 0.4, 0.25)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

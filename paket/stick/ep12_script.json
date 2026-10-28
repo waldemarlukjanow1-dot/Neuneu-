@@ -1,0 +1,60 @@
+{
+ "episode": "ep12",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU KEIN WASSER TRINKST?"
+ ],
+ "sources": "DGE · WHO · Umweltbundesamt · Meta-Analyse 2018 (Dehydration & Kognition)",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Morgens Kaffee, mittags Cola, abends Eistee. Aber kein einziges Glas Wasser.",
+   "cap": "Morgens *Kaffee, mittags *Cola, abends *Eistee. Aber *kein *einziges Glas *Wasser."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert dann?",
+   "cap": "Was passiert *dann?"
+  },
+  {
+   "scene": "body",
+   "say": "Dein Körper besteht zu rund sechzig Prozent aus Wasser. Und er verliert jeden Tag welches: beim Atmen, Schwitzen und auf dem Klo.",
+   "cap": "Dein *Körper besteht zu rund *60 *Prozent aus *Wasser. Und er *verliert jeden Tag welches: beim *Atmen, *Schwitzen und auf dem *Klo."
+  },
+  {
+   "scene": "low",
+   "say": "Fehlen schon zwei Prozent, leiden Aufmerksamkeit und Ausdauer.",
+   "cap": "Fehlen schon *2 *Prozent, leiden *Aufmerksamkeit und *Ausdauer."
+  },
+  {
+   "scene": "sugar",
+   "say": "Und die Cola? Ein halber Liter hat rund dreiundfünfzig Gramm Zucker. Das sind etwa siebzehn Würfel.",
+   "cap": "Und die *Cola? Ein *halber *Liter hat rund *53 *Gramm *Zucker. Das sind etwa *17 *Würfel."
+  },
+  {
+   "scene": "sugar",
+   "say": "Die WHO rät zu höchstens fünfzig Gramm am Tag, besser nur fünfundzwanzig.",
+   "cap": "Die *WHO rät zu höchstens *50 *Gramm am Tag, besser nur *25."
+  },
+  {
+   "scene": "long",
+   "say": "Auf Dauer fördern süße Getränke Karies, Übergewicht und Typ-zwei-Diabetes.",
+   "cap": "Auf *Dauer fördern *süße *Getränke *Karies, *Übergewicht und *Typ-2-Diabetes."
+  },
+  {
+   "scene": "price",
+   "say": "Das Verrückte: Leitungswasser kostet nur rund einen halben Cent pro Liter.",
+   "cap": "Das *Verrückte: *Leitungswasser kostet nur rund einen *halben *Cent pro *Liter."
+  },
+  {
+   "scene": "tip",
+   "say": "Faustregel: etwa anderthalb Liter am Tag. Und ist dein Urin hellgelb, passt es.",
+   "cap": "*Faustregel: etwa *1,5 *Liter am Tag. Und ist dein Urin *hellgelb, *passt es."
+  },
+  {
+   "scene": "outro",
+   "say": "Wie viel Wasser hast du heute schon getrunken? Und markier jemanden, der nur Cola und Energy trinkt!",
+   "cap": "Wie viel *Wasser hast du *heute schon getrunken? Und *markier jemanden, der nur *Cola und *Energy trinkt!"
+  }
+ ]
+}
