@@ -1,0 +1,71 @@
+{
+ "episode": "ep16",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU VOR 20 JAHREN 100 € IN BITCOIN INVESTIERT HÄTTEST?"
+ ],
+ "sources": "Rechenbeispiel, keine Anlageberatung · Kurs 29.10.2026 ≈ 71.850 € · Mt. Gox 17.07.2010 · Bitcoin Wiki (Pizza Day) · CoinDesk · BBC/The Register (Howells)",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Hundert Euro in Bitcoin. Vor zwanzig Jahren. Wie reich wärst du heute?",
+   "cap": "*100 *Euro in *Bitcoin. Vor *20 *Jahren. Wie *reich wärst du *heute?"
+  },
+  {
+   "scene": "twist",
+   "say": "Erstmal: gar nicht. Vor zwanzig Jahren gab es Bitcoin noch gar nicht. Der startet erst zweitausendneun.",
+   "cap": "Erstmal: *gar *nicht. Vor *20 Jahren gab es *Bitcoin noch *gar *nicht. Der startet erst *2009."
+  },
+  {
+   "scene": "buy",
+   "say": "Also so früh wie möglich: Juli zweitausendzehn, die erste große Börse. Ein Bitcoin kostet fünf Cent.",
+   "cap": "Also so *früh wie *möglich: *Juli *2010, die erste große *Börse. Ein Bitcoin kostet *5 *Cent."
+  },
+  {
+   "scene": "buy",
+   "say": "Für deine hundert Euro kriegst du über zweitausendfünfhundert Bitcoins.",
+   "cap": "Für deine *100 *Euro kriegst du über *2.500 *Bitcoins."
+  },
+  {
+   "scene": "today",
+   "say": "Heute ist einer rund zweiundsiebzigtausend Euro wert. Macht zusammen: etwa hundertachtzig Millionen Euro.",
+   "cap": "Heute ist *einer rund *72.000 *Euro wert. Macht zusammen: etwa *180 *Millionen *Euro."
+  },
+  {
+   "scene": "pizza",
+   "say": "Zwei Monate vorher hat ein Programmierer zehntausend Bitcoins für zwei Pizzen bezahlt.",
+   "cap": "*2 *Monate vorher hat ein *Programmierer *10.000 *Bitcoins für *zwei *Pizzen bezahlt."
+  },
+  {
+   "scene": "pizza",
+   "say": "Heute wären die über siebenhundert Millionen Euro wert. Teuerste Pizza der Welt.",
+   "cap": "Heute wären die über *700 *Millionen *Euro wert. *Teuerste *Pizza der *Welt."
+  },
+  {
+   "scene": "crash",
+   "say": "Aber: Zweitausendelf stürzt der Kurs um über neunzig Prozent ab. Danach noch dreimal um rund achtzig Prozent.",
+   "cap": "Aber: *2011 stürzt der Kurs um über *90 *Prozent ab. Danach noch *dreimal um rund *80 *Prozent."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Hättest du bei tausend Euro nicht längst verkauft?",
+   "gap": 0.5,
+   "cap": "Hättest *du bei *1.000 *Euro nicht *längst *verkauft?"
+  },
+  {
+   "scene": "trash",
+   "say": "Ein Brite hat seine Festplatte mit fast achttausend Bitcoins aus Versehen weggeworfen. Er hat sie nie zurückbekommen.",
+   "cap": "Ein *Brite hat seine *Festplatte mit fast *8.000 *Bitcoins aus *Versehen *weggeworfen. Er hat sie *nie *zurückbekommen."
+  },
+  {
+   "scene": "outro",
+   "say": "Markier den, der damals Bitcoin hätte kaufen sollen!",
+   "cap": "*Markier den, der *damals *Bitcoin hätte *kaufen sollen!"
+  }
+ ]
+}

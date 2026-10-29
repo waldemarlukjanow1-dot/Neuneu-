@@ -629,6 +629,43 @@ if 'kick' in sc and 'closeup' in sc:  # Folge 15 (Energy)
     s = sc['uk']; place(fx, stampS(), s['start'] + 0.3, 0.45); place(fx, drumhit(), wt('uk', 'uns') - 0.3, 0.35)
     s = sc['outro']; place(fx, can_open(), s['start'] + 0.2, 0.4); place(fx, popsfx(), s['start'] + 1.0, 0.3)
 
+if 'pizza' in sc and 'trash' in sc:  # Folge 16 (Bitcoin)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def coin_sfx():
+        n = int(0.5 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 2600 * x) + 0.6 * np.sin(2 * np.pi * 3900 * x)) * np.exp(-x * 9) * (1 + 0.3 * np.sin(2 * np.pi * 30 * x))
+    def buzzer():
+        n = int(0.45 * SR); x = np.arange(n) / SR
+        return lp(np.sign(np.sin(2 * np.pi * 110 * x)), 1800) * env(n, 0.005, 0.3) * 0.6
+    def fall():
+        n = int(0.8 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(1400 * np.exp(-x * 3) + 120) / SR) * env(n, 0.01, 0.4)
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    h = sc['hook']; place(fx, popsfx(), h['start'] + 0.15, 0.3); place(fx, whoosh(0.5), wt('hook', 'Bitcoin') - 0.3, 0.35); place(fx, coin_sfx(), wt('hook', 'Bitcoin') + 0.1, 0.3)
+    place(fx, ding(1320), wt('hook', 'reich') - 0.4, 0.2)
+    s = sc['twist']; place(fx, popsfx(), s['start'] + 0.4, 0.3); place(fx, buzzer(), wt('twist', 'nicht', 1) - 0.3, 0.45); place(fx, ding(1560), wt('twist', 'startet') - 0.4, 0.2)
+    s = sc['buy']; place(fx, popsfx(), wt('buy', 'Börse') - 0.4, 0.3); place(fx, coin_sfx(), wt('buy', 'Cent') - 0.6, 0.35)
+    v = ph['buy'][1]['start'] + 0.2
+    for k in range(10): place(fx, coin_sfx(), v + k * 0.18, 0.12)
+    place(fx, popsfx(), wt('buy', 'zweitausendfünfhundert') - 0.3, 0.3)
+    s = sc['today']; place(fx, popsfx(), wt('today', 'zweiundsiebzigtausend') - 0.3, 0.3); tm = wt('today', 'hundertachtzig') - 0.4
+    for k in range(12): place(fx, tick(), tm + k * 0.1, 0.35)
+    place(fx, drumhit(), tm + 1.2, 0.5); place(fx, confetti_pop(), tm + 1.2, 0.45); place(fx, sparkle(), tm + 1.3, 0.25)
+    s = sc['pizza']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, popsfx(), wt('pizza', 'Pizzen') - 0.4, 0.35); place(fx, popsfx(), wt('pizza', 'Pizzen') - 0.3, 0.3)
+    place(fx, drumhit(), ph['pizza'][1]['start'] + 0.4, 0.45); place(fx, ding(1760), wt('pizza', 'Teuerste') - 0.3, 0.2)
+    s = sc['crash']; place(fx, fall(), wt('crash', 'stürzt') - 0.3, 0.5); place(fx, low_boom(), wt('crash', 'stürzt') + 0.3, 0.5)
+    for k in range(3): place(fx, fall(), wt('crash', 'dreimal') - 0.3 + (k + 1) * 0.45, 0.25)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'verkauft') + 0.5, 0.25)
+    s = sc['trash']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, crack(), wt('trash', 'weggeworfen') - 0.3, 0.35); place(fx, popsfx(), wt('trash', 'achttausend') - 0.3, 0.3); place(fx, buzzer(), wt('trash', 'nie') - 0.3, 0.3)
+    s = sc['outro']; place(fx, coin_sfx(), s['start'] + 0.2, 0.3); place(fx, popsfx(), s['start'] + 1.0, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

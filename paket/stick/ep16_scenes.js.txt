@@ -1,0 +1,275 @@
+// ---------- scene data ----------
+// extra poses for this episode (sitting on the sofa: legs bent 90°, figure lowered by SIT_BOB)
+POSES.sit = { torso: -0.12, head: 0.06, armL: [0.45, 0.9], armR: [0.9, 1.6], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.sitSnack = { torso: -0.1, head: 0.02, armL: [0.45, 0.9], armR: [0.75, 1.9], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.stretch = { torso: 0, head: -0.12, armL: [2.9, 0.15], armR: [2.9, 0.15], legL: [0.14, 0], legR: [0.14, 0] };
+const SIT_BOB = -118;
+const NIGHT = new Set(['hook', 'n22', 'n0', 'n2']);
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const hhmm = (m) => { m = ((Math.floor(m / 5) * 5) % 1440 + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function sofa(x, s = 0.84) {
+  const G = 1165, seat = G - 96 * s;
+  g.save(); g.strokeStyle = INK; g.lineWidth = 7; g.lineJoin = 'round';
+  rr(x - 150 * s, seat - 220 * s, 72 * s, 240 * s, 22 * s); g.fillStyle = '#ef476f'; g.fill(); g.stroke();
+  rr(x - 185 * s, seat, 300 * s, G - seat - 18 * s, 18 * s); g.fillStyle = '#d63a5c'; g.fill(); g.stroke();
+  rr(x - 110 * s, seat - 22 * s, 225 * s, 34 * s, 14 * s); g.fillStyle = '#ff7096'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 170 * s, G - 20 * s, 16 * s, 20 * s); g.fillRect(x + 90 * s, G - 20 * s, 16 * s, 20 * s);
+  g.restore();
+}
+function phone(g2, h) {
+  g.save(); g.translate(h.hx + 6, h.hy - 20); g.rotate(-0.25);
+  rr(-17, -32, 34, 62, 8); g.fillStyle = INK; g.fill(); rr(-12, -26, 24, 48, 4); g.fillStyle = '#bfe6ff'; g.fill(); g.restore();
+}
+function popcorn(g2, h) {
+  g.save(); g.translate(h.hx + 4, h.hy - 16);
+  g.fillStyle = '#fff6e6'; g.strokeStyle = INK; g.lineWidth = 3;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(-18 + i * 7, -34 - (i % 2) * 8, 10, 0, 7); g.fill(); g.stroke(); }
+  g.beginPath(); g.moveTo(-26, -30); g.lineTo(26, -30); g.lineTo(18, 24); g.lineTo(-18, 24); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#ef476f'; for (const sx of [-14, 2]) { g.beginPath(); g.moveTo(sx, -30); g.lineTo(sx + 9, -30); g.lineTo(sx + 7, 24); g.lineTo(sx - 1, 24); g.closePath(); g.fill(); }
+  g.restore();
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function tv(x, y, u, t, tNext) {
+  g.save(); g.strokeStyle = INK; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - 60, y + 115); g.lineTo(x - 100, 1165); g.moveTo(x + 60, y + 115); g.lineTo(x + 100, 1165); g.stroke();
+  rr(x - 175, y - 118, 350, 236, 22); g.fillStyle = '#14161c'; g.fill(); g.lineWidth = 7; g.stroke();
+  const gr = g.createLinearGradient(0, y - 100, 0, y + 100); gr.addColorStop(0, '#4cc9f0'); gr.addColorStop(1, '#7209b7');
+  rr(x - 155, y - 98, 310, 196, 12); g.fillStyle = gr; g.fill();
+  const cd = tNext === null ? 99 : u - tNext;
+  if (cd < 0) { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 6', x, y + 70, 30, '#fff', { lw: 6 }); }
+  else if (cd < 2.4) { text('Nächste Folge in', x, y - 20, 28, '#fff', { weight: 800 }); text(String(3 - Math.floor(cd / 0.8)), x, y + 62, 84, YEL, { lw: 10 }); }
+  else { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 7', x, y + 70, 30, YEL, { lw: 6 }); }
+  g.restore();
+}
+function alarmClock(x, y, s, shake, t) {
+  withScale(x, y, s, () => {
+    g.rotate(Math.sin(t * 55) * 0.09 * shake);
+    for (const sd of [-1, 1]) { g.save(); g.rotate(sd * 0.62); g.fillStyle = YEL; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, -150, 50, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    g.strokeStyle = INK; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(-70, 100); g.lineTo(-105, 155); g.moveTo(70, 100); g.lineTo(105, 155); g.stroke();
+    g.fillStyle = '#ef476f'; g.lineWidth = 9; g.beginPath(); g.arc(0, 0, 138, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#fff'; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 106, 0, 7); g.fill(); g.stroke();
+    text('07:00', 0, 22, 64, INK);
+    if (shake > 0.5) {
+      g.strokeStyle = '#fff'; g.lineWidth = 8;
+      for (let k = 0; k < 3; k++) { g.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 12 + k)); for (const a0 of [-0.45, Math.PI - 0.45]) { g.beginPath(); g.arc(0, 0, 175 + k * 30, a0, a0 + 0.9); g.stroke(); } }
+      g.globalAlpha = 1;
+    }
+  });
+}
+function battery(x, y, w, h, level) {
+  rr(x - w / 2, y - h / 2, w, h, 20); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  rr(x + w / 2 + 2, y - h * 0.22, 20, h * 0.44, 6); g.fillStyle = INK; g.fill();
+  g.save(); rr(x - w / 2 + 12, y - h / 2 + 12, w - 24, h - 24, 12); g.clip();
+  g.fillStyle = level > 0.5 ? '#06d6a0' : level > 0.28 ? YEL : '#ef476f'; g.fillRect(x - w / 2 + 12, y - h / 2 + 12, (w - 24) * level, h - 24); g.restore();
+  text(Math.round(level * 100) + ' %', x, y + 16, 46, INK);
+}
+
+
+// ---------- Bitcoin-Folge ----------
+const GOLD = '#f7931a';
+function coin(x, y, s, spin = 0) {   // generic gold coin with a drawn ₿ (no font dependency)
+  withScale(x, y, s, () => {
+    g.scale(Math.max(0.08, Math.abs(Math.cos(spin))), 1);
+    g.strokeStyle = INK; g.lineWidth = 7; g.fillStyle = GOLD; g.beginPath(); g.arc(0, 0, 70, 0, 7); g.fill(); g.stroke();
+    g.strokeStyle = '#ffd08a'; g.lineWidth = 5; g.beginPath(); g.arc(0, 0, 56, 0, 7); g.stroke();
+    g.save(); g.rotate(0.24); text('B', 0, 30, 84, '#fff', { weight: 900, lw: 0 });
+    g.fillStyle = '#fff'; for (const dx of [-10, 6]) { g.fillRect(dx, -50, 7, 16); g.fillRect(dx, 26, 7, 16); } g.restore();
+  });
+}
+function note(x, y, s, rot = 0, alpha = 1) {   // 100-euro note
+  if (alpha <= 0) return;
+  g.save(); g.globalAlpha = alpha;
+  withScale(x, y, s, () => { g.rotate(rot); rr(-130, -66, 260, 132, 12); g.fillStyle = '#7bd389'; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    g.strokeStyle = '#3d9a50'; g.lineWidth = 4; rr(-112, -50, 224, 100, 8); g.stroke(); g.fillStyle = '#3d9a50'; g.beginPath(); g.arc(-60, 0, 30, 0, 7); g.fill();
+    text('100 €', 38, 18, 50, INK, { weight: 900, lw: 0 }); });
+  g.restore();
+}
+function cross(x, y, r, p) { if (p <= 0) return; g.save(); g.strokeStyle = '#ef233c'; g.lineWidth = 22; g.lineCap = 'round'; g.beginPath(); g.moveTo(x - r, y - r); g.lineTo(x - r + 2 * r * clamp01(p * 2), y - r + 2 * r * clamp01(p * 2)); if (p > 0.5) { const q = clamp01(p * 2 - 1); g.moveTo(x + r, y - r); g.lineTo(x + r - 2 * r * q, y - r + 2 * r * q); } g.stroke(); g.restore(); }
+const fmtDE = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+// rough BTC price path (USD, log scale) for the crash scene: [year, price]
+const PATH = [[2010.5, 0.06], [2011.45, 30], [2011.9, 2], [2013.0, 13], [2013.9, 1100], [2015.05, 180], [2017.95, 19500], [2018.95, 3200], [2021.85, 67000], [2022.9, 15500], [2024.2, 71000], [2025.75, 124000], [2026.8, 84000]];
+const DROPS = [[2, '−93 %', '2011'], [5, '−84 %', '2015'], [7, '−84 %', '2018'], [9, '−77 %', '2022']];
+function chartBox(x0, y0, w, h, prog, t, dropsShown) {
+  rr(x0 - 20, y0 - 20, w + 40, h + 40, 20); g.fillStyle = 'rgba(10,12,20,0.85)'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 4; g.stroke();
+  const X = (yr) => x0 + (yr - 2010.5) / (2026.8 - 2010.5) * w, Y = (p) => y0 + h - (Math.log10(p) + 1.5) / (Math.log10(200000) + 1.5) * h;
+  const xEnd = X(2010.5 + prog * (2026.8 - 2010.5));
+  g.save(); g.beginPath(); g.rect(x0 - 20, y0 - 20, xEnd - x0 + 20, h + 40); g.clip();
+  g.strokeStyle = '#06d6a0'; g.lineWidth = 6; g.lineJoin = 'round'; g.beginPath();
+  PATH.forEach(([yr, p], i) => { i ? g.lineTo(X(yr), Y(p)) : g.moveTo(X(yr), Y(p)); }); g.stroke();
+  g.strokeStyle = '#ef233c'; g.lineWidth = 8; g.beginPath(); for (const [i] of DROPS) { g.moveTo(X(PATH[i - 1][0]), Y(PATH[i - 1][1])); g.lineTo(X(PATH[i][0]), Y(PATH[i][1])); } g.stroke();
+  g.restore();
+  for (const [lab, yy] of [['2010', 2010.5], ['2026', 2026.8]]) text(lab, X(yy), y0 + h + 26, 22, 'rgba(255,255,255,0.8)', { weight: 800, lw: 0, base: 'top' });
+  DROPS.forEach(([i, lab, yr], k) => { if (k >= dropsShown) return; const px = X(PATH[i][0]), py = Y(PATH[i][1]); withScale(px, py + 42, 1, () => { text(lab, 0, 0, 28, '#ff5a5f', { lw: 7 }); }); });
+}
+function landfill(x, s, t, glowA) {
+  withScale(x, 1165, s, () => {
+    g.strokeStyle = INK; g.lineWidth = 7;
+    g.fillStyle = '#6c584c'; g.beginPath(); g.moveTo(-260, 0); g.quadraticCurveTo(-120, -260, 20, -200); g.quadraticCurveTo(160, -280, 270, 0); g.closePath(); g.fill(); g.stroke();
+    const junk = [['#adb5bd', -150, -90, 40], ['#e9c46a', -60, -150, 32], ['#90be6d', 70, -140, 36], ['#f4a261', 150, -80, 30], ['#ced4da', -10, -60, 28]];
+    for (const [c, jx, jy, r] of junk) { rr(jx - r, jy - r * 0.6, r * 2, r * 1.2, 6); g.fillStyle = c; g.fill(); g.lineWidth = 4; g.stroke(); }
+    if (glowA > 0) { g.save(); g.globalAlpha = glowA; glow(40, -190, 120, 'rgba(255,210,63,0.75)'); g.restore(); }
+    g.save(); g.translate(40, -190); g.rotate(-0.25); rr(-46, -30, 92, 60, 8); g.fillStyle = '#495057'; g.fill(); g.lineWidth = 5; g.stroke(); g.fillStyle = '#adb5bd'; g.beginPath(); g.arc(-8, 0, 18, 0, 7); g.fill(); g.restore();
+    for (let i = 0; i < 3; i++) { const fx = -120 + i * 110 + Math.sin(t * 3 + i) * 10, fy = -260 - i * 18 + Math.cos(t * 4 + i) * 8; text('🪰', fx, fy, 30, '#000', { weight: 400, font: '"Noto Color Emoji"', lw: 0 }); }
+  });
+}
+
+const BG = {
+  hook: ['#2b2d42', '#0b0c10'], twist: ['#8d99ae', '#4a5568'], buy: ['#ffb347', '#f77f00'], today: ['#06a77d', '#05486b'], pizza: ['#ffd166', '#ef8354'],
+  crash: ['#3a0d0d', '#0b0c10'], closeup: ['#0b0c10', '#000000'], trash: ['#7f8c6a', '#3d4a2d'], outro: ['#2b2d42', '#0b0c10'],
+};
+const STATIONS = [['2006', 'twist'], ['Kauf', 'buy'], ['Heute', 'today'], ['Pizza', 'pizza'], ['Crash', 'crash'], ['Müll', 'trash']];
+const stationIdx = { hook: -1, twist: 0, buy: 1, today: 2, pizza: 3, crash: 4, closeup: 4.4, trash: 5, outro: 5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (id === 'hook' || id === 'outro' || id === 'today') { g.save(); g.globalAlpha = 0.12; for (let i = 0; i < 12; i++) { const x = hash(i) * W, y = (hash(i + 3) * H + t * (40 + hash(i + 5) * 60)) % (H + 200) - 100; coin(x, y, 0.45, t * 2 + i); } g.restore(); }
+  else if (id === 'crash') { g.save(); g.strokeStyle = 'rgba(239,35,60,0.15)'; g.lineWidth = 2; for (let i = 0; i < 12; i++) { const y = 560 + i * 80; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } g.restore(); }
+  else { g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); } }
+  g.fillStyle = 'rgba(0,0,0,0.15)'; g.fillRect(0, GROUND, W, H - GROUND);
+  if (id !== 'closeup') { g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke(); }
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function kappiState(sc, u, t) {
+  let pos = { x: 260, scale: 0.8 }, keys = [[0, 'stand', 'neutral']], facing = 0;
+  switch (sc.id) {
+    case 'hook': keys = [[0, 'hold', 'happy'], [at(/^reich/, 'hook', sc, -0.4), 'think', 'thinking']]; break;
+    case 'twist': keys = [[0, 'shrug', 'surprised'], [at(/^startet/, 'twist', sc, -0.4), 'point', 'talk']]; break;
+    case 'buy': keys = [[0, 'point', 'talk'], [phStart('buy', 1, sc), 'cheer', 'joy']]; break;
+    case 'today': keys = [[0, 'point', 'talk'], [at(/^hundertachtzig/, 'today', sc, -0.4), 'scared', 'surprised']]; break;
+    case 'pizza': keys = [[0, 'point', 'talk'], [phStart('pizza', 1, sc), 'scared', 'surprised']]; break;
+    case 'crash': keys = [[0, 'pointUp', 'determined'], [at(/^stürzt/, 'crash', sc, -0.3), 'scared', 'worried']]; break;
+    case 'closeup': keys = [[0, 'stand', 'determined']]; break;
+    case 'trash': keys = [[0, 'point', 'talk'], [at(/^weggeworfen/, 'trash', sc, -0.3), 'scared', 'surprised'], [at(/^nie/, 'trash', sc, -0.3), 'shrug', 'worried']]; break;
+    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; keys = [[0, 'point', 'happy']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.25));
+  const jit = sc.id === 'crash' && u > at(/^stürzt/, 'crash', sc, -0.3) && u < at(/^stürzt/, 'crash', sc, 0.6) ? (hash(Math.floor(t * 30)) - 0.5) * 12 : 0;
+  return { x: pos.x + jit, y: 1165, scale: pos.scale, facing, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2] };
+}
+const CLOSE = (u) => ease(clamp01((u - 0.15) / 0.8));
+function sceneBack(sc, u, t) {
+  if (sc.id === 'closeup') { g.fillStyle = `rgba(0,0,0,${0.35 * CLOSE(u)})`; g.fillRect(-300, 300, 1700, 1500); }
+  if (sc.id === 'today' && u > at(/^hundertachtzig/, 'today', sc, -0.4)) glow(720, 800, 380, 'rgba(255,210,63,0.35)');
+}
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  if (sc.id === 'closeup') {
+    const p = CLOSE(u), s = lerp(0.8, 2.7, p);
+    st.x = lerp(260, 540, p); st.scale = s; st.y = lerp(1165, 880 + 499 * 2.7, p);
+    g.save(); g.beginPath(); g.rect(49, 461, 982, 829); g.clip(); const K = drawKappi(g, st); g.restore(); return K;
+  }
+  return drawKappi(g, st);
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  switch (sc.id) {
+    case 'hook': {
+      const tB = at(/^Bitcoin/, 'hook', sc, -0.3), tJ = at(/^Jahren/, 'hook', sc, -0.4), tR = at(/^reich/, 'hook', sc, -0.4);
+      const fly = ease(clamp01((u - tB) / 0.7));
+      note(lerp(560, 760, fly), lerp(1000, 780, fly), 0.95 * pop(u, 0.1) * (1 - 0.6 * fly), lerp(-0.12, 0.6, fly), 1 - fly);
+      if (u > tB + 0.4) coin(760, 780, 1.3 * pop(u, tB + 0.4), t * 2.5);
+      if (u > tJ) withScale(760, 1010, pop(u, tJ), () => pill(0, 0, 1, '📅 2006', '#fff', INK, 40));
+      if (u > tR) withScale(720, 580, pop(u, tR), () => text('💰 = ???', 0, 0, 64, YEL, { lw: 12, font: EMO }));
+      break;
+    }
+    case 'twist': {
+      const tN = at(/^nicht/, 'twist', sc, -0.3, 1), tS = at(/^startet/, 'twist', sc, -0.4);
+      withScale(720, 600, pop(u, 0.1), () => pill(0, 0, 1, '📅 2006', '#fff', INK, 44));
+      coin(720, 820, 1.3 * pop(u, 0.4), 0);
+      cross(720, 820, 95, clamp01((u - tN) / 0.35));
+      if (u > tN + 0.3 && u < tS) withScale(720, 990, pop(u, tN + 0.3), () => text('gab’s noch nicht!', 0, 0, 44, '#fff', { lw: 10 }));
+      if (u > tS) withScale(720, 1000, pop(u, tS), () => { pill(0, 0, 1, '1. Block: 03.01.2009', YEL, INK, 34); });
+      break;
+    }
+    case 'buy': {
+      const p2 = phStart('buy', 1, sc), tC = at(/^Cent/, 'buy', sc, -0.6), tB = at(/^Börse/, 'buy', sc, -0.4);
+      if (u < p2) {
+        withScale(720, 580, pop(u, 0.2), () => pill(0, 0, 1, '📅 Juli 2010', '#fff', INK, 40));
+        if (u > tB) withScale(720, 720, pop(u, tB), () => { rr(-210, -60, 420, 120, 18); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 5; g.stroke(); text('BÖRSE · Mt. Gox', 0, -14, 30, '#fff', { weight: 900, lw: 0 }); text(u > tC ? '1 ₿ = 0,05 $' : '1 ₿ = …', 0, 38, 44, '#06d6a0', { weight: 900, lw: 0 }); });
+        if (u > tC) coin(720, 980, 1.0 * pop(u, tC), t * 3);
+      } else {
+        const v = p2 + 0.2, n = Math.floor(40 * ease(clamp01((u - v) / 1.8)));
+        note(720, 600, 0.75 * (1 - clamp01((u - v) / 0.4)), 0, 1 - clamp01((u - v) / 0.4));
+        for (let i = 0; i < n; i++) coin(560 + (i % 8) * 46, 1135 - Math.floor(i / 8) * 34, 0.4, 0);
+        const tN = at(/^zweitausendfünfhundert/, 'buy', sc, -0.3);
+        if (u > tN) withScale(720, 760, pop(u, tN), () => pill(0, 0, 1, '2.500+ Bitcoin', GOLD, INK, 50));
+        if (u > tN + 0.5) withScale(720, 860, pop(u, tN + 0.5), () => text('für 100 € (≈ 128 $)', 0, 0, 28, '#fff', { weight: 800, lw: 6 }));
+      }
+      break;
+    }
+    case 'today': {
+      const tP = at(/^zweiundsiebzigtausend/, 'today', sc, -0.3), tM = at(/^hundertachtzig/, 'today', sc, -0.4);
+      if (u > tP) withScale(720, 580, pop(u, tP), () => { pill(0, 0, 1, '1 ₿ ≈ 71.850 €', '#fff', INK, 40); text('Kurs am 29.10.2026', 0, 64, 22, '#fff', { weight: 800, lw: 6 }); });
+      const p = ease(clamp01((u - tM) / 1.2));
+      if (u > tM - 0.6) withScale(720, 820, pop(u, tM - 0.6), () => { rr(-280, -80, 560, 160, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = YEL; g.lineWidth = 6; g.stroke(); text(fmtDE(179600000 * p) + ' €', 0, 22, 62, YEL, { weight: 900, lw: 0 }); });
+      if (p >= 1) { withScale(720, 960, pop(u, tM + 1.2), () => text('≈ 180 MILLIONEN 🤯', 0, 0, 48, '#fff', { lw: 10, font: EMO })); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + t * 1.5; sparkle(720 + Math.cos(a) * 320, 820 + Math.sin(a) * 120, 1.0, YEL); } }
+      if (u > 0.3) text('2.500 ₿ × 71.850 €', 720, 1100, 28, '#fff', { weight: 800, lw: 6 });
+      break;
+    }
+    case 'pizza': {
+      const p2 = phStart('pizza', 1, sc), tZ = at(/^Pizzen/, 'pizza', sc, -0.4), tT = at(/^Teuerste/, 'pizza', sc, -0.3);
+      withScale(720, 580, pop(u, 0.2), () => pill(0, 0, 1, '📅 22. Mai 2010', '#fff', INK, 36));
+      if (u > tZ) { text('🍕', 640, 860 + Math.sin(t * 3) * 6, 150, '#000', { weight: 400, font: '"Noto Color Emoji"', lw: 0 }); text('🍕', 820, 860 + Math.cos(t * 3) * 6, 150, '#000', { weight: 400, font: '"Noto Color Emoji"', lw: 0 }); }
+      if (u > 0.8) withScale(720, 700, pop(u, 0.8), () => text('10.000 ₿ =', 0, 0, 48, '#fff', { lw: 10 }));
+      if (u > p2) withScale(720, 1000, pop(u, p2 + 0.4), () => pill(0, 0, 1, 'heute ≈ 718 Mio. €', '#ef233c', '#fff', 40));
+      if (u > tT) withScale(720, 1100, pop(u, tT), () => text('teuerste Pizza der Welt 🏆', 0, 0, 30, YEL, { lw: 8, font: EMO }));
+      break;
+    }
+    case 'crash': {
+      const tS = at(/^stürzt/, 'crash', sc, -0.3), tD = at(/^dreimal/, 'crash', sc, -0.3);
+      const prog = clamp01((u - 0.3) / Math.max(1, D - 1.2));
+      const shown = u < tS ? 0 : u < tD ? 1 : 1 + Math.min(3, Math.floor((u - tD) / 0.45) + 1);
+      chartBox(500, 560, 440, 460, prog, t, shown);
+      text('Bitcoin-Kurs (log)', 720, 1090, 24, '#fff', { weight: 800, lw: 6 });
+      if (u > D - 1.4) withScale(720, 1135, pop(u, D - 1.4), () => text('Hättest du durchgehalten? 😬', 0, 0, 30, YEL, { lw: 8, font: EMO }));
+      break;
+    }
+    case 'closeup': {
+      const tV = at(/^verkauft/, 'closeup', sc);
+      if (u > tV + 0.5) withScale(820, 560, pop(u, tV + 0.5), () => text('💸❓', 0, 0, 64, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      break;
+    }
+    case 'trash': {
+      const tF = at(/^Festplatte/, 'trash', sc, -0.3), tA = at(/^achttausend/, 'trash', sc, -0.3), tN = at(/^nie/, 'trash', sc, -0.3);
+      landfill(730, 0.95, t, u > tF ? 0.6 + 0.4 * Math.abs(Math.sin(t * 4)) : 0);
+      withScale(720, 580, pop(u, 0.2), () => pill(0, 0, 1, '🏴󠁧󠁢󠁷󠁬󠁳󠁿 Newport, Wales · 2013', '#fff', INK, 30));
+      if (u > tA) withScale(720, 690, pop(u, tA), () => pill(0, 0, 1, '≈ 8.000 ₿ ≈ 575 Mio. €', GOLD, INK, 36));
+      if (u > tN) withScale(720, 790, pop(u, tN), () => text('Klage 2025 abgewiesen ⚖️', 0, 0, 30, '#fff', { lw: 8, font: EMO }));
+      break;
+    }
+    case 'outro': {
+      coin(840, 1060, 0.9, t * 2);
+      withScale(660, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Markier den, der', 0, -30, 48, INK); text('damals Bitcoin', 0, 25, 44, INK); text('hätte kaufen sollen 👇', 0, 80, 40, GOLD, { font: EMO }); });
+      withScale(660, 870, pop(u, 1.0), () => pill(0, 0, 1, 'Was machst du mit 180 Mio.? 💬', INK, YEL, 30));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 3).join(' · '), 540, 1500, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(3).join(' · '), 540, 1540, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}
