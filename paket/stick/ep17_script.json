@@ -1,0 +1,66 @@
+{
+ "episode": "ep17",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU ENDLICH VERSTEHST, WIE DU RICHTIG MUSKULÖS WIRST?"
+ ],
+ "sources": "Lamon u. a. 2021 · Schoenfeld u. a. 2017 · Morton u. a. 2018 · Schoenfeld u. a. 2013 · Schoenfeld u. a. 2018",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Das ist dein Bizeps. Noch.",
+   "cap": "Das ist dein *Bizeps. *Noch."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du endlich die Cheat-Codes für Muskeln kennst?",
+   "cap": "Was passiert, wenn du *endlich die *Cheat-Codes für *Muskeln kennst?"
+  },
+  {
+   "scene": "rest",
+   "say": "Code eins: Im Gym wachsen deine Muskeln gar nicht. Da gibst du nur das Signal. Wachsen tun sie danach, in der Pause.",
+   "cap": "*Code *1: Im *Gym wachsen deine Muskeln *gar *nicht. Da gibst du nur das *Signal. Wachsen tun sie *danach, in der *Pause."
+  },
+  {
+   "scene": "sleep",
+   "say": "Code zwei: Schlaf. Nach nur einer Nacht ohne Schlaf baute der Körper in einer Studie achtzehn Prozent weniger Muskeleiweiß auf.",
+   "cap": "*Code *2: *Schlaf. Nach nur *einer *Nacht ohne Schlaf baute der Körper in einer Studie *18 *Prozent *weniger Muskeleiweiß auf."
+  },
+  {
+   "scene": "light",
+   "say": "Code drei: Du brauchst nicht die schwersten Gewichte. Auch leichte bauen Muskeln auf, wenn du gehst, bis nichts mehr geht.",
+   "cap": "*Code *3: Du brauchst *nicht die *schwersten Gewichte. Auch *leichte bauen Muskeln auf, wenn du gehst, bis *nichts *mehr *geht."
+  },
+  {
+   "scene": "protein",
+   "say": "Code vier: Eiweiß. Rund einskommasechs Gramm pro Kilo Körpergewicht am Tag. Bei siebzig Kilo gut hundertzehn Gramm.",
+   "cap": "*Code *4: *Eiweiß. Rund *1,6 *Gramm pro *Kilo Körpergewicht am Tag. Bei *70 *Kilo gut *110 *Gramm."
+  },
+  {
+   "scene": "protein",
+   "say": "Und nein, der Shake muss nicht in der ersten Minute nach dem Training rein.",
+   "cap": "Und *nein, der *Shake muss *nicht in der *ersten *Minute nach dem Training rein."
+  },
+  {
+   "scene": "mind",
+   "say": "Code fünf, der verrückteste: Denk an den Muskel. In einer Studie wuchs der Bizeps fast doppelt so stark, wenn man sich beim Training auf ihn konzentriert hat.",
+   "cap": "*Code *5, der *verrückteste: *Denk an den *Muskel. In einer Studie wuchs der Bizeps *fast *doppelt so stark, wenn man sich beim Training auf ihn *konzentriert hat."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Wie oft hast du schon gesagt: ab Montag?",
+   "gap": 0.5,
+   "cap": "Wie *oft hast du schon gesagt: *ab *Montag?"
+  },
+  {
+   "scene": "outro",
+   "say": "Markier deinen Gym-Partner, der das wissen muss!",
+   "cap": "*Markier deinen *Gym-Partner, der das *wissen *muss!"
+  }
+ ]
+}

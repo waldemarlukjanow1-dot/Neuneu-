@@ -212,6 +212,13 @@ function drawExtra(g, hx, hy, R, facing, ex) {
 }
 
 // state: { x, y (ground), scale, facing (-1|0|1), pose, expr, mouth (0..1), blink (0..1), look:{x,y}, bob, squash, hold: fn(g, hand) }
+// optional muscles (st.muscle 0..1): bulges along a limb segment, drawn in line colour
+function bulge(g, x1, y1, x2, y2, w, m) {
+  if (m <= 0) return;
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, L = Math.hypot(x2 - x1, y2 - y1);
+  g.save(); g.fillStyle = DESIGN.line; g.beginPath(); g.ellipse(mx, my, L * 0.42, w * m, Math.atan2(y2 - y1, x2 - x1), 0, Math.PI * 2); g.fill(); g.restore();
+}
+
 export function drawKappi(g, st) {
   const D = DESIGN, s = st.scale ?? 1, f = st.facing ?? 0;
   const p = st.pose;
@@ -227,17 +234,25 @@ export function drawKappi(g, st) {
   // legs
   const legDirL = f === 0 ? -1 : dir, legDirR = f === 0 ? 1 : dir;
   const hipOff = f === 0 ? 14 : 0;
-  limb(g, -hipOff, hipY, p.legL[0], -p.legL[1], D.thigh, D.shin, legDirL);
-  limb(g, hipOff, hipY, p.legR[0], -p.legR[1], D.thigh, D.shin, legDirR);
+  const lL = limb(g, -hipOff, hipY, p.legL[0], -p.legL[1], D.thigh, D.shin, legDirL);
+  const lR = limb(g, hipOff, hipY, p.legR[0], -p.legR[1], D.thigh, D.shin, legDirR);
+  if (st.muscle) { bulge(g, -hipOff, hipY, lL.ex, lL.ey, 20, st.muscle); bulge(g, hipOff, hipY, lR.ex, lR.ey, 20, st.muscle); }
   // torso
   const tx = Math.sin(p.torso) * D.torso * dir, ty = -Math.cos(p.torso) * D.torso;
   const nx = tx, ny = hipY + ty;
   g.beginPath(); g.moveTo(0, hipY); g.lineTo(nx, ny); g.stroke();
+  const mus = st.muscle || 0;
+  if (mus > 0) {   // V-shaped upper body with rounded shoulders
+    const sw = 58 * mus, top = ny + 20, wy = lerp(ny, hipY, 0.7);
+    g.fillStyle = D.line; g.beginPath(); g.moveTo(nx - sw, top); g.quadraticCurveTo(nx, top - 8, nx + sw, top); g.quadraticCurveTo(nx + sw * 0.9, lerp(top, wy, 0.5), 14, wy); g.lineTo(-14, wy); g.quadraticCurveTo(nx - sw * 0.9, lerp(top, wy, 0.5), nx - sw, top); g.closePath(); g.fill();
+    for (const sd of [-1, 1]) { g.beginPath(); g.arc(nx + sd * sw * 0.92, top + 6, 20 * mus, 0, Math.PI * 2); g.fill(); }
+  }
   // arms (from shoulder slightly below neck)
   const sx = lerp(0, nx, 0.92), sy = lerp(hipY, ny, 0.9);
   const armDirL = f === 0 ? -1 : dir, armDirR = f === 0 ? 1 : dir;
   // in side view draw the far arm first (thinner/darker look by order)
   const aL = limb(g, sx, sy, p.armL[0], p.armL[1], D.upperArm, D.foreArm, armDirL);
+  bulge(g, sx, sy, aL.ex, aL.ey, 30, mus); bulge(g, aL.ex, aL.ey, aL.hx, aL.hy, 17, mus);
   // head
   const hang = p.torso + p.head;
   const hx = nx + Math.sin(hang) * (D.neck + D.headR) * dir, hy = ny - Math.cos(hang) * (D.neck + D.headR);
@@ -252,6 +267,7 @@ export function drawKappi(g, st) {
   if (isKappi) drawCap(g, hx, hy, D.headR, f, hang * dir * 0.6); else drawExtra(g, hx, hy, D.headR, f, st.extra);
   g.strokeStyle = D.line; g.lineWidth = D.lineW;
   const aR = limb(g, sx, sy, p.armR[0], p.armR[1], D.upperArm, D.foreArm, armDirR);
+  bulge(g, sx, sy, aR.ex, aR.ey, 30, mus); bulge(g, aR.ex, aR.ey, aR.hx, aR.hy, 17, mus);
   if (f === 0 && isKappi) { drawChain(g, nx, ny, p.torso, f); g.strokeStyle = D.line; g.lineWidth = D.lineW; }   // front view: chain lies over the arm roots
   // hands
   g.fillStyle = D.line; for (const h of [aL, aR]) { g.beginPath(); g.arc(h.hx, h.hy, 9, 0, Math.PI * 2); g.fill(); }

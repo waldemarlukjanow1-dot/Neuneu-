@@ -1,0 +1,241 @@
+// ---------- scene data ----------
+// extra poses for this episode (sitting on the sofa: legs bent 90°, figure lowered by SIT_BOB)
+POSES.sit = { torso: -0.12, head: 0.06, armL: [0.45, 0.9], armR: [0.9, 1.6], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.sitSnack = { torso: -0.1, head: 0.02, armL: [0.45, 0.9], armR: [0.75, 1.9], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.stretch = { torso: 0, head: -0.12, armL: [2.9, 0.15], armR: [2.9, 0.15], legL: [0.14, 0], legR: [0.14, 0] };
+const SIT_BOB = -118;
+const NIGHT = new Set(['hook', 'n22', 'n0', 'n2']);
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const hhmm = (m) => { m = ((Math.floor(m / 5) * 5) % 1440 + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function sofa(x, s = 0.84) {
+  const G = 1165, seat = G - 96 * s;
+  g.save(); g.strokeStyle = INK; g.lineWidth = 7; g.lineJoin = 'round';
+  rr(x - 150 * s, seat - 220 * s, 72 * s, 240 * s, 22 * s); g.fillStyle = '#ef476f'; g.fill(); g.stroke();
+  rr(x - 185 * s, seat, 300 * s, G - seat - 18 * s, 18 * s); g.fillStyle = '#d63a5c'; g.fill(); g.stroke();
+  rr(x - 110 * s, seat - 22 * s, 225 * s, 34 * s, 14 * s); g.fillStyle = '#ff7096'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 170 * s, G - 20 * s, 16 * s, 20 * s); g.fillRect(x + 90 * s, G - 20 * s, 16 * s, 20 * s);
+  g.restore();
+}
+function phone(g2, h) {
+  g.save(); g.translate(h.hx + 6, h.hy - 20); g.rotate(-0.25);
+  rr(-17, -32, 34, 62, 8); g.fillStyle = INK; g.fill(); rr(-12, -26, 24, 48, 4); g.fillStyle = '#bfe6ff'; g.fill(); g.restore();
+}
+function popcorn(g2, h) {
+  g.save(); g.translate(h.hx + 4, h.hy - 16);
+  g.fillStyle = '#fff6e6'; g.strokeStyle = INK; g.lineWidth = 3;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(-18 + i * 7, -34 - (i % 2) * 8, 10, 0, 7); g.fill(); g.stroke(); }
+  g.beginPath(); g.moveTo(-26, -30); g.lineTo(26, -30); g.lineTo(18, 24); g.lineTo(-18, 24); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#ef476f'; for (const sx of [-14, 2]) { g.beginPath(); g.moveTo(sx, -30); g.lineTo(sx + 9, -30); g.lineTo(sx + 7, 24); g.lineTo(sx - 1, 24); g.closePath(); g.fill(); }
+  g.restore();
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function tv(x, y, u, t, tNext) {
+  g.save(); g.strokeStyle = INK; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - 60, y + 115); g.lineTo(x - 100, 1165); g.moveTo(x + 60, y + 115); g.lineTo(x + 100, 1165); g.stroke();
+  rr(x - 175, y - 118, 350, 236, 22); g.fillStyle = '#14161c'; g.fill(); g.lineWidth = 7; g.stroke();
+  const gr = g.createLinearGradient(0, y - 100, 0, y + 100); gr.addColorStop(0, '#4cc9f0'); gr.addColorStop(1, '#7209b7');
+  rr(x - 155, y - 98, 310, 196, 12); g.fillStyle = gr; g.fill();
+  const cd = tNext === null ? 99 : u - tNext;
+  if (cd < 0) { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 6', x, y + 70, 30, '#fff', { lw: 6 }); }
+  else if (cd < 2.4) { text('Nächste Folge in', x, y - 20, 28, '#fff', { weight: 800 }); text(String(3 - Math.floor(cd / 0.8)), x, y + 62, 84, YEL, { lw: 10 }); }
+  else { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 7', x, y + 70, 30, YEL, { lw: 6 }); }
+  g.restore();
+}
+function alarmClock(x, y, s, shake, t) {
+  withScale(x, y, s, () => {
+    g.rotate(Math.sin(t * 55) * 0.09 * shake);
+    for (const sd of [-1, 1]) { g.save(); g.rotate(sd * 0.62); g.fillStyle = YEL; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, -150, 50, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    g.strokeStyle = INK; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(-70, 100); g.lineTo(-105, 155); g.moveTo(70, 100); g.lineTo(105, 155); g.stroke();
+    g.fillStyle = '#ef476f'; g.lineWidth = 9; g.beginPath(); g.arc(0, 0, 138, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#fff'; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 106, 0, 7); g.fill(); g.stroke();
+    text('07:00', 0, 22, 64, INK);
+    if (shake > 0.5) {
+      g.strokeStyle = '#fff'; g.lineWidth = 8;
+      for (let k = 0; k < 3; k++) { g.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 12 + k)); for (const a0 of [-0.45, Math.PI - 0.45]) { g.beginPath(); g.arc(0, 0, 175 + k * 30, a0, a0 + 0.9); g.stroke(); } }
+      g.globalAlpha = 1;
+    }
+  });
+}
+function battery(x, y, w, h, level) {
+  rr(x - w / 2, y - h / 2, w, h, 20); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  rr(x + w / 2 + 2, y - h * 0.22, 20, h * 0.44, 6); g.fillStyle = INK; g.fill();
+  g.save(); rr(x - w / 2 + 12, y - h / 2 + 12, w - 24, h - 24, 12); g.clip();
+  g.fillStyle = level > 0.5 ? '#06d6a0' : level > 0.28 ? YEL : '#ef476f'; g.fillRect(x - w / 2 + 12, y - h / 2 + 12, (w - 24) * level, h - 24); g.restore();
+  text(Math.round(level * 100) + ' %', x, y + 16, 46, INK);
+}
+
+
+// ---------- Muskel-Folge ----------
+function dumbbell(x, y, s, plates = 2, col = '#495057') {
+  withScale(x, y, s, () => {
+    g.strokeStyle = INK; g.lineWidth = 6; rr(-110, -10, 220, 20, 8); g.fillStyle = '#adb5bd'; g.fill(); g.stroke();
+    for (const sd of [-1, 1]) for (let i = 0; i < plates; i++) { const px = sd * (70 + i * 26) - 12; rr(px, -48 + i * 6, 24, 96 - i * 12, 6); g.fillStyle = col; g.fill(); g.stroke(); }
+  });
+}
+function shaker(x, y, s) {
+  withScale(x, y, s, () => { g.strokeStyle = INK; g.lineWidth = 6;
+    g.beginPath(); g.moveTo(-50, -120); g.lineTo(50, -120); g.lineTo(40, 60); g.lineTo(-40, 60); g.closePath(); g.fillStyle = '#e9ecef'; g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(-46, -40); g.lineTo(46, -40); g.lineTo(40, 60); g.lineTo(-40, 60); g.closePath(); g.fillStyle = '#c8a27a'; g.fill(); g.stroke();
+    rr(-56, -160, 112, 42, 10); g.fillStyle = '#1f6bff'; g.fill(); g.stroke(); rr(-14, -186, 28, 28, 6); g.fillStyle = '#1450c8'; g.fill(); g.stroke(); });
+}
+function bars(x, y, vals, labs, cols, prog) {   // vertical bar chart, values in %
+  const bw = 120, gap = 90, maxH = 300;
+  vals.forEach((v, i) => { const bx = x - (bw + gap) / 2 + i * (bw + gap) - bw / 2, h = maxH * v / 13 * prog;
+    rr(bx, y - h, bw, Math.max(4, h), 12); g.fillStyle = cols[i]; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    if (prog > 0.6) text('+' + String(v).replace('.', ',') + ' %', bx + bw / 2, y - h - 18, 38, '#fff', { lw: 8 });
+    text(labs[i], bx + bw / 2, y + 40, 26, '#fff', { weight: 800, lw: 6 }); });
+}
+
+const BG = {
+  hook: ['#2b2d42', '#0b0c10'], rest: ['#4cc9f0', '#3a86ff'], sleep: ['#1d1258', '#0b0c10'], light: ['#ff8fab', '#c9184a'], protein: ['#ffd166', '#f4a261'],
+  mind: ['#9d4edd', '#5a189a'], closeup: ['#0b0c10', '#000000'], outro: ['#06d6a0', '#118ab2'],
+};
+const STATIONS = [['Pause', 'rest'], ['Schlaf', 'sleep'], ['Gewicht', 'light'], ['Eiweiß', 'protein'], ['Kopf', 'mind']];
+const stationIdx = { hook: -1, rest: 0, sleep: 1, light: 2, protein: 3, mind: 4, closeup: 4, outro: 4 };
+const LV = { hook: 0, rest: 1, sleep: 2, light: 3, protein: 4, mind: 5, closeup: 5, outro: 5 };
+const CODE = new Set(['rest', 'sleep', 'light', 'protein', 'mind']);
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+const level = (sc, u) => lerp(LV[prevScene(sc).id] ?? 0, LV[sc.id], ease(clamp01((u - 0.3) / 0.7)));
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (id === 'sleep') { for (let i = 0; i < 30; i++) { g.globalAlpha = 0.35 + 0.5 * Math.abs(Math.sin(t * (1 + hash(i + 2)) + i)); sparkle(hash(i) * W, 120 + hash(i + 11) * 900, 0.3 + hash(i + 5) * 0.4, '#fff'); } g.globalAlpha = 1; }
+  else if (id === 'hook' || id === 'outro') { g.save(); g.strokeStyle = 'rgba(255,210,63,0.12)'; g.lineWidth = 2; for (let i = 0; i < 14; i++) { const y = 600 + i * 70 + (t * 40) % 70; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } g.restore(); }
+  else { g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); } }
+  g.fillStyle = 'rgba(0,0,0,0.15)'; g.fillRect(0, GROUND, W, H - GROUND);
+  if (id !== 'closeup') { g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke(); }
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function kappiState(sc, u, t) {
+  let pos = { x: 260, scale: 0.8 }, keys = [[0, 'stand', 'neutral']], facing = 0;
+  const up = CODE.has(sc.id) ? [[0, 'flex', 'joy']] : [];
+  switch (sc.id) {
+    case 'hook': keys = [[0, 'flex', 'neutral'], [at(/^Noch/, 'hook', sc, -0.2), 'flex', 'determined'], [phStart('hook', 1, sc), 'think', 'thinking']]; break;
+    case 'rest': keys = [...up, [1.0, 'point', 'talk'], [at(/^Pause/, 'rest', sc, -0.4), 'shrug', 'happy']]; break;
+    case 'sleep': keys = [...up, [1.0, 'point', 'talk'], [at(/^weniger/, 'sleep', sc, -0.3), 'scared', 'worried']]; break;
+    case 'light': keys = [...up, [1.0, 'point', 'talk'], [at(/^leichte/, 'light', sc, -0.3), 'pointUp', 'determined']]; break;
+    case 'protein': keys = [...up, [1.0, 'point', 'talk'], [phStart('protein', 1, sc), 'shrug', 'happy']]; break;
+    case 'mind': keys = [...up, [1.0, 'think', 'thinking'], [at(/^doppelt/, 'mind', sc, -0.3), 'flex', 'surprised']]; break;
+    case 'closeup': keys = [[0, 'stand', 'determined']]; break;
+    case 'outro': pos = { x: 250, scale: 0.84 }; keys = [[0, 'flex', 'proud']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.25));
+  return { x: pos.x, y: 1165, scale: pos.scale, facing, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2], muscle: level(sc, u) / 5 };
+}
+const CLOSE = (u) => ease(clamp01((u - 0.15) / 0.8));
+function sceneBack(sc, u, t) {
+  if (sc.id === 'closeup') { g.fillStyle = `rgba(0,0,0,${0.35 * CLOSE(u)})`; g.fillRect(-300, 300, 1700, 1500); }
+  if (CODE.has(sc.id) && u < 1.3) { g.save(); g.globalAlpha = 1 - clamp01((u - 0.9) / 0.4); glow(260, 900, 330, 'rgba(255,210,63,0.45)'); g.restore(); }
+}
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  if (sc.id === 'closeup') {
+    const p = CLOSE(u), s = lerp(0.8, 2.7, p);
+    st.x = lerp(260, 540, p); st.scale = s; st.y = lerp(1165, 880 + 499 * 2.7, p);
+    g.save(); g.beginPath(); g.rect(49, 461, 982, 829); g.clip(); const K = drawKappi(g, st); g.restore(); return K;
+  }
+  return drawKappi(g, st);
+}
+function hud(sc, u) {   // level counter top-left
+  const lv = Math.round(level(sc, u));
+  rr(150, 488, 230, 58, 20); g.fillStyle = 'rgba(10,12,20,0.85)'; g.fill(); g.strokeStyle = YEL; g.lineWidth = 3; g.stroke();
+  text(`💪 Codes ${lv}/5`, 265, 530, 32, YEL, { font: EMO });
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  if (sc.id !== 'closeup' && sc.id !== 'outro') hud(sc, u);
+  if (CODE.has(sc.id) && u > 0.3 && u < 1.6) withScale(260, 650, pop(u, 0.3), () => text('LEVEL UP!', 0, 0, 50, YEL, { lw: 12 }));
+  switch (sc.id) {
+    case 'hook': {
+      const tN = at(/^Noch/, 'hook', sc, -0.2), p2 = phStart('hook', 1, sc);
+      if (u < p2) { withScale(560, 700, pop(u, 0.2), () => { text('← dein Bizeps', 0, 0, 44, '#fff', { lw: 10 }); }); if (u > tN) withScale(560, 770, pop(u, tN), () => text('(noch 😏)', 0, 0, 40, YEL, { lw: 8, font: EMO })); }
+      else { withScale(720, 640, pop(u, p2), () => pill(0, 0, 1, '🎮 CHEAT-CODES: 0/5', INK, YEL, 38)); dumbbell(720, 1100, 0.9 * pop(u, p2 + 0.3), 2); }
+      break;
+    }
+    case 'rest': {
+      const tS = at(/^Signal/, 'rest', sc, -0.4), tP = at(/^Pause/, 'rest', sc, -0.4);
+      withScale(720, 680, pop(u, 0.5), () => pill(0, 0, 1, 'CODE 1: PAUSE', '#fff', INK, 38));
+      if (u > tS) withScale(720, 820, pop(u, tS), () => pill(0, 0, 1, '🏋️ Gym = Signal 📶', INK, '#fff', 36));
+      if (u > tP) withScale(720, 950, pop(u, tP), () => pill(0, 0, 1, '🛋️ Pause = Wachstum 📈', YEL, INK, 36));
+      break;
+    }
+    case 'sleep': {
+      const tW = at(/^weniger/, 'sleep', sc, -0.6), tN = at(/^Nacht/, 'sleep', sc, -0.3);
+      withScale(720, 680, pop(u, 0.5), () => pill(0, 0, 1, 'CODE 2: SCHLAF', '#fff', INK, 38));
+      if (u > tN) withScale(720, 800, pop(u, tN), () => text('1 Nacht ohne Schlaf 😵', 0, 0, 38, '#fff', { lw: 8, font: EMO }));
+      if (u > tW) { const p = ease(clamp01((u - tW) / 0.8));
+        rr(560, 870, 320, 60, 18); g.fillStyle = 'rgba(255,255,255,0.15)'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 5; g.stroke();
+        rr(566, 876, 308 * (1 - 0.18 * p), 48, 14); g.fillStyle = '#06d6a0'; g.fill();
+        text('Muskelaufbau', 720, 912, 26, INK, { weight: 900, lw: 0 });
+        if (p > 0.9) withScale(720, 1010, pop(u, tW + 0.8), () => pill(0, 0, 1, '−18 %', '#ef233c', '#fff', 46)); }
+      break;
+    }
+    case 'light': {
+      const tL = at(/^leichte/, 'light', sc, -0.3), tG = at(/^nichts/, 'light', sc, -0.3);
+      withScale(720, 680, pop(u, 0.5), () => pill(0, 0, 1, 'CODE 3: GEWICHT', '#fff', INK, 38));
+      dumbbell(720, 830, 0.95 * pop(u, 1.0), 3, '#212529');
+      if (u > tL) { dumbbell(720, 1000, 0.65 * pop(u, tL), 1, '#4cc9f0'); withScale(720, 920, pop(u, tL + 0.2), () => text('= ✅', 0, 12, 40, '#fff', { lw: 8, font: EMO })); }
+      if (u > tG) withScale(720, 1110, pop(u, tG), () => text('…wenn du bis zum Muskelversagen gehst', 0, 0, 26, YEL, { lw: 7 }));
+      break;
+    }
+    case 'protein': {
+      const p2 = phStart('protein', 1, sc), tK = at(/^siebzig/, 'protein', sc, -0.3), tM = at(/^Minute/, 'protein', sc, -0.4);
+      if (u < p2) {
+        withScale(720, 680, pop(u, 0.5), () => pill(0, 0, 1, 'CODE 4: EIWEISS', '#fff', INK, 38));
+        withScale(720, 800, pop(u, 1.2), () => text('≈ 1,6 g pro kg / Tag', 0, 0, 42, '#fff', { lw: 10 }));
+        if (u > tK) withScale(720, 920, pop(u, tK), () => digi(0, 0, 0.75, '70 kg', '#fff'));
+        if (u > tK + 0.9) withScale(720, 1050, pop(u, tK + 0.9), () => pill(0, 0, 1, '≈ 112 g Eiweiß 🥚🍗', YEL, INK, 38));
+      } else {
+        shaker(720, 1080, 0.9 * pop(u, p2));
+        if (u > tM) withScale(720, 700, pop(u, tM), () => { pill(0, 0, 1, '⏱️ 0:59 … PANIK? ❌', '#ef233c', '#fff', 34); text('die Menge am Tag zählt mehr', 0, 70, 26, '#fff', { weight: 800, lw: 6 }); });
+      }
+      break;
+    }
+    case 'mind': {
+      const tS = at(/^Studie/, 'mind', sc, -0.3), tD = at(/^doppelt/, 'mind', sc, -0.3);
+      withScale(720, 600, pop(u, 0.5), () => pill(0, 0, 1, 'CODE 5: KOPF 🧠', '#fff', INK, 38));
+      if (u > tS) { bars(720, 1050, [12.4, 6.9], ['Fokus auf Muskel', 'ohne Fokus'], [YEL, '#adb5bd'], ease(clamp01((u - tS) / 1.2)));
+        text('Bizeps · 8 Wochen · 30 Anfänger', 720, 1135, 22, '#fff', { weight: 800, lw: 6 }); }
+      if (u > tD) withScale(720, 690, pop(u, tD), () => text('fast 2× so viel! 🤯', 0, 0, 40, YEL, { lw: 8, font: EMO }));
+      break;
+    }
+    case 'closeup': {
+      const tM = at(/^Montag/, 'closeup', sc);
+      if (u > tM + 0.5) withScale(820, 560, pop(u, tM + 0.5), () => text('📅❓', 0, 0, 64, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      break;
+    }
+    case 'outro': {
+      dumbbell(860, 1140, 0.6, 2);
+      withScale(660, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Markier deinen', 0, -30, 48, INK); text('Gym-Partner, der das', 0, 25, 40, INK); text('wissen muss 💪👇', 0, 80, 44, '#c9184a', { font: EMO }); });
+      withScale(660, 870, pop(u, 1.0), () => pill(0, 0, 1, 'Welcher Code war neu? 1 · 2 · 3 · 4 · 5', INK, YEL, 26));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 3).join(' · '), 540, 1500, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(3).join(' · '), 540, 1540, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}

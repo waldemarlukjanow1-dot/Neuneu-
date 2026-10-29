@@ -666,6 +666,44 @@ if 'pizza' in sc and 'trash' in sc:  # Folge 16 (Bitcoin)
     s = sc['trash']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, crack(), wt('trash', 'weggeworfen') - 0.3, 0.35); place(fx, popsfx(), wt('trash', 'achttausend') - 0.3, 0.3); place(fx, buzzer(), wt('trash', 'nie') - 0.3, 0.3)
     s = sc['outro']; place(fx, coin_sfx(), s['start'] + 0.2, 0.3); place(fx, popsfx(), s['start'] + 1.0, 0.3)
 
+if 'protein' in sc and 'mind' in sc:  # Folge 17 (Muskeln)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def levelup():   # rising arcade arpeggio
+        out = np.zeros(int(0.5 * SR))
+        for i, m in enumerate([72, 76, 79, 84]):
+            n = int(0.12 * SR); x = np.arange(n) / SR; tone = np.sign(np.sin(2 * np.pi * mtof(m) * x)) * 0.35 * np.exp(-x * 12)
+            place(out, lp(tone, 4000), i * 0.09)
+        return out
+    def clank():
+        n = int(0.6 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 820 * x) + 0.7 * np.sin(2 * np.pi * 1370 * x) + 0.5 * np.sin(2 * np.pi * 2210 * x)) * np.exp(-x * 7) * 0.5 + bp(rng.standard_normal(n), 800, 5000) * np.exp(-x * 40)
+    def shake_sfx(d=0.9):
+        n = int(d * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 2000, 7000) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 7 * x))) * 0.6
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    h = sc['hook']; place(fx, popsfx(), h['start'] + 0.2, 0.3); place(fx, ding(1320), wt('hook', 'Noch') - 0.2, 0.2); place(fx, clank(), ph['hook'][1]['start'] + 0.3, 0.35)
+    for sid in ('rest', 'sleep', 'light', 'protein', 'mind'): place(fx, levelup(), sc[sid]['start'] + 0.3, 0.45); place(fx, popsfx(), sc[sid]['start'] + 0.5, 0.25)
+    place(fx, popsfx(), wt('rest', 'Signal') - 0.4, 0.3); place(fx, sparkle(), wt('rest', 'Pause') - 0.4, 0.3)
+    place(fx, popsfx(), wt('sleep', 'Nacht') - 0.3, 0.25); place(fx, bloop(), wt('sleep', 'weniger') - 0.4, 0.45); place(fx, drumhit(), wt('sleep', 'weniger') + 0.2, 0.35)
+    place(fx, clank(), sc['light']['start'] + 1.0, 0.4); place(fx, clank(), wt('light', 'leichte') - 0.3, 0.3); place(fx, ding(1560), wt('light', 'nichts') - 0.3, 0.2)
+    place(fx, popsfx(), sc['protein']['start'] + 1.2, 0.25); place(fx, popsfx(), wt('protein', 'siebzig') - 0.3, 0.3); place(fx, ding(1760), wt('protein', 'siebzig') + 0.6, 0.2)
+    place(fx, shake_sfx(), ph['protein'][1]['start'] + 0.1, 0.35); place(fx, popsfx(), wt('protein', 'Minute') - 0.4, 0.3)
+    ts = wt('mind', 'Studie') - 0.3
+    for k in range(8): place(fx, tick(), ts + k * 0.15, 0.3)
+    place(fx, drumhit(), wt('mind', 'doppelt') - 0.3, 0.45); place(fx, sparkle(), wt('mind', 'doppelt') - 0.2, 0.3)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'Montag') + 0.5, 0.25)
+    s = sc['outro']; place(fx, levelup(), s['start'] + 0.2, 0.35); place(fx, popsfx(), s['start'] + 1.0, 0.3)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
