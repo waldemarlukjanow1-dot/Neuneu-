@@ -704,6 +704,47 @@ if 'protein' in sc and 'mind' in sc:  # Folge 17 (Muskeln)
     s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'Montag') + 0.5, 0.25)
     s = sc['outro']; place(fx, levelup(), s['start'] + 0.2, 0.35); place(fx, popsfx(), s['start'] + 1.0, 0.3)
 
+if 'crave' in sc and 'habit' in sc:  # Folge 18 (Rauchstopp)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def snap():
+        n = int(0.25 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 1500, 7000) * np.exp(-x * 60) * 1.4
+    def hb():
+        n = int(0.18 * SR); x = np.arange(n) / SR; return np.sin(2 * np.pi * 55 * x) * np.exp(-x * 25)
+    def coin_sfx():
+        n = int(0.5 * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 2600 * x) + 0.6 * np.sin(2 * np.pi * 3900 * x)) * np.exp(-x * 9) * (1 + 0.3 * np.sin(2 * np.pi * 30 * x))
+    def ring(d=1.2):
+        n = int(d * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 1300 * x) + np.sin(2 * np.pi * 1700 * x)) * 0.3 * (np.sin(2 * np.pi * 20 * x) > 0) * (x % 0.6 < 0.4)
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def pour():
+        n = int(1.0 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 400, 2500) * (0.6 + 0.4 * np.sin(2 * np.pi * 9 * x)) * env(n, 0.05, 0.5) * 0.6
+    place(fx, popsfx(), sc['hook']['start'] + 0.15, 0.3); tl = wt('hook', 'letzte'); place(fx, snap(), tl - 0.3, 0.8); place(fx, drumhit(), tl - 0.2, 0.4); place(fx, sparkle(), ph['hook'][1]['start'], 0.25)
+    s = sc['m20']; tp = wt('m20', 'Puls')
+    for k in range(int((s['end'] - s['start']) / 0.7)): bt = s['start'] + 0.3 + k * (0.55 + 0.03 * k); place(fx, hb(), bt, 0.5); place(fx, hb(), bt + 0.12, 0.3)
+    place(fx, popsfx(), tp - 0.3, 0.3)
+    s = sc['h12']; place(fx, ding(1320), s['start'] + 0.2, 0.2); place(fx, sparkle(), wt('h12', 'normal') - 0.3, 0.35)
+    s = sc['crave']; place(fx, popsfx(), s['start'] + 0.2, 0.3)
+    for k in range(8): place(fx, tick(), s['start'] + 0.7 + k * 0.25, 0.3)
+    place(fx, pour(), wt('crave', 'Wasser') - 0.3, 0.4)
+    s = sc['habit']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, popsfx(), wt('habit', 'Essen') - 0.3, 0.3); place(fx, crack(), wt('habit', 'laufen') - 0.3, 0.3); place(fx, ding(1560), wt('habit', 'laufen'), 0.2)
+    s = sc['money']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, coin_sfx(), wt('money', 'acht') - 0.3, 0.3); td = wt('money', 'dreitausend') - 0.3
+    for k in range(10): place(fx, coin_sfx(), td + k * 0.1, 0.1)
+    place(fx, drumhit(), td + 1.0, 0.4)
+    s = sc['help']; place(fx, ring(), s['start'] + 0.2, 0.25); place(fx, ding(1760), wt('help', 'kostenlos') - 0.3, 0.2)
+    s = sc['year']; place(fx, popsfx(), s['start'] + 0.2, 0.3); place(fx, confetti_pop(), wt('year', 'halb') + 0.5, 0.45); place(fx, sparkle(), wt('year', 'halb') + 0.5, 0.25)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'ausgeben') + 0.5, 0.25)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, popsfx(), s['start'] + 0.9, 0.25)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

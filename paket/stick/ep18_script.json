@@ -1,0 +1,71 @@
+{
+ "episode": "ep18",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "ICH DIR ZEIGE, WIE LEICHT AUFHÖREN SEIN KANN?"
+ ],
+ "sources": "WHO · NHS · BMF (Ø 8,05 €/Packung, 07/2026) · BIÖG rauchfrei-info.de",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Diese Zigarette? Ist deine letzte.",
+   "cap": "Diese *Zigarette? Ist deine *letzte."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn ich dir zeige, wie leicht Aufhören sein kann?",
+   "cap": "Was passiert, wenn ich dir zeige, wie *leicht *Aufhören sein kann?"
+  },
+  {
+   "scene": "m20",
+   "say": "Zwanzig Minuten nach der letzten Zigarette sinken Puls und Blutdruck schon.",
+   "cap": "*20 *Minuten nach der letzten Zigarette sinken *Puls und *Blutdruck schon."
+  },
+  {
+   "scene": "h12",
+   "say": "Nach zwölf Stunden ist das giftige Kohlenmonoxid in deinem Blut wieder normal.",
+   "cap": "Nach *12 *Stunden ist das giftige *Kohlenmonoxid in deinem Blut wieder *normal."
+  },
+  {
+   "scene": "crave",
+   "say": "Trick eins: Das Verlangen fühlt sich endlos an. Meistens ist es nach ein paar Minuten vorbei. Trink ein Glas Wasser und warte es ab.",
+   "cap": "*Trick *1: Das *Verlangen fühlt sich *endlos an. Meistens ist es nach *ein *paar *Minuten vorbei. Trink ein Glas *Wasser und *warte es ab."
+  },
+  {
+   "scene": "habit",
+   "say": "Trick zwei: Ändere die Momente, in denen du sonst rauchst. Nach dem Essen eine Runde laufen statt Kippe.",
+   "cap": "*Trick *2: Ändere die *Momente, in denen du sonst rauchst. Nach dem *Essen eine Runde *laufen statt *Kippe."
+  },
+  {
+   "scene": "money",
+   "say": "Trick drei: Rechne mit. Eine Schachtel kostet im Schnitt rund acht Euro. Eine pro Tag sind fast dreitausend Euro im Jahr.",
+   "cap": "*Trick *3: *Rechne mit. Eine *Schachtel kostet im Schnitt rund *8 *Euro. Eine pro Tag sind fast *3.000 *Euro im *Jahr."
+  },
+  {
+   "scene": "help",
+   "say": "Und du musst das nicht allein schaffen. Das Rauchfrei-Telefon berät dich kostenlos.",
+   "cap": "Und du musst das *nicht *allein schaffen. Das *Rauchfrei-Telefon berät dich *kostenlos."
+  },
+  {
+   "scene": "year",
+   "say": "Nach einem Jahr ist dein Risiko für Herzkrankheiten nur noch etwa halb so hoch.",
+   "cap": "Nach *einem *Jahr ist dein Risiko für *Herzkrankheiten nur noch etwa *halb so hoch."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Wofür würdest du die dreitausend Euro ausgeben?",
+   "gap": 0.5,
+   "cap": "*Wofür würdest du die *3.000 *Euro *ausgeben?"
+  },
+  {
+   "scene": "outro",
+   "say": "Schick das jemandem, der aufhören will!",
+   "cap": "*Schick das *jemandem, der *aufhören *will!"
+  }
+ ]
+}
