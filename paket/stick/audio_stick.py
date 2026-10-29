@@ -378,7 +378,7 @@ if 'fair' in sc and 'amg' in sc:  # Folge 09
     for k in range(3): place(fx, backfire(), s['start'] + 0.9 + k * 0.5, 0.4)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, backfire(), s['start'] + 0.8, 0.3)
 
-if 'closeup' in sc:  # Folge 10 (Vape)
+if 'closeup' in sc and 'youth' in sc:  # Folge 10 (Vape)
     def wt(sid, prefix, k=0):
         for p in ph[sid]:
             for w in p['words']:
@@ -573,6 +573,61 @@ if 'react' in sc and 'morning' in sc:  # Folge 14 (Handy am Morgen)
     s = sc['study']; place(fx, crack(), s['start'] + 0.3, 0.25); place(fx, ding(1560), wt('study', 'Prozent') - 0.6, 0.2); place(fx, drumhit(), ph['study'][1]['start'] + 0.4, 0.4)
     s = sc['tip']; place(fx, popsfx(), wt('tip', 'Schlafzimmer') - 0.3, 0.3); place(fx, popsfx(), wt('tip', 'echten') - 0.3, 0.3)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.35); place(fx, popsfx(), wt('outro', 'markier') - 0.2, 0.3)
+
+if 'kick' in sc and 'closeup' in sc:  # Folge 15 (Energy)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def can_open():   # click + fizz
+        n = int(0.9 * SR); x = np.arange(n) / SR
+        click = bp(rng.standard_normal(n), 1500, 6000) * np.exp(-x * 90) * 1.5
+        fz = hp(rng.standard_normal(n), 3000) * np.exp(-x * 3.5) * np.minimum(1, x / 0.02) * 0.9
+        return click + fz
+    def gulp():
+        n = int(0.25 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(260 * np.exp(-x * 9) + 90) / SR) * np.exp(-x * 14)
+    def hb():
+        n = int(0.18 * SR); x = np.arange(n) / SR; return np.sin(2 * np.pi * 55 * x) * np.exp(-x * 25)
+    def beep(f=1000, d=0.09):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * f * x) * np.minimum(1, (d - x) / 0.01) * np.minimum(1, x / 0.005)
+    def zap():
+        n = int(0.35 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 2000, 9000) * np.exp(-x * 9) * (np.sin(2 * np.pi * 60 * x) > 0)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def stampS():
+        n = int(0.3 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(120 * np.exp(-x * 10) + 45) / SR) * np.exp(-x * 14) + bp(rng.standard_normal(n), 300, 2000) * np.exp(-x * 40) * 0.5
+    h = sc['hook']; te = wt('hook', 'Erste'); place(fx, can_open(), te - 0.3, 0.7)
+    for k in range(3): place(fx, gulp(), te + 0.6 + k * 0.28, 0.4)
+    place(fx, sparkle(), wt('hook', 'Gott') - 0.5, 0.35); place(fx, zap(), wt('hook', 'Gott') - 0.5, 0.3); place(fx, popsfx(), ph['hook'][1]['start'], 0.3)
+    s = sc['kick']
+    for k in range(int((s['end'] - s['start']) / 0.4)): place(fx, hb(), s['start'] + 0.2 + k * 0.4, 0.55); place(fx, hb(), s['start'] + 0.32 + k * 0.4, 0.35)
+    for k in range(3): place(fx, zap(), s['start'] + 0.5 + k * 1.6, 0.18)
+    s = sc['sugar']
+    for k in range(20): place(fx, tick(), s['start'] + 0.4 + k * 0.1, 0.35)
+    place(fx, drumhit(), wt('sugar', 'Würfel') - 0.3, 0.35)
+    s = sc['crash']; place(fx, bloop(), s['start'] + 0.4, 0.45); tz = wt('crash', 'zweite'); place(fx, can_open(), tz - 0.1, 0.6); place(fx, gulp(), tz + 0.6, 0.4)
+    s = sc['night']
+    for k in range(10): place(fx, tick(), s['start'] + 0.6 + k * 0.3, 0.35)
+    place(fx, popsfx(), wt('night', 'Gute') - 0.2, 0.25)
+    s = sc['heart']
+    for k in range(int((s['end'] - s['start']) / 0.75)): place(fx, beep(1000), s['start'] + 0.3 + k * 0.75, 0.25)
+    place(fx, crack(), wt('heart', 'EKG') - 0.3, 0.3)
+    s = sc['limit']; td = wt('limit', 'zweieinhalb')
+    for k in range(3): place(fx, popsfx(), td - 0.4 + k * 0.25, 0.28)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'heute') + 0.5, 0.25)
+    s = sc['taurin']; place(fx, popsfx(), s['start'] + 0.3, 0.25); place(fx, popsfx(), wt('taurin', 'Ochsengalle') - 0.3, 0.3); place(fx, sparkle(), wt('taurin', 'Labor') - 0.3, 0.25)
+    s = sc['uk']; place(fx, stampS(), s['start'] + 0.3, 0.45); place(fx, drumhit(), wt('uk', 'uns') - 0.3, 0.35)
+    s = sc['outro']; place(fx, can_open(), s['start'] + 0.2, 0.4); place(fx, popsfx(), s['start'] + 1.0, 0.3)
 
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768

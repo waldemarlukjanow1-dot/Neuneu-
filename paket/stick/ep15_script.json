@@ -1,0 +1,76 @@
+{
+ "episode": "ep15",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG ENERGY TRINKST?"
+ ],
+ "sources": "FrSaftErfrischGetrV (320 mg/l) · Verbraucherzentrale · EFSA · Shah u. a. 2019 · UK-Regierung 07/2026",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Erste Dose. Du fühlst dich wie ein Gott.",
+   "cap": "*Erste *Dose. Du fühlst dich wie ein *Gott."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du das jeden Tag machst?",
+   "cap": "Was passiert, wenn du das *jeden *Tag machst?"
+  },
+  {
+   "scene": "kick",
+   "say": "Zehn Minuten später: Herz schneller, Kopf hellwach. Bis zu hundertsechzig Milligramm Koffein pro Dose.",
+   "cap": "*10 *Minuten später: *Herz schneller, Kopf *hellwach. Bis zu *160 *Milligramm *Koffein pro Dose."
+  },
+  {
+   "scene": "sugar",
+   "say": "Dazu rund sechzig Gramm Zucker. Zwanzig Würfel. In einer Dose.",
+   "cap": "Dazu rund *60 *Gramm *Zucker. *20 *Würfel. In *einer *Dose."
+  },
+  {
+   "scene": "crash",
+   "say": "Ein paar Stunden später der Absturz: müde, gereizt. Also: zweite Dose.",
+   "cap": "Ein paar Stunden später der *Absturz: *müde, *gereizt. Also: *zweite *Dose."
+  },
+  {
+   "scene": "night",
+   "say": "Dose um siebzehn Uhr? Um zweiundzwanzig Uhr ist im Schnitt noch die Hälfte vom Koffein in dir. Gute Nacht.",
+   "cap": "Dose um *17 *Uhr? Um *22 *Uhr ist im Schnitt noch die *Hälfte vom Koffein in dir. *Gute *Nacht."
+  },
+  {
+   "scene": "heart",
+   "say": "In einer Studie stieg nach knapp einem Liter Energy der Blutdruck. Das EKG war noch Stunden später verändert.",
+   "cap": "In einer *Studie stieg nach knapp *1 *Liter Energy der *Blutdruck. Das *EKG war noch *Stunden später *verändert."
+  },
+  {
+   "scene": "limit",
+   "say": "Die Lebensmittelbehörde der EU sagt: maximal vierhundert Milligramm am Tag. Das sind zweieinhalb große Dosen.",
+   "cap": "Die *Lebensmittelbehörde der *EU sagt: maximal *400 *Milligramm am Tag. Das sind *2,5 *große *Dosen."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Wie viele Dosen waren es heute?",
+   "gap": 0.6,
+   "cap": "Wie *viele *Dosen waren es *heute?"
+  },
+  {
+   "scene": "taurin",
+   "say": "Und Taurin heißt so, weil man es zuerst in Ochsengalle gefunden hat. Heute kommt es aus dem Labor.",
+   "cap": "Und *Taurin heißt so, weil man es zuerst in *Ochsengalle gefunden hat. Heute kommt es aus dem *Labor."
+  },
+  {
+   "scene": "uk",
+   "say": "England will Energy für unter Sechzehnjährige ab April zweitausendsiebenundzwanzig verbieten. Und bei uns? Gibt's die Dose an jeder Tanke.",
+   "cap": "*England will Energy für *unter *16-Jährige ab *April *2027 *verbieten. Und bei *uns? Gibt's die Dose an *jeder *Tanke."
+  },
+  {
+   "scene": "outro",
+   "say": "Markier den, der ohne Energy nicht wach wird!",
+   "cap": "*Markier den, der ohne *Energy nicht *wach wird!"
+  }
+ ]
+}
