@@ -745,6 +745,47 @@ if 'crave' in sc and 'habit' in sc:  # Folge 18 (Rauchstopp)
     s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'ausgeben') + 0.5, 0.25)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, popsfx(), s['start'] + 0.9, 0.25)
 
+if 'count' in sc and 'plan' in sc:  # Folge 19 (Aufschieben)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def paper():
+        n = int(0.18 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 1500, 6000) * np.exp(-x * 25) * 0.8
+    def beep(f=880, d=0.12):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * f * x) * np.minimum(1, (d - x) / 0.01) * np.minimum(1, x / 0.005)
+    def rocket():
+        n = int(0.9 * SR); x = np.arange(n) / SR
+        return bp(rng.standard_normal(n), 300, 3000) * env(n, 0.05, 0.4) + np.sin(2 * np.pi * np.cumsum(200 + 900 * x) / SR) * env(n, 0.02, 0.35) * 0.5
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    place(fx, popsfx(), sc['hook']['start'] + 0.2, 0.3); place(fx, drumhit(), ph['hook'][1]['start'], 0.35)
+    s = sc['feel']; place(fx, popsfx(), s['start'] + 0.3, 0.25); place(fx, sparkle(), wt('feel', 'weniger') - 0.3, 0.25)
+    s = sc['later']
+    for k in range(5): place(fx, paper(), s['start'] + 0.3 + k * 0.28, 0.5)
+    for w_ in ('Stress', 'Krankheiten', 'Noten'): place(fx, bloop(), wt('later', w_) - 0.3, 0.3)
+    s = sc['why']; place(fx, popsfx(), wt('why', 'Aufgabe') - 0.3, 0.3); place(fx, low_boom(), wt('why', 'Gefühl') - 0.3, 0.3); place(fx, ding(1320), wt('why', 'Faul') - 0.3, 0.2)
+    s = sc['two']; place(fx, popsfx(), s['start'] + 0.2, 0.25)
+    for k in range(8): place(fx, tick(), wt('two', 'Minuten') - 0.6 + k * 0.25, 0.3)
+    for w_ in ('Abwasch', 'Nachricht', 'Mülleimer'): place(fx, ding(1560), wt('two', w_) - 0.3, 0.2)
+    s = sc['count']; place(fx, popsfx(), s['start'] + 0.2, 0.25)
+    for w_, k in (('Fünf', 0), ('vier', 0), ('drei', 0), ('zwei', 1), ('eins', 0)): place(fx, beep(880), wt('count', w_, k) - 0.1, 0.3)
+    up = wt('count', 'aufstehen') - 0.3; place(fx, beep(1760, 0.3), up, 0.3); place(fx, rocket(), up, 0.45); place(fx, drumhit(), up + 0.05, 0.4)
+    s = sc['plan']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, popsfx(), wt('plan', 'Wenn') - 0.3, 0.3); place(fx, popsfx(), wt('plan', 'dann') - 0.3, 0.3); place(fx, sparkle(), wt('plan', 'Studien') - 0.3, 0.2)
+    s = sc['free']
+    for k in range(3): place(fx, ding(1320 + k * 220), s['start'] + 0.2 + k * 0.3, 0.2)
+    place(fx, confetti_pop(), s['start'] + 0.6, 0.5); place(fx, sparkle(), wt('free', 'erledigt') - 0.3, 0.25)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'guckst') + 0.5, 0.25)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, popsfx(), s['start'] + 1.0, 0.25)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]

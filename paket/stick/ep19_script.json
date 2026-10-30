@@ -1,0 +1,71 @@
+{
+ "episode": "ep19",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU MIT DEM AUFSCHIEBEN AUFHÖRST?"
+ ],
+ "sources": "Tice & Baumeister 1997 · Sirois & Pychyl 2013 · Gollwitzer & Sheeran 2006 · 2-Minuten-Regel: D. Allen",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Nur noch fünf Minuten. Dann fang ich an.",
+   "cap": "Nur noch *5 *Minuten. Dann fang ich *an."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du ab heute nichts mehr aufschiebst?",
+   "cap": "Was passiert, wenn du ab *heute *nichts mehr *aufschiebst?"
+  },
+  {
+   "scene": "feel",
+   "say": "Erstmal: Aufschieben fühlt sich gut an. In einer Studie hatten Aufschieber am Anfang des Semesters sogar weniger Stress.",
+   "cap": "Erstmal: Aufschieben fühlt sich *gut an. In einer *Studie hatten Aufschieber am *Anfang des Semesters sogar *weniger *Stress."
+  },
+  {
+   "scene": "later",
+   "say": "Am Ende aber mehr Stress, mehr Krankheiten und schlechtere Noten.",
+   "cap": "Am *Ende aber *mehr *Stress, mehr *Krankheiten und *schlechtere *Noten."
+  },
+  {
+   "scene": "why",
+   "say": "Denn du schiebst nicht die Aufgabe weg. Du schiebst das blöde Gefühl weg, das sie dir macht. Faul bist du nicht.",
+   "cap": "Denn du schiebst *nicht die *Aufgabe weg. Du schiebst das *blöde *Gefühl weg, das sie dir macht. *Faul bist du *nicht."
+  },
+  {
+   "scene": "two",
+   "say": "Trick eins: Dauert es weniger als zwei Minuten? Dann mach es sofort. Abwasch, Nachricht, Mülleimer.",
+   "cap": "*Trick *1: Dauert es weniger als *2 *Minuten? Dann mach es *sofort. *Abwasch, *Nachricht, *Mülleimer."
+  },
+  {
+   "scene": "count",
+   "say": "Trick zwei: Zähl runter. Fünf, vier, drei, zwei, eins, und aufstehen, bevor dein Kopf anfängt zu verhandeln.",
+   "cap": "*Trick *2: Zähl *runter. *5, *4, *3, *2, *1, und *aufstehen, bevor dein Kopf anfängt zu *verhandeln."
+  },
+  {
+   "scene": "plan",
+   "say": "Trick drei: ein Wenn-dann-Plan. Wenn ich nach Hause komme, dann mache ich zuerst die Aufgabe. Solche Pläne helfen in Studien deutlich, Ziele wirklich durchzuziehen.",
+   "cap": "*Trick *3: ein *Wenn-dann-Plan. *Wenn ich nach Hause komme, *dann mache ich *zuerst die Aufgabe. Solche Pläne helfen in Studien *deutlich, Ziele wirklich *durchzuziehen."
+  },
+  {
+   "scene": "free",
+   "say": "Und das Beste: Erledigt ist erledigt. Kein schlechtes Gewissen mehr. Freizeit ohne Hintergedanken.",
+   "cap": "Und das *Beste: *Erledigt ist *erledigt. *Kein schlechtes *Gewissen mehr. *Freizeit ohne *Hintergedanken."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Was schiebst du gerade auf, während du das hier guckst?",
+   "gap": 0.5,
+   "cap": "Was *schiebst *du gerade *auf, während du das hier *guckst?"
+  },
+  {
+   "scene": "outro",
+   "say": "Markier den, der alles auf morgen schiebt!",
+   "cap": "*Markier den, der *alles auf *morgen schiebt!"
+  }
+ ]
+}
