@@ -1,0 +1,231 @@
+// ---------- scene data ----------
+// extra poses for this episode (sitting on the sofa: legs bent 90°, figure lowered by SIT_BOB)
+POSES.sit = { torso: -0.12, head: 0.06, armL: [0.45, 0.9], armR: [0.9, 1.6], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.sitSnack = { torso: -0.1, head: 0.02, armL: [0.45, 0.9], armR: [0.75, 1.9], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.stretch = { torso: 0, head: -0.12, armL: [2.9, 0.15], armR: [2.9, 0.15], legL: [0.14, 0], legR: [0.14, 0] };
+const SIT_BOB = -118;
+const NIGHT = new Set(['hook', 'n22', 'n0', 'n2']);
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const hhmm = (m) => { m = ((Math.floor(m / 5) * 5) % 1440 + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function sofa(x, s = 0.84) {
+  const G = 1165, seat = G - 96 * s;
+  g.save(); g.strokeStyle = INK; g.lineWidth = 7; g.lineJoin = 'round';
+  rr(x - 150 * s, seat - 220 * s, 72 * s, 240 * s, 22 * s); g.fillStyle = '#ef476f'; g.fill(); g.stroke();
+  rr(x - 185 * s, seat, 300 * s, G - seat - 18 * s, 18 * s); g.fillStyle = '#d63a5c'; g.fill(); g.stroke();
+  rr(x - 110 * s, seat - 22 * s, 225 * s, 34 * s, 14 * s); g.fillStyle = '#ff7096'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 170 * s, G - 20 * s, 16 * s, 20 * s); g.fillRect(x + 90 * s, G - 20 * s, 16 * s, 20 * s);
+  g.restore();
+}
+function phone(g2, h) {
+  g.save(); g.translate(h.hx + 6, h.hy - 20); g.rotate(-0.25);
+  rr(-17, -32, 34, 62, 8); g.fillStyle = INK; g.fill(); rr(-12, -26, 24, 48, 4); g.fillStyle = '#bfe6ff'; g.fill(); g.restore();
+}
+function popcorn(g2, h) {
+  g.save(); g.translate(h.hx + 4, h.hy - 16);
+  g.fillStyle = '#fff6e6'; g.strokeStyle = INK; g.lineWidth = 3;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(-18 + i * 7, -34 - (i % 2) * 8, 10, 0, 7); g.fill(); g.stroke(); }
+  g.beginPath(); g.moveTo(-26, -30); g.lineTo(26, -30); g.lineTo(18, 24); g.lineTo(-18, 24); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#ef476f'; for (const sx of [-14, 2]) { g.beginPath(); g.moveTo(sx, -30); g.lineTo(sx + 9, -30); g.lineTo(sx + 7, 24); g.lineTo(sx - 1, 24); g.closePath(); g.fill(); }
+  g.restore();
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function tv(x, y, u, t, tNext) {
+  g.save(); g.strokeStyle = INK; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - 60, y + 115); g.lineTo(x - 100, 1165); g.moveTo(x + 60, y + 115); g.lineTo(x + 100, 1165); g.stroke();
+  rr(x - 175, y - 118, 350, 236, 22); g.fillStyle = '#14161c'; g.fill(); g.lineWidth = 7; g.stroke();
+  const gr = g.createLinearGradient(0, y - 100, 0, y + 100); gr.addColorStop(0, '#4cc9f0'); gr.addColorStop(1, '#7209b7');
+  rr(x - 155, y - 98, 310, 196, 12); g.fillStyle = gr; g.fill();
+  const cd = tNext === null ? 99 : u - tNext;
+  if (cd < 0) { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 6', x, y + 70, 30, '#fff', { lw: 6 }); }
+  else if (cd < 2.4) { text('Nächste Folge in', x, y - 20, 28, '#fff', { weight: 800 }); text(String(3 - Math.floor(cd / 0.8)), x, y + 62, 84, YEL, { lw: 10 }); }
+  else { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 7', x, y + 70, 30, YEL, { lw: 6 }); }
+  g.restore();
+}
+function alarmClock(x, y, s, shake, t) {
+  withScale(x, y, s, () => {
+    g.rotate(Math.sin(t * 55) * 0.09 * shake);
+    for (const sd of [-1, 1]) { g.save(); g.rotate(sd * 0.62); g.fillStyle = YEL; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, -150, 50, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    g.strokeStyle = INK; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(-70, 100); g.lineTo(-105, 155); g.moveTo(70, 100); g.lineTo(105, 155); g.stroke();
+    g.fillStyle = '#ef476f'; g.lineWidth = 9; g.beginPath(); g.arc(0, 0, 138, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#fff'; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 106, 0, 7); g.fill(); g.stroke();
+    text('07:00', 0, 22, 64, INK);
+    if (shake > 0.5) {
+      g.strokeStyle = '#fff'; g.lineWidth = 8;
+      for (let k = 0; k < 3; k++) { g.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 12 + k)); for (const a0 of [-0.45, Math.PI - 0.45]) { g.beginPath(); g.arc(0, 0, 175 + k * 30, a0, a0 + 0.9); g.stroke(); } }
+      g.globalAlpha = 1;
+    }
+  });
+}
+function battery(x, y, w, h, level) {
+  rr(x - w / 2, y - h / 2, w, h, 20); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  rr(x + w / 2 + 2, y - h * 0.22, 20, h * 0.44, 6); g.fillStyle = INK; g.fill();
+  g.save(); rr(x - w / 2 + 12, y - h / 2 + 12, w - 24, h - 24, 12); g.clip();
+  g.fillStyle = level > 0.5 ? '#06d6a0' : level > 0.28 ? YEL : '#ef476f'; g.fillRect(x - w / 2 + 12, y - h / 2 + 12, (w - 24) * level, h - 24); g.restore();
+  text(Math.round(level * 100) + ' %', x, y + 16, 46, INK);
+}
+
+
+// ---------- Vitamin-D-Folge ----------
+function bottle(x, y, s, lab = 'VITAMIN D3', t = 0, tilt = 0) {   // amber dropper bottle
+  withScale(x, y, s, () => { g.rotate(tilt); g.strokeStyle = INK; g.lineWidth = 6;
+    rr(-60, -150, 120, 150, 22); g.fillStyle = '#b5651d'; g.fill(); g.stroke();
+    rr(-40, -110, 80, 70, 8); g.fillStyle = '#fff3c4'; g.fill(); g.lineWidth = 4; g.stroke(); text('☀️', 0, -80, 26, '#000', { weight: 400, font: '"Noto Color Emoji"', lw: 0 }); text(lab, 0, -50, 14, INK, { weight: 900, lw: 0 });
+    rr(-24, -186, 48, 38, 6); g.fillStyle = INK; g.fill(); g.beginPath(); g.ellipse(0, -205, 20, 24, 0, 0, 7); g.fillStyle = '#212529'; g.fill(); });
+}
+function drop(x, y, s) { withScale(x, y, s, () => { g.beginPath(); g.moveTo(0, -30); g.bezierCurveTo(22, 0, 22, 22, 0, 24); g.bezierCurveTo(-22, 22, -22, 0, 0, -30); g.fillStyle = '#ffd60a'; g.fill(); g.strokeStyle = INK; g.lineWidth = 4; g.stroke(); }); }
+function sunLow(x, y, r, t) { g.save(); g.fillStyle = '#ffd60a'; g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.arc(x, y, r, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+function person(x, y, s, col) { withScale(x, y, s, () => { g.fillStyle = col; g.strokeStyle = INK; g.lineWidth = 4; g.beginPath(); g.arc(0, -52, 18, 0, 7); g.fill(); g.stroke(); rr(-22, -30, 44, 52, 16); g.fill(); g.stroke(); }); }
+function gauge(v) {   // blood level 25(OH)D, nmol/l, top-left HUD
+  const x0 = 120, w = 300, y = 515, X = (n) => x0 + clamp01(n / 200) * w;
+  rr(x0 - 14, y - 40, w + 28, 92, 18); g.fillStyle = 'rgba(10,12,20,0.85)'; g.fill();
+  for (const [a, b, c] of [[0, 30, '#ef233c'], [30, 50, '#ffd166'], [50, 125, '#06d6a0'], [125, 200, '#ef233c']]) { g.fillStyle = c; g.fillRect(X(a), y, X(b) - X(a), 16); }
+  text('Vitamin-D-Spiegel', x0 + w / 2, y - 12, 20, '#fff', { weight: 800, lw: 0 });
+  text('Mangel', X(15), y + 40, 16, '#fff', { weight: 800, lw: 0 }); text('gut', X(87), y + 40, 16, '#fff', { weight: 800, lw: 0 }); text('zu viel', X(162), y + 40, 16, '#fff', { weight: 800, lw: 0 });
+  g.fillStyle = '#fff'; g.strokeStyle = INK; g.lineWidth = 3; g.beginPath(); g.moveTo(X(v), y + 20); g.lineTo(X(v) - 10, y + 34); g.lineTo(X(v) + 10, y + 34); g.closePath(); g.fill(); g.stroke(); g.fillRect(X(v) - 2, y - 4, 4, 24);
+}
+
+const LVL = { hook: 45, winter: 25, lack: 25, good: 70, vital: 75, danger: 175, dose: 75, closeup: 75, outro: 75 };
+const BG = {
+  hook: ['#ffd166', '#f4a261'], winter: ['#a2d2ff', '#5e60ce'], lack: ['#8d99ae', '#4a5568'], good: ['#06d6a0', '#118ab2'], vital: ['#3a86ff', '#1d3557'],
+  danger: ['#6a040f', '#1b0a0a'], dose: ['#ffba08', '#e85d04'], closeup: ['#0b0c10', '#000000'], outro: ['#ffd166', '#f4a261'],
+};
+const STATIONS = [['Winter', 'winter'], ['Mangel', 'lack'], ['Nutzen', 'good'], ['Studie', 'vital'], ['Zu viel', 'danger'], ['Dosis', 'dose']];
+const stationIdx = { hook: -1, winter: 0, lack: 1, good: 2, vital: 3, danger: 4, dose: 5, closeup: 5, outro: 5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (id === 'winter') { for (let i = 0; i < 40; i++) { const x = (hash(i) * W + Math.sin(t + i) * 20) % W, y = (hash(i + 5) * H + t * (60 + hash(i + 2) * 60)) % H; g.fillStyle = 'rgba(255,255,255,0.8)'; g.beginPath(); g.arc(x, y, 3 + hash(i + 9) * 4, 0, 7); g.fill(); } }
+  else { g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); } }
+  g.fillStyle = 'rgba(0,0,0,0.15)'; g.fillRect(0, GROUND, W, H - GROUND);
+  if (id !== 'closeup') { g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke(); }
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function kappiState(sc, u, t) {
+  let pos = { x: 260, scale: 0.8 }, keys = [[0, 'stand', 'neutral']], facing = 0;
+  switch (sc.id) {
+    case 'hook': keys = [[0, 'hold', 'happy'], [phStart('hook', 1, sc), 'think', 'thinking']]; break;
+    case 'winter': keys = [[0, 'shrug', 'worried']]; break;
+    case 'lack': keys = [[0, 'point', 'talk'], [at(/^Mangel/, 'lack', sc, -0.3), 'scared', 'surprised']]; break;
+    case 'good': keys = [[0, 'flex', 'determined'], [at(/^Mangel/, 'good', sc, -0.3), 'point', 'happy']]; break;
+    case 'vital': keys = [[0, 'pointUp', 'talk'], [at(/^nicht/, 'vital', sc, -0.3, 1), 'shrug', 'thinking'], [phStart('vital', 1, sc), 'scared', 'surprised']]; break;
+    case 'danger': keys = [[0, 'pointUp', 'determined'], [at(/^Nieren/, 'danger', sc, -0.3), 'chest', 'worried']]; break;
+    case 'dose': keys = [[0, 'point', 'talk'], [at(/^Warentest/, 'dose', sc, -0.3), 'shrug', 'surprised']]; break;
+    case 'closeup': keys = [[0, 'stand', 'determined']]; break;
+    case 'outro': pos = { x: 290, scale: 0.84 }; facing = 1; keys = [[0, 'point', 'happy']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.25));
+  return { x: pos.x, y: 1165, scale: pos.scale, facing, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2] };
+}
+const CLOSE = (u) => ease(clamp01((u - 0.15) / 0.8));
+function sceneBack(sc, u, t) {
+  if (sc.id === 'closeup') { g.fillStyle = `rgba(0,0,0,${0.35 * CLOSE(u)})`; g.fillRect(-300, 300, 1700, 1500); }
+}
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  if (sc.id === 'closeup') {
+    const p = CLOSE(u), s = lerp(0.8, 2.7, p);
+    st.x = lerp(260, 540, p); st.scale = s; st.y = lerp(1165, 880 + 499 * 2.7, p);
+    g.save(); g.beginPath(); g.rect(49, 461, 982, 829); g.clip(); const K = drawKappi(g, st); g.restore(); return K;
+  }
+  return drawKappi(g, st);
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  if (sc.id !== 'closeup' && sc.id !== 'outro') { const tgt = sc.id === 'danger' ? lerp(LVL.good, LVL.danger, ease(clamp01((u - at(/^Mehr/, 'danger', sc, -0.3)) / 1.5))) : lerp(LVL[prevScene(sc).id] ?? LVL[sc.id], LVL[sc.id], ease(clamp01((u - 0.3) / 1.0))); gauge(sc.id === 'danger' && u < 0.5 ? LVL.vital : tgt); }
+  switch (sc.id) {
+    case 'hook': {
+      const p2 = phStart('hook', 1, sc);
+      bottle(760, 1000, 1.3 * pop(u, 0.1), 'VITAMIN D3', t, -0.15);
+      const dp = ((u - 0.6) % 1.2) / 1.2; if (u > 0.6) drop(735, 820 + dp * 300, 0.9 * (1 - dp * 0.5));
+      if (u > 0.4 && u < p2) withScale(740, 640, pop(u, 0.4), () => pill(0, 0, 1, '☀️ Sonne in Tropfen?', '#fff', INK, 36));
+      if (u > p2) withScale(740, 640, pop(u, p2), () => pill(0, 0, 1, '…jeden Tag? 🤔', YEL, INK, 38));
+      break;
+    }
+    case 'winter': {
+      const tT = at(/^tief/, 'winter', sc, -0.3), tK = at(/^kaum/, 'winter', sc, -0.3);
+      sunLow(740, 1165, 80 * pop(u, 0.3), t);
+      withScale(720, 680, pop(u, 0.3), () => pill(0, 0, 1, '❄️ Oktober – März', '#fff', INK, 36));
+      if (u > tT) withScale(720, 800, pop(u, tT), () => text('Sonne zu tief 📉', 0, 0, 40, '#fff', { lw: 8, font: EMO }));
+      if (u > tK) withScale(720, 900, pop(u, tK), () => text('Haut bildet kaum Vitamin D', 0, 0, 30, YEL, { lw: 8 }));
+      break;
+    }
+    case 'lack': {
+      const tS = at(/^sechzig/, 'lack', sc, -0.3), tM = at(/^Mangel/, 'lack', sc, -0.3), tR = at(/^Robert/, 'lack', sc, -0.3);
+      if (u > tR) withScale(720, 600, pop(u, tR), () => pill(0, 0, 1, 'RKI · Erwachsene', '#fff', INK, 32));
+      for (let i = 0; i < 10; i++) { const col = (u > tM && i < 3) ? '#ef233c' : (u > tS && i < 6) ? '#ffd166' : '#06d6a0'; person(560 + (i % 5) * 80, 820 + Math.floor(i / 5) * 130, 0.9 * pop(u, 0.4 + i * 0.05), col); }
+      if (u > tS) withScale(720, 1030, pop(u, tS), () => text('🟡 ≈ 60 % unter Wunschwert', 0, 0, 30, '#fff', { lw: 7, font: EMO }));
+      if (u > tM) withScale(720, 1090, pop(u, tM), () => text('🔴 ≈ 30 % Mangel', 0, 0, 30, '#fff', { lw: 7, font: EMO }));
+      break;
+    }
+    case 'good': {
+      const its = [[/^Knochen/, '🦴', 'Knochen'], [/^Muskeln/, '💪', 'Muskeln'], [/^Immunsystem/, '🛡️', 'Immunsystem']];
+      its.forEach(([re, e, lab], i) => { const tt = at(re, 'good', sc, -0.3); if (u > tt) withScale(560 + i * 160, 760, pop(u, tt), () => { text(e, 0, 0, 90, '#000', { weight: 400, font: '"Noto Color Emoji"', lw: 0 }); text(lab, 0, 70, 26, '#fff', { weight: 900, lw: 6 }); }); });
+      const tH = at(/^hilft/, 'good', sc, -0.3);
+      if (u > tH) withScale(720, 1000, pop(u, tH), () => pill(0, 0, 1, 'bei Mangel: kleine Dosis hilft ✅', '#fff', INK, 30));
+      break;
+    }
+    case 'vital': {
+      const p2 = phStart('vital', 1, sc), tK = at(/^Krebs/, 'vital', sc, -0.3), tH = at(/^Herzinfarkte/, 'vital', sc, -0.3), tR = at(/^Riesenstudie/, 'vital', sc, -0.3);
+      if (u > tR) withScale(720, 640, pop(u, tR), () => { pill(0, 0, 1, 'VITAL-Studie · 25.871 Menschen', '#fff', INK, 30); text('2.000 I.E. täglich · ~5 Jahre', 0, 64, 22, '#fff', { weight: 800, lw: 6 }); });
+      if (u > tK) withScale(720, 800, pop(u, tK), () => text('Krebs: kein Unterschied ➖', 0, 0, 32, '#fff', { lw: 8, font: EMO }));
+      if (u > tH) withScale(720, 870, pop(u, tH), () => text('Herzinfarkt: kein Unterschied ➖', 0, 0, 30, '#fff', { lw: 8, font: EMO }));
+      if (u > p2) withScale(720, 1000, pop(u, p2 + 0.3), () => { pill(0, 0, 1, 'Autoimmunkrankheiten −22 % 🤯', YEL, INK, 32); text('(Hahn u. a. 2022, BMJ)', 0, 62, 20, '#fff', { weight: 800, lw: 5 }); });
+      break;
+    }
+    case 'danger': {
+      const tM = at(/^Mehr/, 'danger', sc, -0.3), tG = at(/^gespeichert/, 'danger', sc, -0.3), tN = at(/^Nieren/, 'danger', sc, -0.3);
+      bottle(760, 1000, 1.0, 'VITAMIN D3', t, 2.4 * ease(clamp01((u - tM) / 0.5)));
+      if (u > tM + 0.4) for (let i = 0; i < 6; i++) { const dp = ((u * 1.4 + i / 6) % 1); drop(700 + Math.sin(i * 7) * 30, 900 + dp * 250, 0.7); }
+      if (u > tM) withScale(720, 640, pop(u, tM), () => pill(0, 0, 1, '⚠️ mehr ≠ besser', '#ef233c', '#fff', 38));
+      if (u > tG) withScale(720, 740, pop(u, tG), () => text('wird im Körper gespeichert', 0, 0, 30, '#fff', { lw: 7 }));
+      if (u > tN) withScale(720, 830, pop(u, tN), () => text('Kalzium im Blut ↑ → Nieren ⚠️', 0, 0, 30, YEL, { lw: 8, font: EMO }));
+      break;
+    }
+    case 'dose': {
+      const tZ = at(/^zwanzig/, 'dose', sc, -0.3), tW = at(/^Warentest/, 'dose', sc, -0.3);
+      withScale(720, 640, pop(u, 0.3), () => pill(0, 0, 1, 'BfR-Empfehlung', '#fff', INK, 32));
+      if (u > tZ) withScale(720, 750, pop(u, tZ), () => { pill(0, 0, 1, 'max. 20 µg = 800 I.E. / Tag', YEL, INK, 34); text('aus Nahrungsergänzungsmitteln', 0, 62, 22, '#fff', { weight: 800, lw: 6 }); });
+      if (u > tW) { ['1.000', '2.000', '4.000'].forEach((l, i) => bottle(580 + i * 140, 1130, 0.75 * pop(u, tW + i * 0.2), l + ' I.E.', t)); withScale(720, 890, pop(u, tW + 0.6), () => text('Stiftung Warentest: meist höher 📦', 0, 0, 28, '#fff', { lw: 7, font: EMO })); }
+      break;
+    }
+    case 'closeup': {
+      const tS = at(/^steht/, 'closeup', sc);
+      if (u > tS + 0.5) withScale(820, 560, pop(u, tS + 0.5), () => text('🔍❓', 0, 0, 64, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      break;
+    }
+    case 'outro': {
+      bottle(860, 1150, 0.7, 'VITAMIN D3', t);
+      withScale(660, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Schick das dem, der', 0, -30, 46, INK); text('Vitamin D wie', 0, 25, 44, INK); text('Bonbons nimmt 🍬👇', 0, 85, 44, '#e85d04', { font: EMO }); });
+      withScale(660, 870, pop(u, 1.0), () => pill(0, 0, 1, 'Unsicher? Blutwert beim Arzt checken 🩸', INK, YEL, 26));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 3).join(' · '), 540, 1500, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(3).join(' · '), 540, 1540, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+ "episode": "ep21",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG VITAMIN D NIMMST?"
+ ],
+ "sources": "RKI (DEGS1) · DGE · VITAL-Studie (Manson 2019, Hahn 2022) · BfR 2023/2025 · Stiftung Warentest",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Ein Tropfen Sonne aus der Flasche.",
+   "cap": "Ein *Tropfen *Sonne aus der *Flasche."
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du jeden Tag Vitamin D nimmst?",
+   "cap": "Was passiert, wenn du *jeden *Tag *Vitamin *D nimmst?"
+  },
+  {
+   "scene": "winter",
+   "say": "Erstmal: Im Winter steht die Sonne in Deutschland zu tief. Deine Haut bildet dann kaum Vitamin D.",
+   "cap": "Erstmal: Im *Winter steht die Sonne in Deutschland zu *tief. Deine Haut bildet dann *kaum Vitamin D."
+  },
+  {
+   "scene": "lack",
+   "say": "Laut Robert Koch-Institut liegen rund sechzig Prozent unter dem Wunschwert. Fast jeder Dritte hat sogar einen Mangel.",
+   "cap": "Laut *Robert *Koch-Institut liegen rund *60 *Prozent unter dem *Wunschwert. Fast *jeder *Dritte hat sogar einen *Mangel."
+  },
+  {
+   "scene": "good",
+   "say": "Und dein Körper braucht es für Knochen, Muskeln und Immunsystem. Bei einem Mangel hilft eine kleine Tagesdosis also wirklich.",
+   "cap": "Und dein Körper braucht es für *Knochen, *Muskeln und *Immunsystem. Bei einem Mangel *hilft eine *kleine Tagesdosis also wirklich."
+  },
+  {
+   "scene": "vital",
+   "say": "Aber ein Wundermittel ist es nicht. In einer Riesenstudie mit fast sechsundzwanzigtausend Menschen gab es nicht weniger Krebs und nicht weniger Herzinfarkte.",
+   "cap": "Aber ein *Wundermittel ist es *nicht. In einer Riesenstudie mit fast *26.000 Menschen gab es *nicht *weniger *Krebs und nicht weniger *Herzinfarkte."
+  },
+  {
+   "scene": "vital",
+   "say": "Dafür überraschend: rund zweiundzwanzig Prozent weniger Autoimmunkrankheiten.",
+   "cap": "Dafür *überraschend: rund *22 *Prozent weniger *Autoimmunkrankheiten."
+  },
+  {
+   "scene": "danger",
+   "say": "Aber Vorsicht: Mehr ist nicht besser. Vitamin D wird gespeichert, und zu viel kann deinen Nieren schaden.",
+   "cap": "Aber *Vorsicht: *Mehr ist *nicht *besser. Vitamin D wird *gespeichert, und zu viel kann deinen *Nieren *schaden."
+  },
+  {
+   "scene": "dose",
+   "say": "Das Bundesinstitut für Risikobewertung empfiehlt höchstens zwanzig Mikrogramm am Tag. Laut Stiftung Warentest sind die meisten Präparate höher dosiert.",
+   "cap": "Das *Bundesinstitut für Risikobewertung empfiehlt *höchstens *20 *Mikrogramm am Tag. Laut *Stiftung *Warentest sind die *meisten Präparate *höher dosiert."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Hast du mal geguckt, was auf deiner Packung steht?",
+   "gap": 0.5,
+   "cap": "Hast du mal *geguckt, was auf *deiner *Packung steht?"
+  },
+  {
+   "scene": "outro",
+   "say": "Schick das dem, der Vitamin D wie Bonbons nimmt!",
+   "cap": "*Schick das dem, der Vitamin D wie *Bonbons nimmt!"
+  }
+ ]
+}
