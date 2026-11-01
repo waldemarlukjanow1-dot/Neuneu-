@@ -1,0 +1,66 @@
+{
+ "episode": "ep20",
+ "title": [
+  "WAS PASSIERT, WENN",
+  "DU JEDEN TAG INS SOLARIUM GEHST?"
+ ],
+ "sources": "UVSV (max. 0,3 W/m²) · Deutsche Krebshilfe · SSK · IARC/WHO 2009 · Boniol u. a. 2012 (BMJ) · Flament u. a. 2013 · BfS",
+ "phrases": [
+  {
+   "scene": "hook",
+   "say": "Tag eins im Solarium. Sommerbräune im November!",
+   "cap": "*Tag *1 im *Solarium. *Sommerbräune im *November!"
+  },
+  {
+   "scene": "hook",
+   "say": "Was passiert, wenn du ab jetzt jeden Tag gehst?",
+   "cap": "Was passiert, wenn du ab jetzt *jeden *Tag gehst?"
+  },
+  {
+   "scene": "power",
+   "say": "Erstmal: Die Röhren dürfen so stark strahlen wie die Mittagssonne am Äquator. Ohne eine einzige Wolke.",
+   "cap": "Erstmal: Die *Röhren dürfen so stark strahlen wie die *Mittagssonne am *Äquator. Ohne eine *einzige *Wolke."
+  },
+  {
+   "scene": "tan",
+   "say": "Woche eins: Du wirst braun. Aber Bräune ist die Notbremse deiner Haut. Sie entsteht, weil UV-Strahlen sie gerade schädigen.",
+   "cap": "*Woche *1: Du wirst *braun. Aber Bräune ist die *Notbremse deiner Haut. Sie entsteht, weil UV-Strahlen sie gerade *schädigen."
+  },
+  {
+   "scene": "limit",
+   "say": "Die Strahlenschutzkommission rät zu höchstens etwa fünfzig Sonnenbädern im Jahr, echte Sonne mitgezählt. Du bist bei dreihundertfünfundsechzig.",
+   "cap": "Die *Strahlenschutzkommission rät zu *höchstens etwa *50 *Sonnenbädern im Jahr, echte Sonne *mitgezählt. Du bist bei *365."
+  },
+  {
+   "scene": "age",
+   "say": "Monat sechs: Die Haut wird ledrig. Bis zu achtzig Prozent der sichtbaren Hautalterung im Gesicht kommen vom UV-Licht.",
+   "cap": "*Monat *6: Die Haut wird *ledrig. Bis zu *80 *Prozent der sichtbaren *Hautalterung im Gesicht kommen vom *UV-Licht."
+  },
+  {
+   "scene": "cancer",
+   "say": "Und jetzt ernst: Die Weltgesundheitsorganisation zählt Solarien zur höchsten Krebs-Kategorie. Wer vor fünfunddreißig damit anfängt, hat ein fast doppelt so hohes Risiko für schwarzen Hautkrebs.",
+   "cap": "Und jetzt *ernst: Die *Weltgesundheitsorganisation zählt Solarien zur *höchsten *Krebs-Kategorie. Wer vor *35 damit anfängt, hat ein *fast *doppelt so hohes Risiko für *schwarzen *Hautkrebs."
+  },
+  {
+   "scene": "vitd",
+   "say": "Und Vitamin D? Dafür brauchst du UV-B. Solarien strahlen vor allem UV-A.",
+   "cap": "Und *Vitamin *D? Dafür brauchst du *UV-B. Solarien strahlen vor allem *UV-A."
+  },
+  {
+   "scene": "closeup",
+   "say": "Mal ganz ehrlich.",
+   "cap": "Mal ganz *ehrlich."
+  },
+  {
+   "scene": "closeup",
+   "say": "Musst du im November wirklich aussehen wie nach Mallorca?",
+   "gap": 0.5,
+   "cap": "Musst du im *November wirklich aussehen wie nach *Mallorca?"
+  },
+  {
+   "scene": "outro",
+   "say": "Markier den, der im Solarium Stammkunde ist!",
+   "cap": "*Markier den, der im *Solarium *Stammkunde ist!"
+  }
+ ]
+}

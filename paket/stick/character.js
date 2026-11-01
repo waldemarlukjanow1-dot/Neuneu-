@@ -262,7 +262,7 @@ export function drawKappi(g, st) {
   g.beginPath(); g.moveTo(nx, ny); g.lineTo(nx + Math.sin(hang) * D.neck * dir, ny - Math.cos(hang) * D.neck); g.stroke();
   if (isKappi) drawChain(g, nx, ny, p.torso, f);
   g.strokeStyle = D.line;
-  g.fillStyle = D.head; g.lineWidth = D.headStroke; g.beginPath(); g.arc(hx, hy, D.headR, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.fillStyle = st.skin || D.head; g.lineWidth = D.headStroke; g.beginPath(); g.arc(hx, hy, D.headR, 0, Math.PI * 2); g.fill(); g.stroke();   // st.skin: optional tint (default unchanged)
   drawFace(g, hx, hy, D.headR, f, st.expr || 'neutral', st.mouth || 0, st.blink || 0, hang * dir * 0.6, st.look);
   if (isKappi) drawCap(g, hx, hy, D.headR, f, hang * dir * 0.6); else drawExtra(g, hx, hy, D.headR, f, st.extra);
   g.strokeStyle = D.line; g.lineWidth = D.lineW;

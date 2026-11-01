@@ -1,0 +1,248 @@
+// ---------- scene data ----------
+// extra poses for this episode (sitting on the sofa: legs bent 90°, figure lowered by SIT_BOB)
+POSES.sit = { torso: -0.12, head: 0.06, armL: [0.45, 0.9], armR: [0.9, 1.6], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.sitSnack = { torso: -0.1, head: 0.02, armL: [0.45, 0.9], armR: [0.75, 1.9], legL: [1.5, 1.5], legR: [1.42, 1.42] };
+POSES.stretch = { torso: 0, head: -0.12, armL: [2.9, 0.15], armR: [2.9, 0.15], legL: [0.14, 0], legR: [0.14, 0] };
+const SIT_BOB = -118;
+const NIGHT = new Set(['hook', 'n22', 'n0', 'n2']);
+const wordTime = (re, sid, k = 0) => { const ph = TL.phrases.filter(p => p.scene === sid); for (const p of ph) for (const w of p.words) if (re.test(w.say)) { if (k-- === 0) return w.t0; } return null; };
+const hhmm = (m) => { m = ((Math.floor(m / 5) * 5) % 1440 + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const EMO = 'Inter, "Noto Color Emoji"';
+
+function digi(x, y, s, str, col = '#ff5a5f') {
+  withScale(x, y, s, () => { rr(-165, -64, 330, 128, 26); g.fillStyle = '#14161c'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke(); text(str, 0, 32, 88, col, { weight: 800 }); });
+}
+function pill(x, y, s, txt, bg = INK, fg = YEL, size = 44) {
+  withScale(x, y, s, () => {
+    g.font = `900 ${size}px ${EMO}`; const w = g.measureText(txt).width + size * 1.1;
+    rr(-w / 2, -size * 0.95, w, size * 1.9, size * 0.95); g.fillStyle = bg; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke();
+    text(txt, 0, size * 0.36, size, fg, { font: EMO });
+  });
+}
+function sofa(x, s = 0.84) {
+  const G = 1165, seat = G - 96 * s;
+  g.save(); g.strokeStyle = INK; g.lineWidth = 7; g.lineJoin = 'round';
+  rr(x - 150 * s, seat - 220 * s, 72 * s, 240 * s, 22 * s); g.fillStyle = '#ef476f'; g.fill(); g.stroke();
+  rr(x - 185 * s, seat, 300 * s, G - seat - 18 * s, 18 * s); g.fillStyle = '#d63a5c'; g.fill(); g.stroke();
+  rr(x - 110 * s, seat - 22 * s, 225 * s, 34 * s, 14 * s); g.fillStyle = '#ff7096'; g.fill(); g.stroke();
+  g.fillStyle = INK; g.fillRect(x - 170 * s, G - 20 * s, 16 * s, 20 * s); g.fillRect(x + 90 * s, G - 20 * s, 16 * s, 20 * s);
+  g.restore();
+}
+function phone(g2, h) {
+  g.save(); g.translate(h.hx + 6, h.hy - 20); g.rotate(-0.25);
+  rr(-17, -32, 34, 62, 8); g.fillStyle = INK; g.fill(); rr(-12, -26, 24, 48, 4); g.fillStyle = '#bfe6ff'; g.fill(); g.restore();
+}
+function popcorn(g2, h) {
+  g.save(); g.translate(h.hx + 4, h.hy - 16);
+  g.fillStyle = '#fff6e6'; g.strokeStyle = INK; g.lineWidth = 3;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(-18 + i * 7, -34 - (i % 2) * 8, 10, 0, 7); g.fill(); g.stroke(); }
+  g.beginPath(); g.moveTo(-26, -30); g.lineTo(26, -30); g.lineTo(18, 24); g.lineTo(-18, 24); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#ef476f'; for (const sx of [-14, 2]) { g.beginPath(); g.moveTo(sx, -30); g.lineTo(sx + 9, -30); g.lineTo(sx + 7, 24); g.lineTo(sx - 1, 24); g.closePath(); g.fill(); }
+  g.restore();
+}
+function glow(x, y, r, col) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+function tv(x, y, u, t, tNext) {
+  g.save(); g.strokeStyle = INK; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - 60, y + 115); g.lineTo(x - 100, 1165); g.moveTo(x + 60, y + 115); g.lineTo(x + 100, 1165); g.stroke();
+  rr(x - 175, y - 118, 350, 236, 22); g.fillStyle = '#14161c'; g.fill(); g.lineWidth = 7; g.stroke();
+  const gr = g.createLinearGradient(0, y - 100, 0, y + 100); gr.addColorStop(0, '#4cc9f0'); gr.addColorStop(1, '#7209b7');
+  rr(x - 155, y - 98, 310, 196, 12); g.fillStyle = gr; g.fill();
+  const cd = tNext === null ? 99 : u - tNext;
+  if (cd < 0) { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 6', x, y + 70, 30, '#fff', { lw: 6 }); }
+  else if (cd < 2.4) { text('Nächste Folge in', x, y - 20, 28, '#fff', { weight: 800 }); text(String(3 - Math.floor(cd / 0.8)), x, y + 62, 84, YEL, { lw: 10 }); }
+  else { text('▶', x, y + 10, 70, '#fff', { weight: 900 }); text('FOLGE 7', x, y + 70, 30, YEL, { lw: 6 }); }
+  g.restore();
+}
+function alarmClock(x, y, s, shake, t) {
+  withScale(x, y, s, () => {
+    g.rotate(Math.sin(t * 55) * 0.09 * shake);
+    for (const sd of [-1, 1]) { g.save(); g.rotate(sd * 0.62); g.fillStyle = YEL; g.strokeStyle = INK; g.lineWidth = 7; g.beginPath(); g.arc(0, -150, 50, Math.PI, 0); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    g.strokeStyle = INK; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(-70, 100); g.lineTo(-105, 155); g.moveTo(70, 100); g.lineTo(105, 155); g.stroke();
+    g.fillStyle = '#ef476f'; g.lineWidth = 9; g.beginPath(); g.arc(0, 0, 138, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#fff'; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 106, 0, 7); g.fill(); g.stroke();
+    text('07:00', 0, 22, 64, INK);
+    if (shake > 0.5) {
+      g.strokeStyle = '#fff'; g.lineWidth = 8;
+      for (let k = 0; k < 3; k++) { g.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 12 + k)); for (const a0 of [-0.45, Math.PI - 0.45]) { g.beginPath(); g.arc(0, 0, 175 + k * 30, a0, a0 + 0.9); g.stroke(); } }
+      g.globalAlpha = 1;
+    }
+  });
+}
+function battery(x, y, w, h, level) {
+  rr(x - w / 2, y - h / 2, w, h, 20); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = INK; g.lineWidth = 7; g.stroke();
+  rr(x + w / 2 + 2, y - h * 0.22, 20, h * 0.44, 6); g.fillStyle = INK; g.fill();
+  g.save(); rr(x - w / 2 + 12, y - h / 2 + 12, w - 24, h - 24, 12); g.clip();
+  g.fillStyle = level > 0.5 ? '#06d6a0' : level > 0.28 ? YEL : '#ef476f'; g.fillRect(x - w / 2 + 12, y - h / 2 + 12, (w - 24) * level, h - 24); g.restore();
+  text(Math.round(level * 100) + ' %', x, y + 16, 46, INK);
+}
+
+
+// ---------- Solarium-Folge ----------
+function booth(x, s, t, on = 1) {   // standing tanning booth with glowing tubes
+  withScale(x, 1165, s, () => {
+    g.strokeStyle = INK; g.lineWidth = 8;
+    rr(-150, -520, 300, 520, 40); g.fillStyle = '#e9ecef'; g.fill(); g.stroke();
+    rr(-115, -480, 230, 440, 24); g.fillStyle = on ? '#3c096c' : '#495057'; g.fill(); g.lineWidth = 5; g.stroke();
+    for (let i = 0; i < 5; i++) { const fl = on * (0.75 + 0.25 * Math.sin(t * 40 + i * 2)); g.save(); g.shadowColor = '#c77dff'; g.shadowBlur = 25 * fl; rr(-95 + i * 42, -460, 22, 400, 11); g.fillStyle = `rgba(${200 + 55 * fl},${150 + 80 * fl},255,${0.6 + 0.4 * fl})`; g.fill(); g.restore(); }
+    rr(-60, -560, 120, 50, 12); g.fillStyle = '#ffd166'; g.fill(); g.lineWidth = 5; g.stroke(); text('TURBO', 0, -525, 26, INK, { weight: 900, lw: 0 });
+  });
+  if (on) glow(x, 1165 - 260 * s, 300 * s, 'rgba(199,125,255,0.25)');
+}
+function sunglasses(K, s) { g.save(); g.translate(K.head.x, K.head.y); g.scale(s, s); g.fillStyle = INK; rr(-46, -14, 38, 24, 8); g.fill(); rr(8, -14, 38, 24, 8); g.fill(); g.fillRect(-10, -8, 20, 5); g.fillStyle = 'rgba(255,255,255,0.5)'; g.fillRect(-40, -10, 10, 5); g.fillRect(14, -10, 10, 5); g.restore(); }
+function wrinkles(K, s, a) {
+  if (a <= 0) return; g.save(); g.translate(K.head.x, K.head.y); g.scale(s, s); g.globalAlpha = a; g.strokeStyle = 'rgba(80,30,10,0.75)'; g.lineWidth = 3; g.lineCap = 'round';
+  for (const sd of [-1, 1]) { for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(sd * 40, -10 + k * 8); g.lineTo(sd * 54, -14 + k * 10); g.stroke(); } g.beginPath(); g.arc(sd * 26, 22, 16, sd > 0 ? 0.2 : Math.PI - 1.2, sd > 0 ? 1.2 : Math.PI - 0.2); g.stroke(); }
+  g.restore();
+}
+function sun(x, y, r, t) { g.save(); g.translate(x, y); g.rotate(t * 0.3); g.strokeStyle = '#ffd60a'; g.lineWidth = 12; g.lineCap = 'round'; for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.beginPath(); g.moveTo(Math.cos(a) * r * 1.2, Math.sin(a) * r * 1.2); g.lineTo(Math.cos(a) * r * 1.6, Math.sin(a) * r * 1.6); g.stroke(); } g.restore(); g.fillStyle = '#ffd60a'; g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); g.stroke(); }
+function vbars(x, y, vals, labs, cols, prog, max, fmt = String) {
+  const bw = 120, gap = 90, maxH = 300;
+  vals.forEach((v, i) => { const bx = x - (bw + gap) / 2 + i * (bw + gap) - bw / 2, h = maxH * v / max * prog;
+    if (v > 0) { rr(bx, y - h, bw, Math.max(4, h), 12); g.fillStyle = cols[i]; g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.stroke(); }
+    if (prog > 0.5 && v > 0) text(fmt(v), bx + bw / 2, y - h - 18, 44, '#fff', { lw: 8 });
+    text(labs[i], bx + bw / 2, y + 40, 26, '#fff', { weight: 800, lw: 6 }); });
+}
+
+const SKIN = { hook: 0, power: 0.1, tan: 0.45, limit: 0.6, age: 0.8, cancer: 0.8, vitd: 0.8, closeup: 1, outro: 1 };
+const DAY = { hook: 'Tag 1', power: 'Tag 1', tan: 'Woche 1', limit: 'Monat 2', age: 'Monat 6', cancer: 'Monat 6', vitd: 'Monat 6', outro: 'Tag 365' };
+const skinCol = (k) => { const a = [255, 246, 230], b = [214, 140, 70], c = [205, 105, 40]; const m = k < 0.6 ? a.map((v, i) => lerp(v, b[i], k / 0.6)) : b.map((v, i) => lerp(v, c[i], (k - 0.6) / 0.4)); return `rgb(${m.map(Math.round).join(',')})`; };
+const BG = {
+  hook: ['#3c096c', '#10002b'], power: ['#ffba08', '#f48c06'], tan: ['#f4a261', '#e76f51'], limit: ['#4cc9f0', '#3a86ff'], age: ['#b08968', '#7f5539'],
+  cancer: ['#2b0a0a', '#0b0c10'], vitd: ['#06d6a0', '#118ab2'], closeup: ['#0b0c10', '#000000'], outro: ['#3c096c', '#10002b'],
+};
+const STATIONS = [['Stärke', 'power'], ['Bräune', 'tan'], ['Limit', 'limit'], ['Haut', 'age'], ['Krebs', 'cancer'], ['Vit. D', 'vitd']];
+const stationIdx = { hook: -1, power: 0, tan: 1, limit: 2, age: 3, cancer: 4, vitd: 5, closeup: 5, outro: 5 };
+const sceneAt = (t) => { let s = TL.scenes[0]; for (const sc of TL.scenes) if (t >= sc.start) s = sc; return s; };
+const prevScene = (sc) => TL.scenes[Math.max(0, TL.scenes.indexOf(sc) - 1)];
+const phraseOf = (sid, k) => TL.phrases.filter(p => p.scene === sid)[k];
+const phStart = (sid, k, sc) => phraseOf(sid, k).start - sc.start;
+const at = (re, sid, sc, d = 0, k = 0) => wordTime(re, sid, k) - sc.start + d;
+const skinAt = (sc, u) => lerp(SKIN[prevScene(sc).id] ?? 0, SKIN[sc.id], ease(clamp01((u - 0.3) / 1.2)));
+
+function drawBG(id, t) {
+  const [a, b] = BG[id]; const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (id === 'hook' || id === 'outro') { g.save(); g.strokeStyle = 'rgba(199,125,255,0.18)'; g.lineWidth = 3; for (let i = 0; i < 14; i++) { const y = 600 + i * 70 + (t * 40) % 70; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } g.restore(); }
+  else { g.fillStyle = 'rgba(255,255,255,0.07)'; for (let i = 0; i < 9; i++) { const x = (hash(i) * W + t * 8 * (i % 3 + 1)) % (W + 300) - 150, y = 450 + hash(i + 4) * 900; g.beginPath(); g.arc(x, y, 60 + hash(i + 7) * 90, 0, 7); g.fill(); } }
+  g.fillStyle = 'rgba(0,0,0,0.15)'; g.fillRect(0, GROUND, W, H - GROUND);
+  if (id !== 'closeup') { g.strokeStyle = 'rgba(22,24,29,0.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, GROUND); g.lineTo(W, GROUND); g.stroke(); }
+}
+function talkingMouth(t) { const i = Math.floor(t * 100); const e = TL.env[i] || 0; return Math.min(1, e * 1.1) * (0.6 + 0.4 * Math.abs(Math.sin(t * 22))); }
+function blink(t) { const p = (t + 0.7) % 3.3; return p < 0.12 ? Math.sin(p / 0.12 * Math.PI) : 0; }
+
+function kappiState(sc, u, t) {
+  let pos = { x: 260, scale: 0.8 }, keys = [[0, 'stand', 'neutral']], facing = 0;
+  switch (sc.id) {
+    case 'hook': keys = [[0, 'cheer', 'joy'], [phStart('hook', 1, sc), 'think', 'thinking']]; break;
+    case 'power': keys = [[0, 'pointUp', 'talk'], [at(/^Wolke/, 'power', sc, -0.3), 'scared', 'surprised']]; break;
+    case 'tan': keys = [[0, 'flex', 'proud'], [at(/^Notbremse/, 'tan', sc, -0.4), 'shrug', 'worried']]; break;
+    case 'limit': keys = [[0, 'point', 'talk'], [at(/^dreihundert/, 'limit', sc, -0.3), 'scared', 'surprised']]; break;
+    case 'age': keys = [[0, 'chest', 'worried'], [at(/^Bis/, 'age', sc, -0.3), 'point', 'talk']]; break;
+    case 'cancer': keys = [[0, 'stand', 'determined'], [at(/^doppelt/, 'cancer', sc, -0.3), 'chest', 'worried']]; break;
+    case 'vitd': keys = [[0, 'think', 'thinking'], [at(/^UV-B/, 'vitd', sc, -0.3), 'pointUp', 'talk']]; break;
+    case 'closeup': keys = [[0, 'stand', 'determined']]; break;
+    case 'outro': pos = { x: 270, scale: 0.84 }; keys = [[0, 'point', 'happy']]; break;
+  }
+  let k = 0; while (k + 1 < keys.length && u >= keys[k + 1][0]) k++;
+  const cur = keys[k], prev = keys[Math.max(0, k - 1)];
+  const bl = k === 0 ? 1 : ease(clamp01((u - cur[0]) / 0.25));
+  return { x: pos.x, y: 1165, scale: pos.scale, facing, pose: mixPose(POSES[prev[1]], POSES[cur[1]], bl), expr: bl > 0.5 ? cur[2] : prev[2], skin: skinCol(skinAt(sc, u)) };
+}
+const CLOSE = (u) => ease(clamp01((u - 0.15) / 0.8));
+const WR = new Set(['age', 'cancer', 'vitd', 'closeup', 'outro']);
+function sceneBack(sc, u, t) {
+  if (sc.id === 'closeup') { g.fillStyle = `rgba(0,0,0,${0.35 * CLOSE(u)})`; g.fillRect(-300, 300, 1700, 1500); }
+}
+function drawKappiFor(sc, u, t) {
+  const st = kappiState(sc, u, t);
+  st.blink = blink(t); st.mouth = talkingMouth(t);
+  const wa = WR.has(sc.id) ? (sc.id === 'age' ? clamp01((u - at(/^ledrig/, 'age', sc, -0.4)) / 0.6) : 1) : 0;
+  if (sc.id === 'closeup') {
+    const p = CLOSE(u), s = lerp(0.8, 2.7, p);
+    st.x = lerp(260, 540, p); st.scale = s; st.y = lerp(1165, 880 + 499 * 2.7, p);
+    g.save(); g.beginPath(); g.rect(49, 461, 982, 829); g.clip(); const K = drawKappi(g, st); wrinkles(K, s, wa); g.restore(); return K;
+  }
+  const K = drawKappi(g, st); wrinkles(K, st.scale, wa);
+  if (sc.id === 'hook' && u < phStart('hook', 1, sc)) sunglasses(K, st.scale);
+  return K;
+}
+function hud(sc, u) {
+  const s = u < 0.4 ? (DAY[prevScene(sc).id] ?? DAY[sc.id]) : DAY[sc.id];
+  rr(150, 488, 230, 58, 20); g.fillStyle = 'rgba(10,12,20,0.85)'; g.fill(); g.strokeStyle = '#c77dff'; g.lineWidth = 3; g.stroke();
+  text(`☀️ ${s}`, 265, 528, 30, '#e0aaff', { font: EMO });
+}
+
+function sceneContent(sc, u, t, K) {
+  const D = sc.end - sc.start;
+  if (sc.id !== 'closeup') hud(sc, u);
+  switch (sc.id) {
+    case 'hook': {
+      const p2 = phStart('hook', 1, sc), tN = at(/^November/, 'hook', sc, -0.4);
+      booth(760, 1.0 * pop(u, 0.05, 0.4), t);
+      if (u > tN && u < p2) withScale(760, 560, pop(u, tN), () => pill(0, 0, 1, '📅 November · ☀️ Sommerbräune', '#fff', INK, 30));
+      if (u > p2) withScale(760, 560, pop(u, p2), () => pill(0, 0, 1, '…und das JEDEN Tag? 🤔', YEL, INK, 34));
+      break;
+    }
+    case 'power': {
+      const tA = at(/^Äquator/, 'power', sc, -0.4), tW = at(/^Wolke/, 'power', sc, -0.3);
+      sun(620, 700, 70 * pop(u, 0.2), t);
+      if (u > tA) withScale(640, 880, pop(u, tA), () => { pill(0, 0, 1, '🌍 Äquator · 12 Uhr', '#fff', INK, 32); });
+      if (u > tA + 0.3) withScale(640, 960, pop(u, tA + 0.3), () => text('= Solarium (max. 0,3 W/m²)', 0, 0, 26, '#fff', { weight: 800, lw: 6 }));
+      if (u > tW) withScale(640, 1050, pop(u, tW), () => text('☁️❌ keine einzige Wolke', 0, 0, 32, YEL, { lw: 8, font: EMO }));
+      break;
+    }
+    case 'tan': {
+      const tN = at(/^Notbremse/, 'tan', sc, -0.4), tS = at(/^schädigen/, 'tan', sc, -0.4);
+      for (let i = 0; i < 4; i++) if (u > 0.4 + i * 0.25) { g.fillStyle = skinCol(i / 3 * 0.6); g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.arc(570 + i * 100, 680, 38 * pop(u, 0.4 + i * 0.25), 0, 7); g.fill(); g.stroke(); }
+      if (u > 0.4) text('→ braun', 720, 760, 30, '#fff', { weight: 900, lw: 7 });
+      if (u > tN) withScale(720, 880, pop(u, tN), () => pill(0, 0, 1, '🚨 Notbremse der Haut', '#ef233c', '#fff', 36));
+      if (u > tS) withScale(720, 990, pop(u, tS), () => text('🧬 UV-Schaden → Bräune', 0, 0, 34, '#fff', { lw: 8, font: EMO }));
+      break;
+    }
+    case 'limit': {
+      const tF = at(/^fünfzig/, 'limit', sc, -0.3), tD = at(/^dreihundert/, 'limit', sc, -0.3);
+      withScale(720, 600, pop(u, 0.2), () => pill(0, 0, 1, 'Strahlenschutzkommission', '#fff', INK, 32));
+      if (u > tF) vbars(720, 1060, [50, u > tD ? Math.round(365 * ease(clamp01((u - tD) / 0.6))) : 0], ['SSK: max. ~50', 'du: 365'], ['#06d6a0', '#ef233c'], 1, 365);
+      if (u > tD + 0.6) withScale(720, 680, pop(u, tD + 0.6), () => text('über 7× zu viel 😳', 0, 0, 40, YEL, { lw: 8, font: EMO }));
+      text('Sonnenbäder pro Jahr (Sonne + Solarium)', 720, 1140, 22, '#fff', { weight: 800, lw: 6 });
+      break;
+    }
+    case 'age': {
+      const tB = at(/^Bis/, 'age', sc, -0.3), tL = at(/^ledrig/, 'age', sc, -0.4);
+      if (u > tL) withScale(720, 620, pop(u, tL), () => pill(0, 0, 1, '🔍 Haut: ledrig, faltig', '#fff', INK, 34));
+      if (u > tB) { const p = ease(clamp01((u - tB) / 1.0)); g.save(); g.translate(720, 860); g.fillStyle = 'rgba(255,255,255,0.25)'; g.beginPath(); g.arc(0, 0, 130, 0, 7); g.fill(); g.fillStyle = '#ffba08'; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, 130, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.8 * p); g.closePath(); g.fill(); g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 130, 0, 7); g.stroke(); g.restore();
+        text(`${Math.round(80 * p)} %`, 720, 890, 56, '#fff', { lw: 10 }); text('bis zu', 720, 808, 24, '#fff', { weight: 800, lw: 6 }); text('der sichtbaren Hautalterung im Gesicht: UV', 720, 1040, 24, '#fff', { weight: 800, lw: 6 }); }
+      break;
+    }
+    case 'cancer': {
+      const tK = at(/^Krebs-Kategorie/, 'cancer', sc, -0.4), t35 = at(/^fünfunddreißig/, 'cancer', sc, -0.3), tD = at(/^doppelt/, 'cancer', sc, -0.3);
+      withScale(720, 600, pop(u, 0.4), () => pill(0, 0, 1, '⚠️ IARC / WHO 2009', '#fff', INK, 34));
+      if (u > tK) withScale(720, 700, pop(u, tK), () => pill(0, 0, 1, 'Gruppe 1 = höchste Stufe', '#ef233c', '#fff', 34));
+      if (u > t35) withScale(720, 790, pop(u, t35), () => text('Start vor 35 Jahren:', 0, 0, 32, '#fff', { lw: 8 }));
+      if (u > tD) { vbars(720, 1080, [1, 1.87], ['nie', 'vor 35'], ['#adb5bd', '#ef233c'], ease(clamp01((u - tD) / 0.8)), 2.6, (v) => String(v).replace('.', ',') + '×'); text('Melanom-Risiko (relativ)', 720, 1150, 22, '#fff', { weight: 800, lw: 6 }); }
+      break;
+    }
+    case 'vitd': {
+      const tB = at(/^UV-B/, 'vitd', sc, -0.3), tA = at(/^UV-A/, 'vitd', sc, -0.3);
+      withScale(720, 620, pop(u, 0.2), () => pill(0, 0, 1, '💊 Vitamin D?', '#fff', INK, 38));
+      if (u > tB) withScale(720, 780, pop(u, tB), () => { card(-230, -50, 460, 100, '#d8f3dc'); text('UV-B → Vitamin D ✅', 0, 14, 36, INK, { font: EMO, lw: 0 }); });
+      if (u > tA) withScale(720, 920, pop(u, tA), () => { card(-230, -50, 460, 100, '#ffd6e0'); text('Solarium: v. a. UV-A ❌', 0, 14, 34, INK, { font: EMO, lw: 0 }); });
+      break;
+    }
+    case 'closeup': {
+      const tM = at(/^Mallorca/, 'closeup', sc);
+      if (u > tM + 0.5) withScale(820, 560, pop(u, tM + 0.5), () => text('🏝️❓', 0, 0, 64, '#000', { weight: 400, font: '"Noto Color Emoji"' }));
+      break;
+    }
+    case 'outro': {
+      booth(870, 0.5, t, 0);
+      withScale(660, 600, pop(u, 0.3) * (1 + 0.02 * Math.sin(t * 5)), () => { card(-300, -120, 600, 240, '#fff'); text('Markier den, der im', 0, -30, 46, INK); text('Solarium', 0, 25, 46, INK); text('Stammkunde ist ☀️👇', 0, 85, 42, '#7b2cbf', { font: EMO }); });
+      withScale(660, 870, pop(u, 1.0), () => pill(0, 0, 1, 'Wie oft warst du schon? 0 · 1–5 · 10+', INK, YEL, 26));
+      g.globalAlpha = sm(0.5, 1.2, u);
+      const parts = TL.sources.split(' · ');
+      text(parts.slice(0, 3).join(' · '), 540, 1500, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      text(parts.slice(3).join(' · '), 540, 1540, 24, 'rgba(255,255,255,0.95)', { weight: 700, lw: 6 });
+      g.globalAlpha = 1;
+      break;
+    }
+  }
+}

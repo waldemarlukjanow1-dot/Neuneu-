@@ -786,6 +786,43 @@ if 'count' in sc and 'plan' in sc:  # Folge 19 (Aufschieben)
     s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'guckst') + 0.5, 0.25)
     s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, popsfx(), s['start'] + 1.0, 0.25)
 
+if 'vitd' in sc and 'cancer' in sc:  # Folge 20 (Solarium)
+    def wt(sid, prefix, k=0):
+        for p in ph[sid]:
+            for w in p['words']:
+                if w['say'].startswith(prefix):
+                    if k == 0: return w['t0']
+                    k -= 1
+    def hum(d=2.5):   # tanning tubes buzzing on
+        n = int(d * SR); x = np.arange(n) / SR
+        return (np.sin(2 * np.pi * 100 * x) * 0.5 + np.sin(2 * np.pi * 200 * x) * 0.3 + bp(rng.standard_normal(n), 2000, 6000) * 0.08) * env(n, 0.15, 0.9) * 0.6
+    def clunk():
+        n = int(0.3 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(180 * np.exp(-x * 20) + 60) / SR) * np.exp(-x * 18) + bp(rng.standard_normal(n), 800, 4000) * np.exp(-x * 50) * 0.5
+    def siren(d=1.0):
+        n = int(d * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(700 + 250 * np.sin(2 * np.pi * 3 * x)) / SR) * env(n, 0.05, 0.6) * 0.5
+    def low_boom():
+        n = int(1.4 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(70 * np.exp(-x * 1.5) + 30) / SR) * np.exp(-x * 2.2)
+    def bloop():
+        n = int(0.32 * SR); x = np.arange(n) / SR
+        return np.sin(2 * np.pi * np.cumsum(900 * np.exp(-x * 7) + 180) / SR) * env(n, 0.003, 0.12)
+    h = sc['hook']; place(fx, clunk(), h['start'] + 0.05, 0.5); place(fx, hum(), h['start'] + 0.1, 0.35); place(fx, sparkle(), wt('hook', 'November') - 0.4, 0.25); place(fx, popsfx(), ph['hook'][1]['start'], 0.3)
+    s = sc['power']; place(fx, sparkle(), s['start'] + 0.2, 0.3); place(fx, popsfx(), wt('power', 'Äquator') - 0.4, 0.3); place(fx, drumhit(), wt('power', 'Wolke') - 0.3, 0.35)
+    s = sc['tan']
+    for k in range(4): place(fx, popsfx(), s['start'] + 0.4 + k * 0.25, 0.2)
+    place(fx, siren(), wt('tan', 'Notbremse') - 0.4, 0.35); place(fx, bloop(), wt('tan', 'schädigen') - 0.4, 0.3)
+    s = sc['limit']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, popsfx(), wt('limit', 'fünfzig') - 0.3, 0.3); td = wt('limit', 'dreihundert') - 0.3
+    for k in range(10): place(fx, tick(), td + k * 0.06, 0.35)
+    place(fx, drumhit(), td + 0.6, 0.45)
+    s = sc['age']; place(fx, crack(), wt('age', 'ledrig') - 0.4, 0.35)
+    for k in range(8): place(fx, tick(), wt('age', 'Bis') - 0.3 + k * 0.12, 0.25)
+    s = sc['cancer']; place(fx, low_boom(), s['start'] + 0.3, 0.5); place(fx, popsfx(), wt('cancer', 'Krebs-Kategorie') - 0.4, 0.3); place(fx, low_boom(), wt('cancer', 'doppelt') - 0.3, 0.4)
+    s = sc['vitd']; place(fx, popsfx(), s['start'] + 0.2, 0.25); place(fx, ding(1560), wt('vitd', 'UV-B') - 0.3, 0.2); place(fx, bloop(), wt('vitd', 'UV-A') - 0.3, 0.3)
+    s = sc['closeup']; place(fx, whoosh(0.8), s['start'] + 0.1, 0.4); place(fx, low_boom(), s['start'] + 0.9, 0.55); place(fx, popsfx(), wt('closeup', 'Mallorca') + 0.5, 0.25)
+    s = sc['outro']; place(fx, popsfx(), s['start'] + 0.3, 0.3); place(fx, popsfx(), s['start'] + 1.0, 0.25)
+
 # ---------- voice + ducking ----------
 with wave.open(f'{ep}/voice.wav') as w: voice = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
 voice = np.pad(voice, (0, max(0, N - len(voice))))[:N]
