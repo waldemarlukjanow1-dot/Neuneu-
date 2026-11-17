@@ -33,3 +33,7 @@ Danach mit ffmpeg auf −14 LUFS normalisieren und mit 60 fps kodieren.
 PAGE=meow.html node render.js x frames all
 python3 audio_meow.py frames/info.json assets/meow.wav a.wav
 ```
+
+### Version 2 (aktuell, `meow2.html` + `audio_meow2.py` → `out/miau_ringe.mp4`, 52,5 s)
+Nutzerwunsch: alle 30 Ringe ab dem ersten Bild sichtbar, nichts wird hinzugefügt, keine Schrift/Emojis/Zähler,
+Ton nur das Miau (pro Durchbruch) und ein kleines Plopp pro Abprall. Kein Wiederaufbau am Ende: der Ball fliegt nach dem letzten Ring raus.

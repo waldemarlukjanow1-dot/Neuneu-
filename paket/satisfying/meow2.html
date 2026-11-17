@@ -1,0 +1,76 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}</style></head><body><script type="module">
+// "Miau-Ringe" v2: all 30 rings visible from the first frame, nothing is ever added. No text, no emojis.
+// The ball escapes ring by ring (one meow per break); after the last ring it flies off and the video ends.
+import { W, H, FPS, g, bg, glowDot, hue, clamp01, lerp, rng, finish } from './sat.js';
+const NR = 30, CX = 540, CY = 900, RMIN = 60, RMAX = 470, GAP = 0.9, BALL = 13, SEED = 21;
+const Rk = (k) => RMIN + (RMAX - RMIN) * k / (NR - 1);
+const speed = (k) => 450 + 1.5 * Rk(k);
+const plan = []; { let t = 0.3; for (let k = 0; k < NR; k++) { plan.push(t); t += lerp(2.2, 1.2, k / (NR - 1)); } }
+const rings = [...Array(NR).keys()].map(k => ({ w: (0.9 + 0.5 * ((k * 7) % 5) / 4) * (k % 2 ? -1 : 1), a0: k * 2.3, broke: null }));
+const gapAng = (k, t) => rings[k].a0 + rings[k].w * t;
+const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+const margin = (k) => BALL / Rk(k) + 0.03;   // the whole ball must fit through the gap
+const rand = rng(SEED), dt = 1 / 1200;
+let x = 0, y = 0, cur = 0; { const a = rand() * 6.283; var vx = Math.cos(a) * speed(0), vy = Math.sin(a) * speed(0); }
+const hitTime = (px, py, ux, uy, Rc) => { const A = ux * ux + uy * uy, B = 2 * (px * ux + py * uy), C = px * px + py * py - Rc * Rc, D = B * B - 4 * A * C; return D < 0 ? null : (-B + Math.sqrt(D)) / (2 * A); };
+const offAt = (k, px, py, ux, uy, t, tau) => Math.abs(wrap(Math.atan2(py + uy * tau, px + ux * tau) - gapAng(k, t + tau)));
+function chooseDeflection(t) {
+  const pref = (rand() - 0.5) * 0.5, cands = [];
+  for (let j = -0.95; j <= 0.95; j += 0.01) cands.push(j); cands.sort((a, c) => Math.abs(a - pref) - Math.abs(c - pref));
+  for (const j of cands) {
+    const c = Math.cos(j), s = Math.sin(j), ux = vx * c - vy * s, uy = vx * s + vy * c;
+    const tau = hitTime(x, y, ux, uy, Rk(cur) - BALL); if (tau === null) continue;
+    const off = offAt(cur, x, y, ux, uy, t, tau), escapeNow = t + tau >= plan[cur] - 0.1;
+    if (escapeNow) {
+      if (off >= GAP / 2 - margin(cur)) continue;
+      if (cur + 1 < NR) { const tau2 = hitTime(x, y, ux, uy, Rk(cur + 1) - BALL); if (tau2 !== null && t + tau2 < plan[cur + 1] - 0.1 && offAt(cur + 1, x, y, ux, uy, t, tau2) < GAP / 2 + 0.15) continue; }
+      return j;
+    }
+    if (off < GAP / 2 + 0.12) continue;
+    if (cur === NR - 1 && off > GAP / 2 + 0.35 && rand() < 0.8) continue;   // last ring: near misses
+    return j;
+  }
+  return pref;
+}
+const traj = [], events = []; let nb = 0;
+{ const j = chooseDeflection(0), c = Math.cos(j), s = Math.sin(j); [vx, vy] = [vx * c - vy * s, vx * s + vy * c]; }
+const END = plan[NR - 1] + 6;
+for (let step = 0; step * dt <= END; step++) {
+  const t = step * dt;
+  if (step % 20 === 0) traj.push([x, y]);
+  x += vx * dt; y += vy * dt;
+  if (cur >= NR) continue;
+  const d = Math.hypot(x, y), R = Rk(cur);
+  if (d + BALL >= R) {
+    const off = Math.abs(wrap(Math.atan2(y, x) - gapAng(cur, t)));
+    if (off < GAP / 2 - margin(cur) + 0.02) { rings[cur].broke = t; events.push({ t, type: 'break', k: cur }); cur++; if (cur < NR) { const v = Math.hypot(vx, vy); vx = vx / v * speed(cur); vy = vy / v * speed(cur); } }
+    else { const nx = x / d, ny = y / d, vn = vx * nx + vy * ny;
+      if (vn > 0) { vx -= 2 * vn * nx; vy -= 2 * vn * ny; events.push({ t, type: 'bounce', k: cur, n: nb++ }); const j = chooseDeflection(t), c = Math.cos(j), s = Math.sin(j); [vx, vy] = [vx * c - vy * s, vx * s + vy * c]; }
+      const k2 = (R - BALL) / d; x *= k2; y *= k2; }
+  }
+}
+const breaks = rings.map(r => r.broke), tLast = breaks[NR - 1], DUR = tLast + 1.8, FR = Math.round(DUR * FPS);
+const sr = rng(5), shards = rings.map(() => [...Array(18)].map((_, i) => ({ a: i / 18 * 6.283 + sr() * 0.25, sp: 120 + sr() * 260, rot: (sr() - 0.5) * 10 })));
+function draw(t) {
+  bg();
+  const broken = breaks.filter(b => b !== null && t >= b).length;
+  for (let k = NR - 1; k >= 0; k--) {
+    const rg = rings[k], R = Rk(k), col = hue(190 + k * 11);
+    if (rg.broke === null || t < rg.broke) {
+      const ga = gapAng(k, t), isCur = k === broken;
+      g.save(); g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = isCur ? 22 : 8; g.lineWidth = isCur ? 7 : 5; g.globalAlpha = isCur ? 1 : 0.85;
+      g.beginPath(); g.arc(CX, CY, R, ga + GAP / 2, ga - GAP / 2 + 6.283); g.stroke(); g.restore();
+    } else {
+      const d = t - rg.broke; if (d > 1.1) continue;
+      g.save(); g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = 8; g.lineWidth = 4; g.globalAlpha = 1 - d / 1.1;
+      for (const s of shards[k]) { const rr = R + s.sp * d; g.save(); g.translate(CX + Math.cos(s.a) * rr, CY + Math.sin(s.a) * rr + 300 * d * d); g.rotate(s.a + Math.PI / 2 + s.rot * d); g.beginPath(); g.moveTo(-R * 0.08 - 6, 0); g.lineTo(R * 0.08 + 6, 0); g.stroke(); g.restore(); }
+      g.restore();
+      if (d < 0.25) { g.save(); g.globalAlpha = (1 - d / 0.25) * 0.5; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(CX, CY, R + d * 260, 0, 7); g.stroke(); g.restore(); }
+    }
+  }
+  const fi = Math.min(traj.length - 1, Math.floor(t * 60)), bcol = broken === 0 ? '#ffffff' : hue(190 + (broken - 1) * 11);
+  for (let s = 7; s >= 1; s--) { const p = traj[Math.max(0, fi - s)]; glowDot(CX + p[0], CY + p[1], BALL * (1 - s / 9), bcol, 0.22 * (1 - s / 8)); }
+  const p = traj[fi]; glowDot(CX + p[0], CY + p[1], BALL, bcol);
+}
+finish((t) => draw(t), FR, events, { breaks, plan, dur: DUR });
+</script></body></html>
