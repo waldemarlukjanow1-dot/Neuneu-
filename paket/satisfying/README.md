@@ -24,3 +24,12 @@ PAGE=sync.html node render.js x frames all
 python3 audio_sat.py sync frames/info.json a.wav     # Töne aus den Ereignissen, kreisförmig gemischt (loopt nahtlos)
 ```
 Danach mit ffmpeg auf −14 LUFS normalisieren und mit 60 fps kodieren.
+
+## Miau-Ringe (`meow.html` → `out/miau_ringe.mp4`, 53 s)
+- 45 Ringe als endloser Tunnel (die Kamera zoomt mit, der aktuelle Ring ist immer gleich groß), jeder Durchbruch = das Miau des Nutzers (`assets/meow.wav`, unverändert, nur die Stille am Anfang abgeschnitten).
+- Tempo in 4 Leveln (1,6 s → 1,2 s → 0,9 s → 0,65 s pro Ring), dann Boss-Ring (gold, 3 s Beinahe-Treffer), „FREE! 😺“ + Katzen-Explosion, die Ringe bauen sich auf → nahtloser Loop.
+- TikTok: Hook-Text in Sekunde 0–3, erstes Miau nach 0,4 s, alle Elemente in der Safe Zone (nichts unten unter y 1520, rechts wenig), 60 fps, −14 LUFS.
+```
+PAGE=meow.html node render.js x frames all
+python3 audio_meow.py frames/info.json assets/meow.wav a.wav
+```
