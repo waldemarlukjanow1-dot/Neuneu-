@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}</style></head><body><script type="module">
+// LOOP 3 "Escape": a ball bounces inside 10 spinning rings, each with a gap. Every escape shatters a ring. All broken → rings rebuild → loop
+import { W, H, FPS, DUR, g, bg, glowDot, counter, hue, clamp01, lerp, ease, rng, finish } from './sat.js';
+await document.fonts.load('800 64px Inter');
+const P = new URLSearchParams(location.search);
+const NR = 10, CX = 540, CY = 900, RIN = 120, DRR = 31, GAP = 0.75, BALL = 16, REBUILD = 7.25;
+const SEED = +(P.get('seed') || 2), V0 = +(P.get('v') || 800), SPIN = +(P.get('spin') || 1.4);
+const rings = [...Array(NR).keys()].map(k => ({ r: RIN + k * DRR, w: (SPIN + 0.18 * k) * (k % 2 ? -1 : 1), a0: k * 1.9, broke: null }));
+const gapAng = (k, t) => rings[k].a0 + rings[k].w * t;
+const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+// physics, 1200 Hz
+const rand = rng(SEED), dt = 1 / 1200; let x = CX, y = CY, ang0 = rand() * 6.283, vx = Math.cos(ang0) * V0, vy = Math.sin(ang0) * V0, cur = 0;
+const traj = [], events = []; let t = 0, nb = 0, tries = 0;
+const PLAN = (P.get('plan') || '2,2,2,2,1,2,1,1,1,1').split(',').map(Number);
+for (let step = 0; step <= REBUILD * 1200; step++) {
+  t = step * dt;
+  if (step % 20 === 0) traj.push([x, y, cur]);
+  if (cur >= NR) { x += vx * dt; y += vy * dt; continue; }
+  x += vx * dt; y += vy * dt;
+  const dx = x - CX, dy = y - CY, d = Math.hypot(dx, dy), R = rings[cur].r;
+  if (d + BALL >= R - 4) {
+    const a = Math.atan2(dy, dx), off = Math.abs(wrap(a - gapAng(cur, t)));
+    if (off < GAP / 2 - 0.05) { rings[cur].broke = t; events.push({ t, type: 'break', k: cur }); cur++; tries = 0; const sp = Math.hypot(vx, vy) * 1.04; const vv = Math.hypot(vx, vy); vx = vx / vv * sp; vy = vy / vv * sp; }
+    else if (off > GAP / 2 + 0.02 || true) {
+      const nx = dx / d, ny = dy / d, vn = vx * nx + vy * ny;
+      if (vn > 0) { vx -= 2 * vn * nx; vy -= 2 * vn * ny; tries++;
+        // scripted luck: after PLAN[cur] misses, pick a deflection (within a natural-looking range) whose next wall hit lands in the gap
+        let best = (rand() - 0.5) * 0.3;
+        if (tries >= PLAN[cur]) { const k2 = (R - 4 - BALL); let bestOff = 9;
+          for (let j = -0.9; j <= 0.9; j += 0.01) { const c = Math.cos(j), s = Math.sin(j), ux = vx * c - vy * s, uy = vx * s + vy * c, sp = Math.hypot(ux, uy);
+            const px = x - CX, py = y - CY, A = sp * sp, B = 2 * (px * ux + py * uy), Cc = px * px + py * py - k2 * k2, tau = (-B + Math.sqrt(B * B - 4 * A * Cc)) / (2 * A);
+            const ha = Math.atan2(py + uy * tau, px + ux * tau), off = Math.abs(wrap(ha - gapAng(cur, t + tau))); if (off < bestOff) { bestOff = off; best = j; } } }
+        const c = Math.cos(best), s = Math.sin(best); [vx, vy] = [vx * c - vy * s, vx * s + vy * c]; events.push({ t, type: 'bounce', k: cur, n: nb++ }); }
+      const k2 = (R - 4 - BALL) / d; x = CX + dx * k2; y = CY + dy * k2;
+    }
+  }
+}
+const lastBreak = Math.max(...rings.map(r => r.broke ?? 99));
+events.push({ t: REBUILD, type: 'rebuild' });
+// shards for each ring
+const shards = rings.map((rg, k) => [...Array(26)].map((_, i) => { const a = i / 26 * 6.283 + 0.1, sp = 250 + rand() * 450; return { a, sp, rot: (rand() - 0.5) * 12, va: (rand() - 0.5) * 2 }; }));
+function draw(tt) {
+  bg();
+  const intact = rings.filter(r => r.broke === null || tt < r.broke).length;
+  const reb = clamp01((tt - REBUILD) / (DUR - REBUILD));
+  rings.forEach((rg, k) => {
+    const col = hue(k * 33 + 200);
+    if (tt >= REBUILD) { const p = clamp01(reb * NR * 1.25 - k * 0.9 * 1.25 / 1.25); if (p <= 0) return; const s = ease(clamp01(p)); g.save(); g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = 20; g.lineWidth = 7; g.globalAlpha = s; const ga = gapAng(k, 0); g.beginPath(); g.arc(CX, CY, rg.r * lerp(0.6, 1, s), ga + GAP / 2, ga - GAP / 2 + 6.283); g.stroke(); g.restore(); return; }
+    if (rg.broke === null || tt < rg.broke) { const ga = gapAng(k, tt), isCur = k === NR - intact; g.save(); g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = isCur ? 28 : 14; g.lineWidth = isCur ? 9 : 6; g.globalAlpha = isCur ? 1 : 0.75; g.beginPath(); g.arc(CX, CY, rg.r, ga + GAP / 2, ga - GAP / 2 + 6.283); g.stroke(); g.restore(); }
+    else { const d = tt - rg.broke; if (d < 1.6) { g.save(); g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = 12; g.lineWidth = 6; g.globalAlpha = 1 - d / 1.6; for (const s of shards[k]) { const rr = rg.r + s.sp * d, a = s.a + s.va * d, yy = 900 * d * d * 0.6; g.save(); g.translate(CX + Math.cos(a) * rr, CY + Math.sin(a) * rr + yy); g.rotate(a + s.rot * d); g.beginPath(); g.moveTo(-18, 0); g.lineTo(18, 0); g.stroke(); g.restore(); } g.restore();
+      if (d < 0.25) { g.save(); g.globalAlpha = (1 - d / 0.25) * 0.5; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(CX, CY, rg.r + d * 600, 0, 7); g.stroke(); g.restore(); } } }
+  });
+  // ball (+trail); after the last ring it flies out, then a new ball pops in at the centre for the loop
+  const fi = Math.min(traj.length - 1, Math.floor(tt * 60));
+  const lastK = rings.reduce((m, r, k) => (r.broke !== null && tt >= r.broke) ? k : m, -1), bcol = lastK < 0 ? '#ffffff' : hue(lastK * 33 + 200);
+  if (tt < REBUILD) { for (let s = 8; s >= 1; s--) { const p = traj[Math.max(0, fi - s)]; glowDot(p[0], p[1], BALL * (1 - s / 10), bcol, 0.25 * (1 - s / 9)); } const p = traj[fi]; glowDot(p[0], p[1], BALL, bcol); }
+  else { const s = ease(clamp01((tt - (DUR - 0.35)) / 0.35)); if (s > 0) glowDot(CX, CY, BALL * s, '#ffffff'); }
+  if (tt < 0.25) glowDot(CX, CY, BALL, '#ffffff', 0);   // keep frame 0 identical to the seam
+  const allGone = tt >= lastBreak && tt < REBUILD;
+  counter(allGone ? 'FREE!' : String(tt >= REBUILD ? NR : intact), 1480, 72);
+  g.save(); g.font = '600 30px Inter, sans-serif'; g.textAlign = 'center'; g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillText(allGone ? 'all rings broken' : 'rings left', 540, 1530); g.restore();
+  if (allGone && tt - lastBreak < 0.5) { const gr = g.createRadialGradient(CX, CY, 0, CX, CY, 700); gr.addColorStop(0, `rgba(255,255,255,${(1 - (tt - lastBreak) / 0.5) * 0.25})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+}
+finish((t) => draw(t), DUR * FPS, events, { lastBreak, breaks: rings.map(r => r.broke) });
+</script></body></html>

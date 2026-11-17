@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}</style></head><body><script type="module">
+// LOOP 2 "Curve": 200 balls through a peg board — the bins fill up exactly to the drawn bell curve, then the floor opens
+import { W, H, FPS, DUR, g, bg, glowDot, counter, hue, clamp01, lerp, rng, finish } from './sat.js';
+await document.fonts.load('800 64px Inter');
+const ROWS = 10, NB = ROWS + 1, SP = 72, RH = 50, X0 = 540, Y0 = 520, BIN_TOP = Y0 + ROWS * RH + 30, BIN_BOT = 1420, BR = 9, NBALL = 200;
+const rand = rng(7);
+// exact counts per bin from the binomial distribution
+const C = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; };
+const pmf = [...Array(NB).keys()].map(k => C(ROWS, k) / 2 ** ROWS);
+let counts = pmf.map(p => Math.round(p * NBALL)); let diff = NBALL - counts.reduce((a, b) => a + b, 0); counts[5] += diff;
+const targets = []; counts.forEach((c, b) => { for (let i = 0; i < c; i++) targets.push(b); });
+for (let i = targets.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [targets[i], targets[j]] = [targets[j], targets[i]]; }
+const binX = (b) => X0 + (b - ROWS / 2) * SP;
+const SPAWN = 5.0 / NBALL, FALL0 = 0.22, HOP = 0.07, OPEN = 7.0;
+const balls = targets.map((b, i) => {
+  const moves = [...Array(ROWS)].map((_, k) => k < b ? 1 : 0); for (let k = moves.length - 1; k > 0; k--) { const j = Math.floor(rand() * (k + 1)); [moves[k], moves[j]] = [moves[j], moves[k]]; }
+  const t0 = 0.1 + i * SPAWN, xs = [X0]; for (const m of moves) xs.push(xs[xs.length - 1] + (m ? SP / 2 : -SP / 2));
+  return { b, t0, moves, xs, tExit: t0 + FALL0 + ROWS * HOP, hue: 190 + (i / NBALL) * 240 };
+});
+// stacking slots per bin, in order of arrival
+const perBin = [...Array(NB)].map(() => []);
+balls.slice().sort((a, c) => a.tExit - c.tExit).forEach(bl => { const k = perBin[bl.b].length; perBin[bl.b].push(bl); const row = Math.floor(k / 3), col = k % 3;
+  bl.sx = binX(bl.b) + (col - 1) * 20 + (row % 2 ? 4 : -4); bl.sy = BIN_BOT - BR - 1 - row * 18.5; const d = bl.sy - (Y0 + ROWS * RH); bl.tLand = bl.tExit + Math.sqrt(2 * Math.max(10, d) / 2600); });
+const events = [];
+balls.forEach(bl => { for (let r = 0; r < ROWS; r++) events.push({ t: bl.t0 + FALL0 + r * HOP, type: 'peg', r }); events.push({ t: bl.tLand, type: 'land', b: bl.b }); });
+const tDone = Math.max(...balls.map(b => b.tLand)); events.push({ t: tDone + 0.05, type: 'match' }); events.push({ t: OPEN, type: 'open' });
+events.sort((a, b) => a.t - b.t);
+const pegHits = new Map();   // "r,i" → hit times
+balls.forEach(bl => { for (let r = 0; r < ROWS; r++) { const key = r + ',' + Math.round((bl.xs[r] - X0) / SP * 2); (pegHits.get(key) || pegHits.set(key, []).get(key)).push(bl.t0 + FALL0 + r * HOP); } });
+function ballPos(bl, t) {
+  if (t < bl.t0) return null;
+  const u = t - bl.t0;
+  if (u < FALL0) return [X0, lerp(Y0 - 120, Y0 - 14, (u / FALL0) ** 2)];
+  if (t < bl.tExit) { const s = (u - FALL0) / HOP, r = Math.floor(s), f = s - r; const x = lerp(bl.xs[r], bl.xs[r + 1], f), y = Y0 + r * RH - 14 + RH * f * f - 22 * Math.sin(Math.PI * f) * (1 - f * 0.3); return [x, y]; }
+  if (t < bl.tLand) { const f = (t - bl.tExit) / (bl.tLand - bl.tExit); return [lerp(bl.xs[ROWS], bl.sx, Math.min(1, f * 1.6)), lerp(Y0 + ROWS * RH - 14, bl.sy, f * f)]; }
+  if (t < OPEN) return [bl.sx, bl.sy];
+  const d = t - OPEN; return [bl.sx, bl.sy + 0.5 * 9000 * d * d];
+}
+function draw(t) {
+  bg();
+  // funnel
+  g.strokeStyle = 'rgba(255,255,255,0.6)'; g.lineWidth = 4; g.beginPath(); g.moveTo(X0 - 110, Y0 - 200); g.lineTo(X0 - 22, Y0 - 110); g.moveTo(X0 + 110, Y0 - 200); g.lineTo(X0 + 22, Y0 - 110); g.stroke();
+  // pegs
+  for (let r = 0; r < ROWS; r++) for (let i = 0; i <= r; i++) {
+    const x = X0 + (i - r / 2) * SP, y = Y0 + r * RH, key = r + ',' + (2 * i - r), hs = pegHits.get(key) || [];
+    let fl = 0; for (const h of hs) if (t >= h && t - h < 0.15) fl = Math.max(fl, 1 - (t - h) / 0.15);
+    glowDot(x, y, 6 + 4 * fl, fl > 0 ? '#ffffff' : 'rgba(200,210,230,0.75)');
+  }
+  // bins
+  g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 3;
+  for (let b = 0; b <= NB; b++) { const x = binX(b) - SP / 2; g.beginPath(); g.moveTo(x, BIN_TOP); g.lineTo(x, BIN_BOT); g.stroke(); }
+  const op = clamp01((t - OPEN) / 0.15) * (1 - clamp01((t - 7.55) / 0.3));
+  g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 4;
+  for (let b = 0; b < NB; b++) { const x0 = binX(b) - SP / 2; g.save(); g.translate(x0, BIN_BOT); g.rotate(op * 1.35); g.beginPath(); g.moveTo(0, 0); g.lineTo(SP / 2, 0); g.stroke(); g.restore(); g.save(); g.translate(x0 + SP, BIN_BOT); g.rotate(-op * 1.35); g.beginPath(); g.moveTo(0, 0); g.lineTo(-SP / 2, 0); g.stroke(); g.restore(); }
+  // target curve
+  const landed = balls.filter(b => t >= b.tLand).length, done = t >= tDone, fl = done && t < OPEN ? Math.max(0, 1 - (t - tDone) / 0.6) : 0;
+  g.save(); g.setLineDash(done ? [] : [14, 12]); g.lineWidth = done ? 6 : 4; g.strokeStyle = done ? '#7CFF6B' : 'rgba(255,255,255,0.55)'; g.shadowColor = done ? '#7CFF6B' : 'transparent'; g.shadowBlur = done ? 25 + 30 * fl : 0; if (t >= OPEN) { g.globalAlpha = Math.max(1 - clamp01((t - OPEN) / 0.4), clamp01((t - 7.55) / 0.4)); if (t >= 7.55) { g.setLineDash([14, 12]); g.lineWidth = 4; g.strokeStyle = 'rgba(255,255,255,0.55)'; g.shadowBlur = 0; } }
+  g.beginPath();
+  for (let i = 0; i <= 200; i++) { const xb = -0.5 + i / 200 * NB, b = xb, z = (b - ROWS / 2) / Math.sqrt(ROWS / 4); const c = NBALL / Math.sqrt(2 * Math.PI * ROWS / 4) * Math.exp(-z * z / 2);
+    const h = Math.ceil(c / 3) * 18.5 + 8, x = X0 + (b - ROWS / 2) * SP; i ? g.lineTo(x, BIN_BOT - h) : g.moveTo(x, BIN_BOT - h); }
+  g.stroke(); g.restore();
+  // balls
+  for (const bl of balls) { const p = ballPos(bl, t); if (!p || p[1] > H + 20) continue; glowDot(p[0], p[1], BR, hue(bl.hue)); }
+  counter(t >= 7.55 ? `0 / ${NBALL}` : done ? '✓ PERFECT' : `${landed} / ${NBALL}`, 1530, done && t < 7.55 ? 70 : 64);
+  if (fl > 0) { g.save(); g.globalAlpha = fl * 0.18; g.fillStyle = '#7CFF6B'; g.fillRect(0, 0, W, H); g.restore(); }
+}
+finish((t) => draw(t), DUR * FPS, events, { tDone });
+</script></body></html>

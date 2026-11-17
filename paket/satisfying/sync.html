@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}</style></head><body><script type="module">
+// LOOP 1 "Sync": 16 dots on rings, ring k does (4+k) laps in 8 s → chaos in between, perfect alignment at the loop seam
+import { W, H, FPS, DUR, g, bg, glowDot, counter, hue, clamp01, finish } from './sat.js';
+await document.fonts.load('800 64px Inter');
+const N = 16, N0 = 4, CX = 540, CY = 880, R0 = 95, DR = 21, TOP = -Math.PI / 2;
+const ang = (k, t) => TOP + 2 * Math.PI * (N0 + k) * t / DUR;
+const events = [];   // a dot passes the top marker
+for (let k = 0; k < N; k++) for (let j = 0; j < N0 + k; j++) events.push({ t: j * DUR / (N0 + k), k });
+events.sort((a, b) => a.t - b.t);
+const lastHit = (k, t) => { const per = DUR / (N0 + k); return (t % per); };   // time since this dot last crossed the top
+function draw(t) {
+  bg();
+  // tracks
+  for (let k = 0; k < N; k++) { g.strokeStyle = 'rgba(255,255,255,0.07)'; g.lineWidth = 2; g.beginPath(); g.arc(CX, CY, R0 + k * DR, 0, 7); g.stroke(); }
+  // alignment (order parameter)
+  let sx = 0, sy = 0; for (let k = 0; k < N; k++) { sx += Math.cos(ang(k, t)); sy += Math.sin(ang(k, t)); }
+  const R = Math.hypot(sx, sy) / N;
+  // marker line at the top
+  g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 3; g.beginPath(); g.moveTo(CX, CY - R0 + 30); g.lineTo(CX, CY - R0 - (N - 1) * DR - 40); g.stroke();
+  // connecting polyline (makes the spirals / waves visible)
+  g.save(); g.lineWidth = 4; g.shadowBlur = 18;
+  for (let k = 0; k < N - 1; k++) { const a = ang(k, t), b = ang(k + 1, t); g.strokeStyle = hue(k * 20, 60); g.shadowColor = hue(k * 20); g.globalAlpha = 0.55;
+    g.beginPath(); g.moveTo(CX + Math.cos(a) * (R0 + k * DR), CY + Math.sin(a) * (R0 + k * DR)); g.lineTo(CX + Math.cos(b) * (R0 + (k + 1) * DR), CY + Math.sin(b) * (R0 + (k + 1) * DR)); g.stroke(); }
+  g.restore();
+  // trails + dots
+  for (let k = 0; k < N; k++) {
+    const r = R0 + k * DR, col = hue(k * 20), w = 2 * Math.PI * (N0 + k) / DUR;
+    g.save(); g.lineCap = 'round'; g.shadowColor = col; g.shadowBlur = 14;
+    for (let s = 0; s < 8; s++) { const a1 = ang(k, t) - s * w * 0.012, a2 = a1 - w * 0.012; g.strokeStyle = col; g.globalAlpha = 0.5 * (1 - s / 8); g.lineWidth = 9 - s; g.beginPath(); g.arc(CX, CY, r, a2, a1); g.stroke(); }
+    g.restore();
+    const a = ang(k, t), h = lastHit(k, t), fl = h < 0.12 ? 1 - h / 0.12 : 0;
+    glowDot(CX + Math.cos(a) * r, CY + Math.sin(a) * r, 11 + 7 * fl, col);
+    if (fl > 0) glowDot(CX, CY - r, 6 + 10 * fl, '#ffffff', fl * 0.8);
+  }
+  // seam flash: everything lines up at t = 0 / 8
+  const near = Math.min(t, DUR - t); if (near < 0.35) { const gr = g.createRadialGradient(CX, CY - 250, 0, CX, CY - 250, 500); gr.addColorStop(0, `rgba(255,255,255,${(1 - near / 0.35) * 0.22})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+  g.save(); g.globalAlpha = 0.9; glowDot(CX, CY, 10, '#fff'); g.restore();
+  const left = DUR - t, synced = t < 0.4;
+  counter(synced ? 'SYNC ✓' : left.toFixed(1), 1480, synced ? 76 : 72);
+  g.save(); g.font = '600 30px Inter, sans-serif'; g.textAlign = 'center'; g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillText(synced ? `${Math.round(R * 100)}% aligned` : 'until sync', 540, 1530); g.restore();
+}
+finish((t) => draw(t), DUR * FPS, events);
+</script></body></html>
